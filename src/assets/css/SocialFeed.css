@@ -1,0 +1,142 @@
+/*
+==================================================
+  SocialFeed.css: ธีม Grayscale (ขาว-เทาอ่อน-เทาเข้ม)
+==================================================
+*/
+
+/* --- 1. BASE STYLES & LAYOUT --- */
+body {
+  background-color: #ffffff; /* พื้นหลังหน้าเว็บ: ขาว */
+}
+
+/* --- 2. CARD & BOX STYLES (กล่องทั้งหมด) --- */
+.custom-card {
+  background-color: #f0f2f5; /* พื้นหลัง Card: เทาอ่อน */
+  border-radius: 15px; /* มุมโค้งมน */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* เงาอ่อนๆ */
+  border: none;
+  margin-bottom: 20px;
+}
+/* Post Card Header/Footer (ทำให้โปร่งใสเพื่อให้ใช้สีพื้นหลัง Card) */
+.custom-card .card-header,
+.custom-card .card-footer {
+  background-color: transparent !important;
+}
+.custom-card .card-header {
+  border-bottom: none !important;
+}
+.custom-card .card-footer {
+  border-top: 1px solid #e0e0e0 !important;
+}
+
+/* --- 3. PROFILE & AVATAR --- */
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 3px solid #e0e0e0; /* ขอบรูปโปรไฟล์: เทาอ่อน */
+  padding: 2px;
+}
+
+/* --- 4. TEXT & COLOR UTILITIES (โทน Grayscale) --- */
+h4,
+h5,
+h6 {
+  color: #333; /* หัวข้อ: เทาเข้ม */
+}
+p,
+span,
+div {
+  color: #555; /* ข้อความทั่วไป: เทาปานกลาง */
+}
+.text-muted,
+.card-subtitle {
+  color: #777 !important; /* ข้อความรอง/Muted: เทาอ่อน */
+}
+.text-primary {
+  color: #333 !important; /* Primary Color (Links/Icon): เทาเข้ม */
+}
+
+/* Icon Colors (เปลี่ยนสีเฉพาะของ Bootstrap เป็น Grayscale) */
+.text-info {
+  color: #888 !important;
+}
+.text-success {
+  color: #888 !important;
+}
+.text-warning {
+  color: #888 !important;
+}
+.text-danger {
+  color: #888 !important;
+} /* Danger/Logout/Like: เปลี่ยนเป็นโทนเทา */
+
+/* --- 5. LIST ITEM STYLES (Sidebar) --- */
+.custom-list-item {
+  border: none !important;
+  background-color: transparent !important;
+  padding: 10px 15px !important;
+}
+.custom-list-item:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important; /* Hover: เทาจางๆ */
+  color: #333 !important; /* Text on Hover: เทาเข้ม */
+  border-radius: 5px;
+}
+
+/* --- 6. BUTTONS & INPUTS --- */
+/* Input Box (Start a post) */
+.post-input-box {
+  border-radius: 25px;
+  background-color: #ffffff !important;
+  border: none !important;
+  padding: 12px 20px !important;
+}
+
+/* Action Buttons (Like, Comment, Share) */
+.post-action-btn {
+  color: #777;
+  font-weight: 500;
+  font-size: 0.95em;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+.post-action-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Hover: เทาจางๆ */
+  color: #333; /* Text on Hover: เทาเข้ม */
+}
+
+/* Primary Button (Send Post) */
+.btn-primary {
+  background-color: #333 !important; /* พื้นหลัง: เทาเข้ม */
+  border-color: #333 !important;
+  color: #ffffff !important;
+}
+.btn-primary:hover {
+  background-color: #555 !important;
+  border-color: #555 !important;
+}
+
+/* Outline Buttons (+ Follow / + ประสบการณ์) */
+.btn-outline-primary {
+  border-color: #ccc !important; /* ขอบปุ่ม: เทา */
+  color: #555 !important; /* Text: เทาปานกลาง */
+}
+.btn-outline-primary:hover {
+  background-color: #e0e0e0 !important; /* Hover: เทาอ่อน */
+  border-color: #e0e0e0 !important;
+  color: #333 !important;
+}
+
+.btn-dashed {
+  border-style: dashed !important;
+  border-radius: 30px;
+  transition: background-color 0.2s;
+}
+.btn-dashed:hover {
+  background-color: #f0f2f5;
+  border: 1px #333;
+  color: #333;
+}
