@@ -1,0 +1,135 @@
+
+.component-togglebox
+{
+    display: block;
+    position: relative;
+}
+.component-togglebox .field
+{
+    position: absolute;
+    top: 0px; bottom: auto;
+
+    min-width: 32px; min-height: 32px;
+    max-width: 32px; max-height: 32px;
+}
+.component-togglebox .name
+{
+    display: block;
+    margin: 0px 0px 0px 48px; align-content: center;
+
+    min-height: 32px; max-height: 32px;
+    color: var(--text-primary);
+}
+.component-togglebox .description
+{
+    display: block;
+    margin: 0px 0px 0px 48px;
+
+    color: var(--text-secondary);
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-togglebar-horizontal
+{
+    display: inline-block;
+}
+.component-togglebar-horizontal > button
+{
+    position: relative;
+    width: 48px; height: 48px;
+    font-size: 0.75rem;
+}
+.component-togglebar-horizontal > button > img
+{
+    position: absolute;
+    top: 0px; bottom: auto;
+    left: 0px; right: 0px;
+    margin: 0px auto;
+}
+.component-togglebar-horizontal > button > label
+{
+    position: absolute;
+    top: auto; bottom: 0px;
+    left: 0px; right: 0px;
+    margin: 0px auto;
+}
+
+.component-togglebar-horizontal > button
+{
+    background-color: transparent;
+    border: none;
+    color: var(--text-primary);
+    width: 48px; height: 48px;
+    padding: 0px;
+}
+.component-togglebar-horizontal > button:hover,
+.component-togglebar-horizontal > button:focus
+{
+    background-color: #D8D8D8;
+    color: var(--text-primary);
+}
+.component-togglebar-horizontal > button:hover
+{
+    background-color: rgb(192,192,192);
+    color: black;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-togglebar-vertical
+{
+    width: 100%;
+}
+.component-togglebar-vertical > button
+{
+    width: 100%;
+    height: 48px;
+    padding: 12px; margin-bottom: 2px;
+    border-radius: 4px;
+    text-align: start;
+}
+.component-togglebar-vertical > p
+{
+    width: 100%;
+    height: 40px;
+    align-content: center;
+}
+
+.component-togglebar-vertical .normal
+{
+    color: black;
+    background-color: rgb(215, 215, 215);
+    border: none; outline: none;
+    box-sizing: border-box;
+}
+.component-togglebar-vertical .normal:hover,
+.component-togglebar-vertical .normal:focus
+{
+    color: black;
+    background-color: rgb(128, 215, 215);
+}
+.component-togglebar-vertical .normal:active
+{
+    color: black;
+    background-color: rgb(128, 215, 215);
+}
+
+.component-togglebar-vertical .toggled
+{
+    color: white;
+    background-color: rgb(149, 204, 255);
+    border: none; outline: none;
+    box-sizing: border-box;
+}
+.component-togglebar-vertical .toggled:hover,
+.component-togglebar-vertical .toggled:focus
+{
+    color: white;
+    background-color: rgb(120, 204, 255);
+}
+.component-togglebar-vertical .toggled:active
+{
+    color: white;
+    background-color: rgb(120, 104, 100);    
+}
