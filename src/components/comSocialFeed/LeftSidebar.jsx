@@ -24,7 +24,7 @@ const LeftSidebar = () => {
 
   return (
     // Layout Container: กำหนดให้ Component 'sticky' อยู่ด้านบนของ Viewport
-    <div className="sticky-top d-grid gap-3" style={{ top: "64px" }}>
+    <div className="sticky-top d-grid gap-3" style={{ top: "20px" }}>
       {/* Card 1: User Profile and Logout Section */}
       <Card className="custom-card">
         <div className="text-center p-3">

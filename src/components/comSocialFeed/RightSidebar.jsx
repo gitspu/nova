@@ -13,7 +13,7 @@ import {
 const RightSidebar = () => {
   return (
     // Layout Container: กำหนดให้ Component 'sticky' อยู่ด้านบนของ Viewport
-    <div className="sticky-top" style={{ top: "64px" }}>
+    <div className="sticky-top" style={{ top: "20px" }}>
       {/* Card 1: Trending News Section (ไม่มีการเปลี่ยนแปลง) */}
       <Card className="custom-card mb-4">
         {/* Card Header: หัวข้อ "Trending News" */}
