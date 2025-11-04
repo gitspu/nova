@@ -6,6 +6,13 @@ import { createRoot } from 'react-dom/client'
 import './assets/css/index.css'
 import App from './App.jsx'
 
+import * as auth from './api/authentication'
+import * as profile from './api/profile'
+
+auth.init ();
+profile.init ();
+
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

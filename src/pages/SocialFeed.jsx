@@ -17,7 +17,7 @@ const SocialFeed = () => {
       {/* Container fluid: กำหนดให้ Container มีความกว้างเต็มหน้าจอ (100%)
         pt-4 px-5: เพิ่ม Padding ด้านบน (p) ขนาด 4 และ Padding ซ้ายขวา (x) ขนาด 5 
       */}
-      <Container fluid className="pt-4 px-5">
+      <Container fluid className="pt-4 px-5" style={{position: 'absolute', top: '56px'}}>
         {/* Row: แถวหลักสำหรับจัดวาง 3 คอลัมน์ (Sidebar ซ้าย, Feed กลาง, Sidebar ขวา) */}
         <Row>
           {/* Col md={2}: คอลัมน์ขนาด 2 สำหรับหน้าจอขนาดกลาง (md) ขึ้นไป

@@ -1,4 +1,15 @@
+
+import IconEmojiSmile from './icon/EmojiSmile.svg'
 import { Plus } from "react-bootstrap-icons";
+
+import * as auth from './../api/authentication'
+import * as authUI from './Auth';
+import * as profile from './../api/profile'
+
+import './../assets/css/Profile.css'
+import { useNavigate } from "react-router-dom";
+
+
 const Profile = () => {
   return (
     <div className="container">
@@ -148,5 +159,86 @@ const Profile = () => {
     </div>
   );
 };
+
+export function ProfileHead ()
+{
+    const navigate = useNavigate ();
+    function logout ()
+    {
+      alert ("Logged Out");
+     
+      if (auth.isLogged ()) {
+          auth.logout ();
+      }
+      navigate ("/");
+    }
+    return <div>
+        <img src="" width={48} height={48} onClick={() => logout()}></img>
+    </div>
+}
+export function ProfileCard ()
+{
+    const navigate = useNavigate ();
+    function logout ()
+    {
+        if (auth.isLogged ()) 
+        {
+            auth.logout ();
+            authUI.navigate ();
+        }
+        else
+        {
+            authUI.navigate ();
+        }
+    }
+   
+    let src = IconEmojiSmile;
+    let name = auth.isLogged () ? "" : "เข้าสู่ระบบ";
+    let status = "";
+
+    if (auth.isLogged () && auth.isActive ())
+    {
+        try
+        {
+            const data = profile.getPersonal ();
+
+            if (data.icon != "") {
+                src = `data:image/jpeg;base64, ${data.icon}`
+            }
+            if (data.firstName != "") {
+                name += data.firstName.value + " ";
+            }
+            if (data.middleName != "") {
+                name += data.middleName.value + " ";
+            }
+            if (data.lastName != "") {
+                name += data.lastName.value + " ";
+            }
+
+            name = name.trimEnd ();
+
+            if (name == "" || name == null) {
+                name = auth.getName ();
+            }
+
+            status = data.status.value;
+        }
+        catch (ex)
+        {
+            name = auth.getName ();
+            console.error ("Profile: Unable to fetch personal data, scope: ProfileCard");
+        }
+    }
+
+    return <div className="d-flex border rounded-2" style={{ width: '192px', height: '48px'}} onClick={() => logout()}>
+        <div className="" style={{minWidth: '48px'}}>
+          <img src={src} height='100%' className="p-1 rounded-circle"></img>
+        </div>
+        <div className="flex-grow-1 align-content-center">
+          <p className="p-0 m-0 ms-2 text-primary">{name}</p>
+          <p className="p-0 m-0 ms-2 text-secondary" style={{fontSize: '0.75rem'}}>{status}</p>
+        </div>
+    </div>
+}
 
 export default Profile;
