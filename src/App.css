@@ -9,6 +9,7 @@
     --bg-secondary: #D6F4ED;
 
     --text-primary: #06202B;
+    --text-secondary: #001C30;
 }
 #app > .navigation
 {
@@ -29,7 +30,7 @@
     position: absolute;
     inset: 56px 0px 0px 0px;
     overflow: hidden auto;
-    
+
     background-color: var(--bg-primary);
     color: var(--text-primary);
 }
@@ -41,7 +42,7 @@
 h1, h2, h3, h4, h5, h6, label, p
 {
     margin: 0px; padding: 0px;
-    background-color: transparent; color: black;
+    background-color: transparent; color: var(--text-primary);
     border: none; outline: none;
 }
 h1, h2, h3, h4, h5, h6
@@ -78,11 +79,17 @@ button
     font-style: normal;
     font-weight: normal;
 }
+button:enabled
+{
+    background-color: #DDF4E7;
+    border: 1px solid grey;
+    border-radius: 12px;
+}
 button:enabled:hover, button:enabled:focus
 {
-    background-color: aquamarine;
+    background-color: #c4edd6;
 }
 button:enabled:active
 {
-    background-color: beige;
+    background-color: #bfe7db;
 }

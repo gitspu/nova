@@ -18,7 +18,7 @@ import * as navigator from './Script/Navigator'
 */
 import {Admin}    from "./Page/Admin";
 import {Auth}     from "./Page/Auth";
-import {Feed}     from "./Page/Feed";
+import {Home}     from "./Page/Home";
 import {Profile}  from "./Page/Profile";
 import {Job}      from './Page/Job'
 import {NavBar}   from './Component/NarBar';
@@ -49,7 +49,7 @@ export function App ()
     return <BrowserRouter>
       <Routes>
         <Route element={<MainRoute/>}>
-          <Route path="/" element={<Feed/>}/>
+          <Route path="/" element={<Home/>}/>
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/job" element={<Job/>}/>
         </Route>

@@ -29,7 +29,7 @@ export function ProfileCard ({
     let profileName = null;
     let profileIcon = IconProfile;
     let viewportClass = ["component-profilecard", className].join (' ');
-    let containerClass = ["container", showBorder ? "border border-1 rounded" : ""].join (' ');
+    let containerClass = ["container", showBorder ? "container-border" : ""].join (' ');
     const [open, setOpen] = useState (false);
 
     //
