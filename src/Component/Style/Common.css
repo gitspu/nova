@@ -15,12 +15,12 @@
 /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
 
 
-.component-togglebox
+.component-checkbox
 {
     display: block;
     position: relative;
 }
-.component-togglebox .field
+.component-checkbox .field
 {
     position: absolute;
     top: 0px; bottom: auto;
@@ -28,7 +28,7 @@
     min-width: 24px; min-height: 24px;
     max-width: 24px; max-height: 24px;
 }
-.component-togglebox .name
+.component-checkbox .name
 {
     display: block;
     margin: 0px 0px 0px 32px; align-content: center;
@@ -36,7 +36,7 @@
     min-height: 32px; max-height: 32px;
     color: var(--text-primary);
 }
-.component-togglebox .description
+.component-checkbox .description
 {
     display: block;
     margin: 0px 0px 0px 32px;

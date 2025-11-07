@@ -72,7 +72,7 @@ export function Admin ()
                 <ToggleBar type='vertical' state={[selection, setSelection]}>
                     <ToggleBarItem text='แดชบอร์ด' value={1}/>
                     <ToggleBarItem text='ระบบยืนยันตัวตน' value={2}/>
-                    <ToggleBarItem text='โปรไฟล์' value={5}/>
+                    <ToggleBarItem text='บัญชี' value={5}/>
                     <ToggleBarSeparator text='ทดสอบระบบ'/>
                     <ToggleBarItem text='ทดสอบระบบ API' value={3}/>
                     <ToggleBarItem text='ทดสอบระบบ UI' value={4}/>
@@ -89,6 +89,7 @@ export function Admin ()
                     selection == 2 ? <ContentAuthentication/> :
                     selection == 3 ? <ContentTestAPI/> :
                     selection == 4 ? <ContentTestUI/> :
+                    selection == 5 ? <ContentAccount/> :
                     <></>
                 }
             </div>
@@ -105,13 +106,33 @@ export function Admin ()
 
 function ContentDashboard ()
 {
-    return <div>
+    return <div className="content-dashboard">
         <div>
             <h1>แดชบอร์ด</h1>
             <hr></hr>
             <br></br>
         </div>
+        <div>
+            <button>รีเฟรชข้อมูล</button>
+        </div>
+        <Item>
+            <ItemChild title='สมัครสมาชิก' value='0'></ItemChild>
+            <ItemChild title='เข้าสู่ระบบ' value='0'></ItemChild>
+            <ItemChild title='ประกาศงาน' value='0'></ItemChild>
+        </Item>
     </div>
+
+    function Item ({children})
+    {
+        return <div className="item">{children}</div>
+    }
+    function ItemChild ({title, value})
+    {
+        return <div className="item-child">
+            <label className="value">{value}</label>
+            <label className="title">{title}</label>
+        </div>
+    }
 }
 function ContentAuthentication ()
 {
@@ -128,6 +149,67 @@ function ContentAuthentication ()
             
         </div>
     </div>
+}
+function ContentAccount ()
+{
+    return <div>
+        <div>
+            <h1>บัญชี</h1>
+            <hr></hr>
+            <br></br>
+        </div>
+        <div>
+            <button>รีเฟรชข้อมูล</button>
+            <button>เพิ่มบัญชี</button>
+        </div>
+        <div>
+            <input type='search' placeholder="ค้นหาบัญชีด้วย ชื่อ หรือ รหัสเฉพาะ" style={{width: '100%'}}></input>
+        </div>
+        <List/>
+    </div>
+
+    function List ()
+    {
+        const children = [];
+
+        for (const key of Object.keys (auth.stateServer.access))
+        {
+            const value = auth.stateServer.access[key];
+            const name = value.name;
+            const role = value.role == 1 ? "ผู้ใช้" :
+                         value.role == 2 ? "ผู้จ้าง" :
+                         value.role == 3 ? "ผู้ดูแล" :
+                         value.role == 4 ? "ผู้ทดสอบ" :
+                         value.role == 5 ? "ผู้พัฒนา" : "ไม่รู้จัก";
+
+            const status = value.status == 1 ? "เปิดใช้งาน" :
+                           value.status == 2 ? "ปิดใช้งาน" :
+                           value.status == 3 ? "ถูกระงับ" : "ไม่รู้จัก";
+
+            children.push (<tr>
+                <td>{name}</td>
+                <td>{role}</td>
+                <td>{status}</td>
+                <td>{key}</td>
+            </tr>)
+        }
+
+        return <div>
+            <table>
+                <thead>
+                    <tr>
+                        <td>ชื่อ</td>
+                        <td>บทบาท</td>
+                        <td>สถานะ</td>
+                        <td>รหัสเฉพาะ</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {children}
+                </tbody>
+            </table>
+        </div>
+    }
 }
 function ContentTestAPI ()
 {
@@ -234,7 +316,14 @@ function ContentTestUI ()
             <hr></hr>
         </div>
         <div>
-            <div>
+            <div className="mb-4">
+                <h3>พื้นหลัง</h3>
+                <div style={{ border: '1px solid black', backgroundColor: 'black', position: 'relative', height: '512px', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', inset: '0px 0px 0px 0px', width: '256px', height: '256px', backgroundColor: 'var(--bg-primary)'}}></div>
+                    <div style={{ position: 'absolute', inset: '128px 0px 0px 128px', width: '256px', height: '256px', backgroundColor: 'var(--bg-secondary)'}}></div>
+                </div>
+            </div>
+            <div className="mb-4">
                 <h3>ข้อความ</h3>
                 <hr/>
                 <h1>หัวเรื่อง 1</h1>
@@ -244,12 +333,20 @@ function ContentTestUI ()
                 <h5>หัวเรื่อง 5</h5>
                 <h6>หัวเรื่อง 6</h6>
                 <hr/>
+                <p>สีเริ่มต้น</p>
+                <p>สีลิงค์</p>
+                <br/>
+                <p>สีเขียว</p>
+                <p>สีเหลือง</p>
+                <p>สีแดง</p>
+                <p>สีฟ้า</p>
+                <hr/>
             </div>
-            <div>
+            <div className="mb-4">
                 <h3 className="pb-3">กล่องตัวเลือก</h3>
                 <Checkbox name="ปกติ" description="คำอธิบาย"></Checkbox>
             </div>
-            <div>
+            <div className="mb-4">
                 <h3 className="pb-3">ปุ่มกด</h3>
                 <button>เริ่มต้น</button>
                 <button>ปกติ</button>
@@ -258,12 +355,6 @@ function ContentTestUI ()
                 <button>สีแดง</button>
                 <button>สีฟ้า</button>
             </div>
-        </div>
-        <div style={{width: '100%', height: '512px', border: '1px solid black'}}>
-            <label>Background</label>
-        </div>
-        <div>
-
         </div>
     </div>
 }

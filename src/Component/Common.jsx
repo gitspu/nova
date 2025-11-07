@@ -27,7 +27,7 @@ export function Checkbox ({
         if (state != null) state[1](which);
     }
 
-    return <div className='component-togglebox'>
+    return <div className='component-checkbox'>
         <input className='field' type='checkbox' value={getState()} onChange={(e) => setState(e.target.value)}/>
         <label className='name'>{name}</label>
         <p className='description'>{description}</p>

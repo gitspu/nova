@@ -79,7 +79,7 @@ button
     font-style: normal;
     font-weight: normal;
 }
-button:enabled
+button:enabled  
 {
     background-color: #DDF4E7;
     border: 1px solid grey;
@@ -92,4 +92,15 @@ button:enabled:hover, button:enabled:focus
 button:enabled:active
 {
     background-color: #bfe7db;
+}
+
+table
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+table td
+{
+    padding: 8px;
+    border: 1px solid black;
 }
