@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Back, BoxArrowLeft, BoxArrowRight, Gear, GearWideConnected } from 'react-bootstrap-icons';
+
 import * as auth from '../Script/Authentication'
 import * as profile from '../Script/Profile'
+
 import './Style/Profile.css'
-import { useState } from 'react';
 
 export function ProfileHead ()
 {
@@ -19,7 +21,7 @@ export function ProfileCard ({
     showName = true /* แสดงชื่อโปรไฟล์ หรือ ชื่อบัญชี */,
     style = {} /* กำหนด css ให้กับส่วนประกอบ */, 
     className = "" /* กำหนดคลาสให้กับส่วนประกอบ */, 
-    children /* รายการย่อยในตัวแม่ */
+    // children /* รายการย่อยในตัวแม่ */
 })
 {
     let profileName = null;
@@ -28,6 +30,9 @@ export function ProfileCard ({
     let containerClass = ["w-100", "h-100", "p-1" , "d-flex", "align-items-center", "gap-3", showBorder ? "border border-1 rounded" : ""].join (' ');
     const [open, setOpen] = useState (false);
 
+    //
+    // ดึงข้อมูลโปรไฟล์ (ถ้ามี)
+    //
     if (auth.isLogged() && auth.isActive())
     {
         try
@@ -45,6 +50,9 @@ export function ProfileCard ({
         }
         catch { ; }
     }
+    //
+    // แสดผลส่วนประกอบ
+    //
     return <Viewport>
         <Container>
             {showIcon ? <img className='h-100 flex-1 rounded-circle' src={profileIcon}></img> : <></>}
@@ -59,7 +67,7 @@ export function ProfileCard ({
 
     function Viewport ({children})
     {
-        return <button className={viewportClass} style={{minWidth: 192, height: '48px'}}>{children}</button>
+        return <button className={viewportClass} style={style}>{children}</button>
     }
     function Container ({children})
     {
@@ -71,7 +79,8 @@ export function ProfileCard ({
     }
     function ContextItem ({icon, text})
     {
-        if (open == false) {
+        if (open == false) 
+        {
             return <></>
         }
         return <button className='w-100'>

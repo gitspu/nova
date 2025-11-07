@@ -20,11 +20,52 @@ export function Auth ()
     if (auth.isLogged () && auth.isActive ())
     {
         console.warn ("Already logged in, redirecting");
-        redirect ();
+        finalize ();
         return;
     }
     
-    function redirect ()
+    return <div className="position-absolute w-100 h-100">
+      <PageBackground/>
+      <PageForeground>
+        <div className={view == 1 ? "d-block" : "d-none"}>
+          <FormHead/>
+          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
+          <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='current-password webauthn'/>
+          <div className="mt-4 mb-4">
+            <FormLink text='ฉันไม่มีบัญชี' highlight='สมัครเลย' click={() => setView(2)}/>
+            <FormLink text='ฉันลืมรหัสผ่าน' highlight='กู้คืนบัญชี' click={() => setView(3)}/>
+          </div>
+          <FormStatus text={status}/>
+          <FormButton text='เข้าสู่ระบบ' click={() => clickLogin()}/>
+        </div>
+        <div className={view == 2 ? "d-block" : "d-none"}>
+          <FormHead/>
+          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
+          <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='new-password webauthn'/>
+          <FormInput text='รหัสผ่าน (ยืนยัน)' value={[passwordConfirm, setPasswordConfirm]} change={() => setStatus("")} type='password' autoComplete='new-password webauthn'/>
+          <FormInput text='อีเมล' value={[email, setEmail]} change={() => setStatus("")} type='email' autoComplete='email webauthn'/>
+          <div className="mt-4 mb-4">
+            <FormLink text='ฉันมีบัญชีแล้ว' highlight='เข้าสู่ระบบ' click={() => setView(1)}/>
+          </div>
+          <FormStatus text={status}/>
+          <FormButton text='สร้างบัญชี' click={() => clickRegister()}/>
+        </div>
+        <div className={view == 3 ? "d-block" : "d-none"}>
+          <FormHead/>
+          <div className="mb-4" onClick={() => setView(1)}>
+            <ArrowLeft className="m-2"/>
+            <label>ย้อนกลับ</label>
+          </div>
+          <div className="mb-4">
+            <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
+          </div>
+          <FormStatus text={status}/>
+          <FormButton text='ดำเนินการต่อ' click={() => clickForgot()}/>
+        </div>
+      </PageForeground>
+    </div>
+
+    function finalize ()
     {
         if (auth.isLogged () && auth.isActive ())
         {
@@ -68,7 +109,7 @@ export function Auth ()
         {
             auth.login (username, password);
             setStatus ("เข้าสู่ระบบสำเร็จ กำลังย้ายคุณไปหน้าที่ต้องการ");
-            redirect ();
+            finalize ();
         }
         catch (e)
         {
@@ -96,51 +137,8 @@ export function Auth ()
     }
     function clickForgot ()
     {
-        setStatus ("ขออภัย ระบบไม่พร้อบใช้งานในขณะนี้");
+        setStatus ("ขออภัย ระบบไม่พร้อมใช้งานในขณะนี้");
     }
-
-   
-    
-    return <div className="position-absolute w-100 h-100">
-      <PageBackground/>
-      <PageForeground>
-        <div className={view == 1 ? "d-block" : "d-none"}>
-          <FormHead/>
-          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
-          <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='current-password webauthn'/>
-          <div className="mt-4 mb-4">
-            <FormLink text='ฉันไม่มีบัญชี' highlight='สมัครเลย' click={() => setView(2)}/>
-            <FormLink text='ฉันลืมรหัสผ่าน' highlight='กู้คืนบัญชี' click={() => setView(3)}/>
-          </div>
-          <FormStatus text={status}/>
-          <FormButton text='เข้าสู่ระบบ' click={() => clickLogin()}/>
-        </div>
-        <div className={view == 2 ? "d-block" : "d-none"}>
-          <FormHead/>
-          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
-          <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='new-password webauthn'/>
-          <FormInput text='รหัสผ่าน (ยืนยัน)' value={[passwordConfirm, setPasswordConfirm]} change={() => setStatus("")} type='password' autoComplete='new-password webauthn'/>
-          <FormInput text='อีเมล' value={[email, setEmail]} change={() => setStatus("")} type='email' autoComplete='email webauthn'/>
-          <div className="mt-4 mb-4">
-            <FormLink text='ฉันมีบัญชีแล้ว' highlight='เข้าสู่ระบบ' click={() => setView(1)}/>
-          </div>
-          <FormStatus text={status}/>
-          <FormButton text='สร้างบัญชี' click={() => clickRegister()}/>
-        </div>
-        <div className={view == 3 ? "d-block" : "d-none"}>
-          <FormHead/>
-          <div className="mb-4" onClick={() => setView(1)}>
-            <ArrowLeft className="m-2"/>
-            <label>ย้อนกลับ</label>
-          </div>
-          <div className="mb-4">
-            <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
-          </div>
-          <FormStatus text={status}/>
-          <FormButton text='ดำเนินการต่อ' click={() => clickForgot()}/>
-        </div>
-      </PageForeground>
-    </div>
 } 
   
 function PageBackground ()

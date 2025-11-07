@@ -2,6 +2,16 @@ import React from "react";
 import "./Style/Common.css"
 
 /**
+ * ปุ่มกดที่เน้นแสดงรูปภาพแทนข้อความ
+*/
+export function ButtonIcon ({icon, alt, click})
+{
+    return <button className="component-buttonicon" onClick={click}>
+        <img src={icon} alt={alt}></img>
+    </button>
+}
+
+/**
  * ส่วนประกอบสำหรับการแสดงตัวเลือก พร้อมคำอธิบายประกอบ
 */
 export function Checkbox ({

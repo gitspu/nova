@@ -1,96 +1,108 @@
+import { useEffect, useState } from "react"
+
+import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox, ButtonIcon } from "./../Component/Common"
+import { ProfileCard } from './../Component/Profile';
+
+import IconList from './../Asset/Icon/List.svg'
+
 import * as profile from '../Script/Profile'
 import * as auth    from '../Script/Authentication'
 import * as navigator from '../Script/Navigator'
 
-import { useEffect, useState } from "react"
-import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox } from "./../Component/Common"
-import { ProfileCard } from './../Component/Profile';
 import './Style/Admin.css'
 
 export function Admin ()
 {
-    const [selection, setSelection] = useState (1);
-    const [selectionOpen, setSelectionOpen] = useState (window.innerWidth >= 512 ? true : false);
-
-    if (auth.isLogged () == false)
-    {
-        navigator.auth ();
-        return;
-    }
-    if (auth.isActive () == false ||
-        (auth.getRole () != auth.ROLE_ADMIN &&
-        auth.getRole () != auth.ROLE_TESTER &&
-        auth.getRole () != auth.ROLE_DEVELOPER))
-    {
-        return <p>Insufficient permission</p>;
-    }
+    const [selection, setSelection]         = useState (1);
+    const [selectionOpen, setSelectionOpen] = useState (!isNarrow ());
     
 
     useEffect (() => 
     {
-        document.title = "NOVA Admin";
-        window.addEventListener ("resize", resize);
+        if (auth.isLogged () == false || auth.isActive() == false)
+        {
+            // ย้ายผู้ใช้ไปยังหน้าเข้าสู่ระบบ
+            navigator.auth ();
+            return;
+        }
+        if (auth.getRole() != auth.ROLE_ADMIN &&
+            auth.getRole() != auth.ROLE_TESTER &&
+            auth.getRole() != auth.ROLE_DEVELOPER) 
+        {
+            // สิทธิ์การเข้าถึงไม่เพียงพอ
+            return <p>Insufficient permission</p>;
+        }
+
+        document.title = "NOVA Administrator Panel";
+        window.addEventListener ("resize", onResize);
 
         return () =>
         {
-            window.removeEventListener ("resize", resize);
+            window.removeEventListener ("resize", onResize);
         }
     });
 
-    function resize ()
-    {
-        setSelectionOpen (window.innerWidth >= 512 ? true : selectionOpen);
-    }
-
-    return <div className="page-admin">
+    
+    return <Viewport>
+        {/* ต้องเรียงลำดับย้อนกลับเนื่องจากส่วนที่ล่างสุดจะอยู่ด้านหน้าสุด */}
         <Content selection={selection}/>
         <Menu selectionShow={selectionOpen} selectionState={[selection, setSelection]}/>
         <Header selectionOpen={[selectionOpen, setSelectionOpen]}/>
-    </div>
-}
-function Header ({selectionOpen})
-{
-    return <div className="header">
-        <div className="header-inner">
-            {window.innerWidth < 512 ?
-                <button onClick={() => selectionOpen[1](!selectionOpen[0])}>Selection</button> :
-                ""
-            }
-            <h2>แผงควบคุมระบบ</h2>
-            <div style={{flexGrow: 1}}></div>
-            <ProfileCard/>
+    </Viewport>
+
+    function Viewport ({children})
+    {
+        return <div className='page-admin'>{children}</div>
+    }
+    function Header ()
+    {
+        return <div className='header'>
+            <div className='header-inner'>
+                <h2>แผงควบคุมระบบ</h2>
+                <div style={{flexGrow: 1}}></div>
+                <ButtonIcon icon={IconList} click={() => setSelectionOpen(!selectionOpen)}/>
+                <ProfileCard showBorder={!isNarrow()} showName={!isNarrow()}/>
+            </div>
         </div>
-    </div>
-} 
-function Menu ({selectionShow, selectionState})
-{
-    return <div className="menu" style={{ display: selectionShow ? 'block' : 'none' }}>
-        <div className="menu-inner">
-            <ToggleBar type='vertical' state={selectionState}>
-                <ToggleBarItem text='แดชบอร์ด' value={1}/>
-                <ToggleBarItem text='ระบบยืนยันตัวตน' value={2}/>
-                <ToggleBarItem text='โปรไฟล์' value={5}/>
-                <ToggleBarSeparator text='ทดสอบระบบ'/>
-                <ToggleBarItem text='ทดสอบระบบ API' value={3}/>
-                <ToggleBarItem text='ทดสอบระบบ UI' value={4}/>
-            </ToggleBar>
+    }
+    function Menu ()
+    {
+        return <div className="menu" style={{ display: selectionOpen ? 'block' : 'none' }}>
+            <div className="menu-inner">
+                <ToggleBar type='vertical' state={[selection, setSelection]}>
+                    <ToggleBarItem text='แดชบอร์ด' value={1}/>
+                    <ToggleBarItem text='ระบบยืนยันตัวตน' value={2}/>
+                    <ToggleBarItem text='โปรไฟล์' value={5}/>
+                    <ToggleBarSeparator text='ทดสอบระบบ'/>
+                    <ToggleBarItem text='ทดสอบระบบ API' value={3}/>
+                    <ToggleBarItem text='ทดสอบระบบ UI' value={4}/>
+                </ToggleBar>
+            </div>
         </div>
-    </div>
-}
-function Content ({selection})
-{
-    return <div className="content">
-        <div className="content-inner">
-            {
-                selection == 1 ? <ContentDashboard/> :
-                selection == 2 ? <ContentAuthentication/> :
-                selection == 3 ? <ContentTestAPI/> :
-                selection == 4 ? <ContentTestUI/> :
-                ""
-            }
+    }
+    function Content ()
+    {
+        return <div className="content">
+            <div className="content-inner">
+                {
+                    selection == 1 ? <ContentDashboard/> :
+                    selection == 2 ? <ContentAuthentication/> :
+                    selection == 3 ? <ContentTestAPI/> :
+                    selection == 4 ? <ContentTestUI/> :
+                    <></>
+                }
+            </div>
         </div>
-    </div>
+    }
+
+    function onResize ()
+    {
+        setSelectionOpen (!isNarrow ());
+    }
+
+    function isNarrow () { return window.innerWidth <= 512; }
 }
+
 function ContentDashboard ()
 {
     return <div>
@@ -119,93 +131,100 @@ function ContentAuthentication ()
 }
 function ContentTestAPI ()
 {
-    function getPersonal ()
+    return <>
+        <Header/> 
+        <ContentAuth/>
+        <ContentProfile/>
+    </>
+
+    function Header ()
     {
-        try { return JSON.stringify (profile.getPersonal ()); }
-        catch (ex) { return String(ex); }
-    }
-    function getSocial ()
-    {
-        try { return JSON.stringify (profile.getSocial ()); }
-        catch (ex) { return String(ex); }
-    }
-    function getJob ()
-    {
-        try { return JSON.stringify (profile.getJob ()); }
-        catch (ex) { return String(ex); }
-    }
-    function getPost ()
-    {
-        try { return JSON.stringify (profile.getPost ()); }
-        catch (ex) { return String(ex); }
-    }
-    function logout ()
-    {
-        auth.logout ();
-        window.location.reload ();
-    }
-    return <div>
-        <div>
+        return <div>
             <h1>ทดสอบระบบ API</h1>
             <hr/>
             <br/>
         </div>
-        <div>
+    }
+    function ContentAuth ()
+    {
+        const init              = String (auth.stateClient.init ? "กำลังทำงาน" : "ไม่ทำงาน");
+        const session           = String (auth.stateClient.session);
+        const sessionExpired    = String (auth.stateClient.sessionExpired == "null" ? "ไม่มีวันหมดอายุ" : auth.stateClient.sessionExpired);
+        const access            = String (auth.stateClient.access);
+
+        const name              = String (auth.stateClient.name);
+        const role              = String (
+            auth.stateClient.role == 0 ? "ROLE_UNKNOWN" :
+            auth.stateClient.role == 1 ? "ROLE_USER" :
+            auth.stateClient.role == 2 ? "ROLE_EMPLOYER" :
+            auth.stateClient.role == 3 ? "ROLE_ADMIN" :
+            auth.stateClient.role == 4 ? "ROLE_TESTER" :
+            auth.stateClient.role == 5 ? "ROLE_DEVELOPER" : "<<Unknown>>"
+        );
+        const status            = String (
+            auth.stateClient.status == 0 ? "STATUS_UNKNOWN" :
+            auth.stateClient.status == 1 ? "STATUS_ACTIVE" :
+            auth.stateClient.status == 2 ? "STATUS_INACTIVE" :
+            auth.stateClient.status == 3 ? "STATUS_SUSPEND" : "<<Unknown>>"
+        );
+
+        return <div>
             <h3>ระบบยืนยันตัวตน</h3>
-            <p>
-                ระบบ: {auth.stateClient.init ? "กำลังทำงาน" : "ไม่ทำงาน"}<br/>
-                รหัสเซสชั่น: {auth.stateClient.session}<br/>
-                รหัสเซสชั่น หมดอายุ: {auth.stateClient.sessionExpired == "null" ? "ไม่มีวันหมดอายุ" : auth.stateClient.sessionExpired}<br/>
-                รหัสเข้าถึง: {auth.stateClient.access}<br/>
-                <br/>
-                ชื่อ: {auth.stateClient.name}<br/>
-                บทบาท: {
-                    auth.stateClient.role == 0 ? "ROLE_UNKNOWN" :
-                    auth.stateClient.role == 1 ? "ROLE_USER" :
-                    auth.stateClient.role == 2 ? "ROLE_EMPLOYER" :
-                    auth.stateClient.role == 3 ? "ROLE_ADMIN" :
-                    auth.stateClient.role == 4 ? "ROLE_TESTER" :
-                    auth.stateClient.role == 5 ? "ROLE_DEVELOPER" : "<<Unknown>>"
-                }
-                <br/>
-                สถานะ: {
-                    auth.stateClient.status == 0 ? "STATUS_UNKNOWN" :
-                    auth.stateClient.status == 1 ? "STATUS_ACTIVE" :
-                    auth.stateClient.status == 2 ? "STATUS_INACTIVE" :
-                    auth.stateClient.status == 3 ? "STATUS_SUSPEND" : "<<Unknown>>"
-                }
-                <br/>
-                <button onClick={() => logout()}>ออกจากระบบ</button>
-            </p>
+            <p>ระบบ: {init}</p>
+            <p>รหัสเซสชั่น: {session}</p>
+            <p>รหัสเซสชั่น หมดอายุ: {sessionExpired}</p>
+            <p>รหัสเข้าถึง: {access}</p>
+            <br/>
+            <p>ชื่อ: {name}</p>
+            <p>บทบาท: {role}</p>
+            <p>สถานะ: {status}</p>
         </div>
-        <br/>
-        <div>
+    }
+    function ContentProfile ()
+    {
+        const init = String (profile.stateClient.client.init ? "กำลังทำงาน" : "ไม่ทำงาน");
+        let personal = "";
+        let social = "";
+        let job = "";
+        let post = "";
+
+        try { personal = JSON.stringify (profile.getPersonal ()); }
+        catch (ex) { return String(ex); }
+
+        try { social = JSON.stringify (profile.getSocial ()); }
+        catch (ex) { return String(ex); }
+
+        try { job = JSON.stringify (profile.getJob ()); }
+        catch (ex) { return String(ex); }
+
+        try { post = JSON.stringify (profile.getPost ()); }
+        catch (ex) { return String(ex); }
+
+        return <div>
             <h3>ระบบโปรไฟล์</h3>
+            <p>ระบบ: {init}</p>
             <p>
-                ระบบ: {profile.stateClient.client.init ? "กำลังทำงาน" : "ไม่ทำงาน"}<br/>
-                ข้อมูลส่วนตัว: 
-                <br></br>
-                <div style={{border: '1px solid black', wordBreak: 'break-word', padding: '12px'}}>
-                    {getPersonal()}
-                </div>
-                ข้อมูลสังคม: 
-                <br></br>
-                <div style={{border: '1px solid black', wordBreak: 'break-word', padding: '12px'}}>
-                    {getSocial()}
-                </div>
-                ข้อมูลงาน: 
-                <br></br>
-                <div style={{border: '1px solid black', wordBreak: 'break-word', padding: '12px'}}>
-                    {getJob()}
-                </div>
-                ข้อมูลโพสต์
-                <br></br>
-                <div style={{border: '1px solid black', wordBreak: 'break-word', padding: '12px'}}>
-                    {getPost()}
-                </div>
+                <span>ข้อมูลส่วนตัว:</span>
+                <br/>
+                <code>{personal}</code>
+            </p>
+            <p>
+                <span>ข้อมูลสังคม:</span>
+                <br/>
+                <code>{social}</code>
+            </p>
+            <p>
+                <span>ข้อมูลงาน:</span>
+                <br/>
+                <code>{job}</code>
+            </p>
+            <p>
+                <span>ข้อมูลโพสต์:</span>
+                <br/>
+                <code>{post}</code>
             </p>
         </div>
-    </div>
+    }
 }
 function ContentTestUI ()
 {
@@ -214,16 +233,37 @@ function ContentTestUI ()
             <h1>ทดสอบระบบ UI</h1>
             <hr></hr>
         </div>
+        <div>
+            <div>
+                <h3>ข้อความ</h3>
+                <hr/>
+                <h1>หัวเรื่อง 1</h1>
+                <h2>หัวเรื่อง 2</h2>
+                <h3>หัวเรื่อง 3</h3>
+                <h4>หัวเรื่อง 4</h4>
+                <h5>หัวเรื่อง 5</h5>
+                <h6>หัวเรื่อง 6</h6>
+                <hr/>
+            </div>
+            <div>
+                <h3 className="pb-3">กล่องตัวเลือก</h3>
+                <Checkbox name="ปกติ" description="คำอธิบาย"></Checkbox>
+            </div>
+            <div>
+                <h3 className="pb-3">ปุ่มกด</h3>
+                <button>เริ่มต้น</button>
+                <button>ปกติ</button>
+                <button>สีเขียว</button>
+                <button>สีเหลือง</button>
+                <button>สีแดง</button>
+                <button>สีฟ้า</button>
+            </div>
+        </div>
         <div style={{width: '100%', height: '512px', border: '1px solid black'}}>
             <label>Background</label>
         </div>
         <div>
-            <button>เริ่มต้น</button>
-            <button>ปกติ</button>
-            <button>สีเขียว</button>
-            <button>สีเหลือง</button>
-            <button>สีแดง</button>
-            <button>สีฟ้า</button>
+
         </div>
     </div>
 }

@@ -3,3 +3,55 @@
     ดังนั้นจงระวังไว้ และใช้อย่างชาญฉลาด 
 */
 
+/*
+    ข้อความ (h1 -> h6, label, paragraph)
+*/
+
+h1, h2, h3, h4, h5, h6, label, p
+{
+    margin: 0px; padding: 0px;
+    background-color: transparent; color: black;
+    border: none; outline: none;
+}
+h1, h2, h3, h4, h5, h6
+{
+    font-weight: bold;
+}
+
+h1 
+{
+    margin: 0px; padding: 0px;
+    /* font-size: 2rem; */
+    font-weight: bold;
+}
+h2
+{
+    margin: 0px; padding: 0px;
+    /* font-size: 1.5rem; */
+    font-weight: bold;
+}
+h3
+{
+    margin: 0px; padding: 0px;
+}
+
+button
+{
+    margin: 0px;
+    padding: 8px;
+
+    border: none;
+    outline: none;
+
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: normal;
+}
+button:enabled:hover, button:enabled:focus
+{
+    background-color: aquamarine;
+}
+button:enabled:active
+{
+    background-color: beige;
+}
