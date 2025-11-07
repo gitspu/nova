@@ -1,17 +1,21 @@
 import * as profile from '../Script/Profile'
 import * as auth    from '../Script/Authentication'
-import * as authUI  from './../Page/Auth'
+import * as navigator from '../Script/Navigator'
 
 import { useEffect, useState } from "react"
-import { ToggleBar, ToggleBarItem, ToggleBarSeparator, ToggleBox } from "./../Component/Common"
+import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox } from "./../Component/Common"
 import { ProfileCard } from './../Component/Profile';
 import './Style/Admin.css'
 
 export function Admin ()
 {
+    const [selection, setSelection] = useState (1);
+    const [selectionOpen, setSelectionOpen] = useState (window.innerWidth >= 512 ? true : false);
+
     if (auth.isLogged () == false)
     {
-        return authUI.navigate ();
+        navigator.auth ();
+        return;
     }
     if (auth.isActive () == false ||
         (auth.getRole () != auth.ROLE_ADMIN &&
@@ -21,14 +25,6 @@ export function Admin ()
         return <p>Insufficient permission</p>;
     }
     
-
-    const [selection, setSelection] = useState (1);
-    const [selectionOpen, setSelectionOpen] = useState (window.innerWidth >= 512 ? true : false);
-
-    function resize ()
-    {
-        setSelectionOpen (window.innerWidth >= 512 ? true : selectionOpen);
-    }
 
     useEffect (() => 
     {
@@ -41,10 +37,14 @@ export function Admin ()
         }
     });
 
+    function resize ()
+    {
+        setSelectionOpen (window.innerWidth >= 512 ? true : selectionOpen);
+    }
 
     return <div className="page-admin">
         <Content selection={selection}/>
-        <Menu selectionOpen={selectionOpen} selection={[selection, setSelection]}/>
+        <Menu selectionShow={selectionOpen} selectionState={[selection, setSelection]}/>
         <Header selectionOpen={[selectionOpen, setSelectionOpen]}/>
     </div>
 }
@@ -62,11 +62,11 @@ function Header ({selectionOpen})
         </div>
     </div>
 } 
-function Menu ({selectionOpen, selection})
+function Menu ({selectionShow, selectionState})
 {
-    return <div className="menu" style={{ display: selectionOpen ? 'block' : 'none' }}>
+    return <div className="menu" style={{ display: selectionShow ? 'block' : 'none' }}>
         <div className="menu-inner">
-            <ToggleBar type='vertical' state={selection[0]} setState={selection[1]}>
+            <ToggleBar type='vertical' state={selectionState}>
                 <ToggleBarItem text='แดชบอร์ด' value={1}/>
                 <ToggleBarItem text='ระบบยืนยันตัวตน' value={2}/>
                 <ToggleBarItem text='โปรไฟล์' value={5}/>
@@ -110,9 +110,9 @@ function ContentAuthentication ()
             <br></br>
         </div>
         <div>
-            <ToggleBox name='เปิดใช้งาน การสมัครบัญชี' description='อนุญาตให้ผู้ที่ต้องการสามารถสมัครสมาชิกเพื่อเข้าถึงแพลตฟอร์มได้'/>
-            <ToggleBox name='เปิดใช้งาน การเข้าสู่ระบบ' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถเข้าสู่ระบบแพลตฟอร์ม ผู้ดูแลระบบยังสามารถเข้าถึงแพลตฟอร์มได้แม้ว่าตั้งค่านี้จะถูกปิดใช้งาน'/>
-            <ToggleBox name='เปิดใช้งาน การลบบัญชี' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถลบบัญชีของตนเองได้'/>
+            <Checkbox name='เปิดใช้งาน การสมัครบัญชี' description='อนุญาตให้ผู้ที่ต้องการสามารถสมัครสมาชิกเพื่อเข้าถึงแพลตฟอร์มได้'/>
+            <Checkbox name='เปิดใช้งาน การเข้าสู่ระบบ' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถเข้าสู่ระบบแพลตฟอร์ม ผู้ดูแลระบบยังสามารถเข้าถึงแพลตฟอร์มได้แม้ว่าตั้งค่านี้จะถูกปิดใช้งาน'/>
+            <Checkbox name='เปิดใช้งาน การลบบัญชี' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถลบบัญชีของตนเองได้'/>
             
         </div>
     </div>

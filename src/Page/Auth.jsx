@@ -5,16 +5,6 @@ import { ArrowLeft } from "react-bootstrap-icons";
 import * as auth from "../Script/Authentication"
 import './Style/Auth.css'
 
-export const DEFAULT_PATH = "/auth";
-export const DEFAULT_REDIRECT = "/";
-
-export function navigate (redirect = window.location.pathname)
-{
-    const destination = DEFAULT_PATH + `?context=${btoa(JSON.stringify({
-        redirect: redirect
-    }))}`;
-    window.location.href = destination;
-}
 
 export function Auth () 
 {
@@ -51,7 +41,7 @@ export function Auth ()
             }
             else
             {
-                window.location.href = DEFAULT_REDIRECT;
+                window.location.href = "/";
                 return;
             }
         }

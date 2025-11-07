@@ -1,5 +1,3 @@
-import {useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
 import {ToggleBar, ToggleBarItem} from './Common'
 import {ProfileCard, ProfileCardContext, ProfileHead} from './Profile'
 import './Style/NavBar.css'
@@ -9,9 +7,11 @@ import IconPeople       from './../Asset/Icon/People.svg'
 import IconBriefcase    from './../Asset/Icon/Briefcase.svg'
 import IconChat         from './../Asset/Icon/Chat.svg'
 import IconBell         from './../Asset/Icon/Bell.svg'
+import { useNavigate } from 'react-router-dom'
 
 export function NavBar ({page})
 {
+    const navigate = useNavigate ();
     const getPage = page != null ? page[0] : null;
     const setPage = page != null ? page[1] : null;
 
@@ -53,11 +53,11 @@ export function NavBar ({page})
     function Menu ()
     {
         return <ToggleBar type='horizontal' state={getPage} setState={setPage}>
-            <ToggleBarItem value={0} text='หน้าแรก' icon={IconHouse}/>
-            <ToggleBarItem value={1} text='เครือข่าย' icon={IconPeople}/>
-            <ToggleBarItem value={2} text='งาน' icon={IconBriefcase}/>
-            <ToggleBarItem value={3} text='ข้อความ' icon={IconChat}/>
-            <ToggleBarItem value={4} text='แจ้งเตือน' icon={IconBell}/>
+            <ToggleBarItem value={0} click={() => navigate("/")} text='หน้าแรก' icon={IconHouse}/>
+            <ToggleBarItem value={1} click={() => navigate("/connection")} text='เครือข่าย' icon={IconPeople}/>
+            <ToggleBarItem value={2} click={() => navigate("/job")} text='งาน' icon={IconBriefcase}/>
+            <ToggleBarItem value={3} click={() => navigate("/message")} text='ข้อความ' icon={IconChat}/>
+            <ToggleBarItem value={4} click={() => navigate("/notification")} text='แจ้งเตือน' icon={IconBell}/>
         </ToggleBar>
     }
     function Profile ()

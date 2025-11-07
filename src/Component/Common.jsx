@@ -4,64 +4,151 @@ import "./Style/Common.css"
 /**
  * ส่วนประกอบสำหรับการแสดงตัวเลือก พร้อมคำอธิบายประกอบ
 */
-export function ToggleBox ({value, setValue, name = "", description = ""})
-{
-    function get ()
-    {
-        return value != null ? value : false;
+export function Checkbox ({
+    state, 
+    name = "", 
+    description = ""
+}) {
+
+    function getState () {
+        return state != null ? state[0] : false;
     }
-    function set (which)
-    {
-        if (setValue != null)
-            setValue (which);
+    function setState (which) {
+        if (state != null) state[1](which);
     }
 
     return <div className='component-togglebox'>
-        <input className='field' type='checkbox' value={get()} onChange={(e) => set(e.target.value)}/>
+        <input className='field' type='checkbox' value={getState()} onChange={(e) => setState(e.target.value)}/>
         <label className='name'>{name}</label>
         <p className='description'>{description}</p>
     </div> 
 }
 
-export function ToggleBar ({state, setState, type, children, style})
+/**
+ * ส่วนประกอบสำหรับการแสดงรายการที่สามารถเลือกได้
+*/
+export function ToggleBar ({
+    type /* horizontal หรือ vertical */, 
+    state /* [get, update] */, 
+    children /* องค์ประกอบ JSX: ToggleBarItem หรือ ToggleBarSeparator */,
+    className = "" /* string กำหนดคลาสให้กับตัวแม่ */, 
+    style = {} /* css กำหนดให้กับตัวแม่ */,
+})
 {
-    const classValue = type === "horizontal" ? "component-togglebar-horizontal" : 
-                       type === "vertical" ? "component-togglebar-vertical" : 
-                       "component-togglebar";
+    // จำเป็นต้องระบุประเภท (type)
+    // ซึ่งมี horizontal (แนวนอน) และ vertical (แนวตั้ง)
 
-    return <div className={classValue} style={style}>
-        {children.map ((value, index) => 
+    if (type == null || type == "") {
+        throw new Error ('Type attribute is required');
+    }
+    if (type != "horizontal" && type != "vertical")
+        throw new Error ('Type attribute is invalid');
+
+    // ส่วนประกอบทำงาน แต่ไม่มีสมบูรณ์
+    // ผู้ใช้ต้องระบุคุณสมบัติให้ครบ
+
+    if (state == null || state.length != 2)
+        console.warn ("Component/ToggleBar: The component specified is incomplete, missing state attribute");
+    if (children == null)
+        console.warn ("Component/ToggleBar: The component contains null children, which shouldn't be occurred");
+
+
+    // แสดผลให้กับ React
+    return <Viewport>
+        <Children/>
+    </Viewport>
+
+    /**
+     * พื้นที่หลักของส่วนประกอบ
+    */
+    function Viewport ({children})
+    {
+        return <div className={`component-togglebar-${type} ${className}`} style={style}>
+            {children}
+        </div>
+    }
+    /**
+     * พื้นลูกที่อยู่ภายใต้แม่ (พื้นที่หลัก)
+    */
+    function Children ()
+    {
+        return children.map ((value, index) =>
         {
-            if (value.type.name == "ToggleBarSeparator") 
+            if (value.type.name == "ToggleBarItem")
             {
-                return React.cloneElement (value, {
+                return React.cloneElement (value, 
+                {
                     key: index,
-                    type: type,
+
+                    __type: type,
+                    __className: (state != null ? (state[0] == value.props.value) : false) ? "toggled" : "normal",
+                    __click: (param) => { if (state != null) { state[1](param); } },
                 });
             }
+            if (value.type.name == "ToggleBarSeparator")
+            {
+                return React.cloneElement (value, 
+                {
+                    key: index,
 
-            return React.cloneElement (value, {
-                key: index,
-                click: (val) => { if (setState != null) { setState(val); }},  
-                className: (state == value.props.value) ? "toggled" : "normal"
-            });
-        })}
-    </div>
-}
-export function ToggleBarItem ({icon, text, value, click, className})
-{
-    function toggle ()
-    {
-        click (value);
+                    __type: type,
+                });
+            }
+            throw new Error ('Children contain invalid element');
+        });
     }
-    return <button className={className} onClick={() => toggle()}>
-        {icon != null ?
-            <img className="position-absolute w-100 h-100 p-1 pb-3" style={{}} src={icon}></img> : ""
-        }
+}
+/**
+ * ส่วนประกอบ รายการแสดงผลให้กับ ToggleBar
+*/
+export function ToggleBarItem ({
+    icon /* ลิงค์ไปยังรูปภาพ */, 
+    text /* ข้อความ */, 
+    value /* ค่าที่จะส่งคืนให้กับ state (ของตัวแม่) */,
+    click /* กำหนดระบบเมื่อผู้ใช้กดปุ่ม */, 
+    className = "" /* กำหนดคลาสให้ตัวรายการ */, 
+    style = {} /* กำหนด css ให้ตัวรายการ */,
+    
+    __click /* กำหนดระบบเมื่อผู้ใช้กดปุ่ม (ใช้ภายในเท่านั้น/ห้ามใช้เอง) */, 
+    __className /* กำหนดคลาสให้ตัวรายการ (ใช้ภายในเท่านั้น/ห้ามใช้เอง)*/,
+})
+{
+    function onClickEvent ()
+    {
+        if (__click != null) __click (value);
+        if (click != null) click (value);
+    }
+
+    return <button className={`${__className} ${className}`} style={style}
+                   onClick={() => onClickEvent()}>
+        <img src={icon} className="h-100 p-1 pb-3"></img>
         <label>{text}</label>
     </button>
 }
-export function ToggleBarSeparator ({text})
+/**
+ * ส่วนประกอบ เว้นพื้นที่ว่างเพื่อแสดงความแตกต่างของหมวดหมู่
+ * สามารถระบุข้อความหรือรูปภาพได้
+ * 
+ * ส่วนประกอบนี้จะไม่แสดงข้อความหรือรูปภาพ
+ * เมื่อ ToggleBox มีค่า type เป็น horizontal
+*/
+export function ToggleBarSeparator ({
+    icon /* ลิงค์รูปภาพ */,
+    text /* ข้อความ */,
+
+    __type /* กำหนดประเภทของส่วนประกอบ (ใช้ภายในเท่านั้น/ห้ามใช้เอง) */,
+})
 {
-    return <p>{text}</p>
+    if (__type == "horizontal")
+    {
+        return <div></div>
+    }
+    if (__type == "vertical")
+    {
+        return <div className="pt-2 pb-2">
+            <img src={icon} alt=''></img>
+            <label>{text}</label>
+        </div>
+    }
+    throw new Error ('Type attribute is invalid');
 }

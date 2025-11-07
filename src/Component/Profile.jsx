@@ -1,4 +1,4 @@
-import { BoxArrowLeft, BoxArrowRight, Gear, GearWideConnected } from 'react-bootstrap-icons';
+import { Back, BoxArrowLeft, BoxArrowRight, Gear, GearWideConnected } from 'react-bootstrap-icons';
 import * as auth from '../Script/Authentication'
 import * as profile from '../Script/Profile'
 import './Style/Profile.css'
@@ -13,7 +13,14 @@ export function ProfileHead ()
 /**
  * ส่วนประกอบ สำหรับแสดงรูปโปรไฟล์พร้อมชื่อ (ตามที่กำหนด)
 */
-export function ProfileCard ({showBorder = true, showIcon = true, showName = true, className = "", children})
+export function ProfileCard ({
+    showBorder = true /* แสดงขอบ */, 
+    showIcon = true /* แสดงรูปโปรไฟล์ */, 
+    showName = true /* แสดงชื่อโปรไฟล์ หรือ ชื่อบัญชี */,
+    style = {} /* กำหนด css ให้กับส่วนประกอบ */, 
+    className = "" /* กำหนดคลาสให้กับส่วนประกอบ */, 
+    children /* รายการย่อยในตัวแม่ */
+})
 {
     let profileName = null;
     let profileIcon = "";
@@ -76,4 +83,87 @@ export function ProfileCard ({showBorder = true, showIcon = true, showName = tru
 export function ProfileCardContext ()
 {
     return 
+}
+
+/**
+ * ส่วนประกอบสำหรับแสดงโพสต์ในโปรไฟล์ ซึ่งรวมไปถึงหน้าฟีดเช่นเดียวกัน
+*/
+export function ProfilePost ()
+{
+    function Background ({children})
+    {
+        // Card Container: โพสต์แต่ละอัน
+        return <Card className="custom-card mb-4">{children}</Card>
+    }
+    function Header ()
+    {
+        // Card Header: ส่วนหัวของโพสต์ (ข้อมูลผู้ใช้)
+        return <Card.Header className="d-flex align-items-center bg-white border-0 p-3">
+            {/* User Avatar */}
+            <PersonCircle size={40} className="me-3 text-primary" />
+            <div>
+                {/* User Name */}
+                <Card.Title className="mb-0 fs-6 fw-bold">**User Name**</Card.Title>
+                {/* Metadata: ตำแหน่งงานและเวลาโพสต์ */}
+                <Card.Subtitle className="text-muted small">Job Title • 1h ago</Card.Subtitle>
+            </div>
+        </Card.Header>
+
+    }
+    function Body ()
+    {
+        // Card Body: ส่วนเนื้อหาโพสต์
+        return <Card.Body className="pt-0 pb-2">
+            {/* Post Text: เนื้อหาข้อความของโพสต์ */}
+            <Card.Text className="text-dark">
+              ตัวอย่างเนื้อหาโพสต์ #SmartPersona
+            </Card.Text>
+
+            {/* Post Media: รูปภาพ/วิดีโอ (Placeholder) */}
+            <img
+              src="https://via.placeholder.com/600x300/e0e0e0/555555?text=Post+Content"
+              alt="Post Content"
+              className="img-fluid rounded-3 mt-2"
+            />
+        </Card.Body>
+    }
+    function Footer ()
+    {
+        // Card Footer: Action Buttons (Like, Comment, Share, Send)
+        return <Card.Footer className="bg-white border-top border-light p-3">
+            {/* Row: จัดเรียงปุ่มเป็น 4 คอลัมน์ (Col) */}
+            <Row className="text-center">
+              {/* Action: Like */}
+              <Col>
+                <Button variant="light" className="w-100 post-action-btn">
+                  <HandThumbsUp className="me-1" /> **Like**
+                </Button>
+              </Col>
+              {/* Action: Comment */}
+              <Col>
+                <Button variant="light" className="w-100 post-action-btn">
+                  <ChatText className="me-1" /> **Comment**
+                </Button>
+              </Col>
+              {/* Action: Share */}
+              <Col>
+                <Button variant="light" className="w-100 post-action-btn">
+                  <Share className="me-1" /> **Share**
+                </Button>
+              </Col>
+              {/* Action: Send (Direct Message) */}
+              <Col>
+                <Button variant="light" className="w-100 post-action-btn">
+                  <Send className="me-1" /> **Send**
+                </Button>
+              </Col>
+            </Row>
+        </Card.Footer>
+    }
+
+    return <Background>
+        <Header/>
+        <Body/>
+        <Footer/>
+    </Background>
 }

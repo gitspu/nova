@@ -7,18 +7,30 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import './App.css'
 
+/*
+    นำเข้าระบบ (script/logic)
+*/
 import * as auth      from './Script/Authentication'
 import * as profile   from './Script/Profile'
-
+import * as navigator from './Script/Navigator'
+/*
+    นำเข้าหน้าเว็บ (page)
+*/
 import {Admin}    from "./Page/Admin";
 import {Auth}     from "./Page/Auth";
 import {Feed}     from "./Page/Feed";
 import {Profile}  from "./Page/Profile";
 import {NavBar}   from './Component/NarBar';
 
+/*
+    เริ่มต้นการทำงานแต่ละระบบ
+*/
 auth.init ();
 profile.init ();    
 
+/*
+    ให้ react ประมวลและแสดงหน้าเว็บ
+*/
 const root = document.getElementById ("root");
 const react = createRoot (root);
 
@@ -28,6 +40,9 @@ react.render (
   </StrictMode>
 );
 
+/**
+ *  ส่วนประกอบหลักที่ react ต้องใช้แสดงผล 
+ */
 export function App ()
 {
     return <BrowserRouter>
@@ -43,10 +58,16 @@ export function App ()
       </Routes>
     </BrowserRouter>
 }
+/**
+ * เส้นทางหลักที่ผู้ใช้จะถูกนำไป 
+ * เส้นทางนี้จะมี NavBar (ระบบนำทางที่อยู่ด้านบน)
+ * และ Outlet ที่แสดงผลตามบริบท
+*/
 function MainRoute ()
 {
     if (auth.isLogged () == false || auth.isActive () == false)
     {
+        navigator.auth ();
         return;
     }
     return <>
