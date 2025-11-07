@@ -11,7 +11,6 @@ export async function init ()
 */
 export async function add (identifier)
 {
-
 }
 /**
  * ลบความสัมพันธ์กับบุคคลดังกล่าว (กำหนดด้วย identifier)  

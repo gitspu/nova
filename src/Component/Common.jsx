@@ -1,5 +1,5 @@
 import React from "react";
-import './../assets/css/Common.css'
+import "./Style/Common.css"
 
 /**
  * ส่วนประกอบสำหรับการแสดงตัวเลือก พร้อมคำอธิบายประกอบ
@@ -61,7 +61,7 @@ export function ToggleBarItem ({icon, text, value, click, className})
         <label>{text}</label>
     </button>
 }
-export function ToggleBarSeparator ({type, text})
+export function ToggleBarSeparator ({text})
 {
     return <p>{text}</p>
 }

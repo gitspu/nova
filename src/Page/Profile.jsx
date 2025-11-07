@@ -1,7 +1,8 @@
 import { Plus } from "react-bootstrap-icons";
-const Profile = () => {
-  return (
-    <div className="container">
+
+export function Profile ()
+{
+    return   <div className="container">
       <h1 className="h3 mb-4">โปรไฟล์</h1>
 
       <main className="row">
@@ -146,7 +147,4 @@ const Profile = () => {
         </div>
       </main>
     </div>
-  );
-};
-
-export default Profile;
+}

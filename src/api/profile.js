@@ -1,5 +1,5 @@
 
-import * as auth from './authentication'
+import * as auth from './Authentication'
 
 export class ErrorState extends Error {};
 export class ErrorServer extends Error {};
@@ -32,6 +32,7 @@ export function init ()
     }
     catch (ex)
     {
+        console.error (ex);
         throw ex;
     }
 }

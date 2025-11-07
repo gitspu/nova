@@ -1,19 +1,17 @@
-import * as auth from './../api/authentication'
-import * as authUI from './../components/Auth'
-
-import * as profile from './../api/profile'
+import * as profile from './../API/Profile'
+import * as auth    from './../API/Authentication'
+import * as authUI  from './../Page/Auth'
 
 import { useEffect, useState } from "react"
-import { ToggleBar, ToggleBarItem, ToggleBarSeparator, ToggleBox } from "./../components/Common"
-import { ProfileCard } from './../components/Profile';
-import './../assets/css/Admin.css'
+import { ToggleBar, ToggleBarItem, ToggleBarSeparator, ToggleBox } from "./../Component/Common"
+import { ProfileCard } from './../Component/Profile';
+import './Style/Admin.css'
 
-export default function Admin ()
+export function Admin ()
 {
     if (auth.isLogged () == false)
     {
         return authUI.navigate ();
-        return <p>Authentication Required</p>
     }
     if (auth.isActive () == false ||
         (auth.getRole () != auth.ROLE_ADMIN &&

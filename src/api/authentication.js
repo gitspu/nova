@@ -1,7 +1,7 @@
 /**
  * ไฟล์โค็ดสำหรับ: ระบบยืนยันตัวตน
 */
-import * as generator     from './generator'
+import * as generator     from './Generator'
 
 export class ErrorState extends Error {};
 export class ErrorServer extends Error {};
@@ -99,6 +99,7 @@ export function init ()
     }
     catch (ex)
     {
+        console.error (ex);
         throw ex;
     }
 }
@@ -176,6 +177,7 @@ export function create (identifier, password)
     }
     catch (ex)
     {
+        console.error (ex);
         throw ex;
     }
 }
@@ -291,6 +293,7 @@ export function logout ()
     }
     catch (ex)
     {
+        console.error (ex);
         throw ex;
     }
 }
