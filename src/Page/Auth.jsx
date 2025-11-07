@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { ArrowLeft } from "react-bootstrap-icons";
 
-import * as auth from "./../API/Authentication"
+import * as auth from "../Script/Authentication"
 import './Style/Auth.css'
 
 export const DEFAULT_PATH = "/auth";

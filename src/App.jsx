@@ -7,8 +7,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import './App.css'
 
-import * as auth      from './API/Authentication'
-import * as profile   from './API/Profile'
+import * as auth      from './Script/Authentication'
+import * as profile   from './Script/Profile'
 
 import {Admin}    from "./Page/Admin";
 import {Auth}     from "./Page/Auth";

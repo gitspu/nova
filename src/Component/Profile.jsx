@@ -1,6 +1,6 @@
 import { BoxArrowLeft, BoxArrowRight, Gear, GearWideConnected } from 'react-bootstrap-icons';
-import * as auth from './../API/Authentication'
-import * as profile from './../API/Profile'
+import * as auth from '../Script/Authentication'
+import * as profile from '../Script/Profile'
 import './Style/Profile.css'
 import { useState } from 'react';
 

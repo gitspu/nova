@@ -1,5 +1,5 @@
-import * as profile from './../API/Profile'
-import * as auth    from './../API/Authentication'
+import * as profile from '../Script/Profile'
+import * as auth    from '../Script/Authentication'
 import * as authUI  from './../Page/Auth'
 
 import { useEffect, useState } from "react"
