@@ -119,6 +119,7 @@ export function ToggleBarItem ({
     className = "" /* กำหนดคลาสให้ตัวรายการ */, 
     style = {} /* กำหนด css ให้ตัวรายการ */,
     
+    __type /* ประเภท (ใช้ภายในเท่านั้น/ห้ามใช้เอง) */,
     __click /* กำหนดระบบเมื่อผู้ใช้กดปุ่ม (ใช้ภายในเท่านั้น/ห้ามใช้เอง) */, 
     __className /* กำหนดคลาสให้ตัวรายการ (ใช้ภายในเท่านั้น/ห้ามใช้เอง)*/,
 })
@@ -129,11 +130,30 @@ export function ToggleBarItem ({
         if (click != null) click (value);
     }
 
-    return <button className={`${__className} ${className}`} style={style}
-                   onClick={() => onClickEvent()}>
-        <img src={icon} className="h-100 p-1 pb-3"></img>
-        <label>{text}</label>
-    </button>
+    return <Parent>
+        <Child/>
+    </Parent>
+
+    function Parent ({children})
+    {
+        return <button className={`${__className} ${className}`} style={style} onClick={() => onClickEvent()}>
+            {children}
+        </button>
+    }
+    function Child ()
+    {
+        if (__type == "horizontal")
+        {
+            return <img src={icon} alt=""></img>
+        }
+        if (__type == "vertical")
+        {
+            return <>
+                <img src={icon} alt=""></img>
+                <label>{text}</label>
+            </>
+        }
+    }
 }
 /**
  * ส่วนประกอบ เว้นพื้นที่ว่างเพื่อแสดงความแตกต่างของหมวดหมู่

@@ -20,6 +20,7 @@ import {Admin}    from "./Page/Admin";
 import {Auth}     from "./Page/Auth";
 import {Feed}     from "./Page/Feed";
 import {Profile}  from "./Page/Profile";
+import {Job}      from './Page/Job'
 import {NavBar}   from './Component/NarBar';
 
 /*
@@ -31,7 +32,7 @@ profile.init ();
 /*
     ให้ react ประมวลและแสดงหน้าเว็บ
 */
-const root = document.getElementById ("root");
+const root = document.getElementById ("app");
 const react = createRoot (root);
 
 react.render (
@@ -50,6 +51,7 @@ export function App ()
         <Route element={<MainRoute/>}>
           <Route path="/" element={<Feed/>}/>
           <Route path="/profile" element={<Profile/>}/>
+          <Route path="/job" element={<Job/>}/>
         </Route>
         <Route element={<SystemRoute/>}>
           <Route path="/auth" element={<Auth/>}/>
@@ -71,17 +73,12 @@ function MainRoute ()
         return;
     }
     return <>
-      <div style={{
-        position: 'absolute', 
-        top: '0px', bottom: '0px',
-        left: '0px', right: '0px',
-        marginTop: '56px',
-        overflowX: 'hidden',
-        overflowY: 'auto'
-      }}>
+      <div className='outlet'>
         <Outlet/>
       </div>
-      <NavBar/>
+      <div className='navigation'>
+        <NavBar/>
+      </div>
     </>
 }
 function SystemRoute ()

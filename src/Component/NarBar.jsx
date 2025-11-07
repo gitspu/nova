@@ -26,27 +26,23 @@ export function NavBar ({page})
 
     function Viewport ({children})
     {
-        return <div className='position-absolute top-0 bottom-0 left-0 right-0 w-100'
-                    style={{ height: '56px', maxHeight: '56px'}}>
-            {children}
-        </div>
+        return <div className='component-navbar'>{children}</div>
     }
     function Container ({children})
     {
-        return <div className='position-absolute top-0 bottom-auto left-0 right-0 w-100 h-100
-                               d-flex align-items-center justify-content-center ps-5 pe-5'>
+        return <div className='component-navbar-inner ps-5 pe-5 gap-3'>
             {children}
         </div>
     }
     function Logo ()
     {
-        return <div>
-            <img width={48} height={48}></img>
-        </div>
+        return <>
+            <img width={40} height={40}></img>
+        </>
     }
     function Search ()
     {
-        return <div className='ms-3 me-3' style={{flexGrow: 1}}>
+        return <div className='d-flex flex-grow-1 justify-content-center'>
             <input className='ps-4 pe-4 pt-2 pb-2 border-1 rounded-5' type='text' placeholder='ค้นหางาน' style={{width: '100%', maxWidth: '512px'}}></input>
         </div>    
     }
@@ -56,8 +52,6 @@ export function NavBar ({page})
             <ToggleBarItem value={0} click={() => navigate("/")} text='หน้าแรก' icon={IconHouse}/>
             <ToggleBarItem value={1} click={() => navigate("/connection")} text='เครือข่าย' icon={IconPeople}/>
             <ToggleBarItem value={2} click={() => navigate("/job")} text='งาน' icon={IconBriefcase}/>
-            <ToggleBarItem value={3} click={() => navigate("/message")} text='ข้อความ' icon={IconChat}/>
-            <ToggleBarItem value={4} click={() => navigate("/notification")} text='แจ้งเตือน' icon={IconBell}/>
         </ToggleBar>
     }
     function Profile ()

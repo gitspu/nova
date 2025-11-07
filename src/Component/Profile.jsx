@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Back, BoxArrowLeft, BoxArrowRight, Gear, GearWideConnected } from 'react-bootstrap-icons';
 
+import IconProfile from './../Asset/Icon/EmojiSmile.svg'
+
 import * as auth from '../Script/Authentication'
 import * as profile from '../Script/Profile'
 
@@ -25,9 +27,9 @@ export function ProfileCard ({
 })
 {
     let profileName = null;
-    let profileIcon = "";
-    let viewportClass = ["h-100", className].join (' ');
-    let containerClass = ["w-100", "h-100", "p-1" , "d-flex", "align-items-center", "gap-3", showBorder ? "border border-1 rounded" : ""].join (' ');
+    let profileIcon = IconProfile;
+    let viewportClass = ["component-profilecard", className].join (' ');
+    let containerClass = ["container", showBorder ? "border border-1 rounded" : ""].join (' ');
     const [open, setOpen] = useState (false);
 
     //
@@ -39,7 +41,7 @@ export function ProfileCard ({
         {
             const info = profile.getPersonal ();
 
-            if (info.icon != null || info.icon != "") {
+            if (info.icon != null && info.icon != "") {
                 profileIcon = `data:image/jepg;base64, ${info.icon}`;
             }
             profileName = [info.firstName.value, info.middleName.value, info.lastName.value].join (' ');
@@ -55,13 +57,13 @@ export function ProfileCard ({
     //
     return <Viewport>
         <Container>
-            {showIcon ? <img className='h-100 flex-1 rounded-circle' src={profileIcon}></img> : <></>}
-            {showName ? <label className='flex-2'>{profileName}</label> : <></>}
+            {showIcon ? <img className='icon' src={profileIcon}></img> : <></>}
+            {showName ? <label className='text'>{profileName}</label> : <></>}
         </Container>
         <Context>
-            <ContextItem text='โปรไฟล์'/>
-            <ContextItem text='การตั้งค่า'/>
-            <ContextItem text='ออกจากระบบ'/>
+            <ContextItem text='โปรไฟล์' click={() => clickProfile ()}/>
+            <ContextItem text='การตั้งค่า' click={() => clickSettings ()}/>
+            <ContextItem text='ออกจากระบบ' click={() => clickLogout ()}/>
         </Context>
     </Viewport>
 
@@ -75,18 +77,38 @@ export function ProfileCard ({
     }
     function Context ({children})
     {
-        return <div className='w-100 border border-1'>{children}</div>
+        return <div className='context'>{children}</div>
     }
-    function ContextItem ({icon, text})
+    function ContextItem ({icon, text, click})
     {
         if (open == false) 
         {
             return <></>
         }
-        return <button className='w-100'>
+        return <button className='w-100' onClick={click}>
             <img src={icon} alt=''></img>
             <label>{text}</label>
         </button>
+    }
+
+    function clickProfile ()
+    {
+
+    }
+    function clickSettings ()
+    {
+
+    }
+    function clickLogout ()
+    {
+        try
+        {
+            auth.logout ();
+        }
+        finally
+        {
+            location.reload ();
+        }
     }
 }
 export function ProfileCardContext ()

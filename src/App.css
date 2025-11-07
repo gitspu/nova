@@ -3,6 +3,37 @@
     ดังนั้นจงระวังไว้ และใช้อย่างชาญฉลาด 
 */
 
+#app
+{
+    --bg-primary: #ECF4E8;
+    --bg-secondary: #D6F4ED;
+
+    --text-primary: #06202B;
+}
+#app > .navigation
+{
+    position: absolute;
+    inset: 0px 0px auto 0px;
+
+    height: 100%; max-height: 56px;
+    overflow: hidden; outline: none;
+    
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+
+    border: 0px;
+    border-bottom: 1px solid #87BAC3;
+}
+#app > .outlet
+{
+    position: absolute;
+    inset: 56px 0px 0px 0px;
+    overflow: hidden auto;
+    
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
 /*
     ข้อความ (h1 -> h6, label, paragraph)
 */

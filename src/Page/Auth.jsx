@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { ArrowLeft } from "react-bootstrap-icons";
 
@@ -17,19 +17,30 @@ export function Auth ()
 
     document.title = "NOVA Authentication";
 
-    if (auth.isLogged () && auth.isActive ())
+
+
+    useEffect (() =>
     {
-        console.warn ("Already logged in, redirecting");
-        finalize ();
-        return;
-    }
+        if (auth.isLogged () && auth.isActive ())
+        {
+            console.warn ("Already logged in, redirecting");
+            finalize ();
+            return;
+        }
+        window.addEventListener ("keydown", keydown);
+
+        return () =>
+        {
+            window.removeEventListener ("keydown", keydown);
+        };
+    });
     
     return <div className="position-absolute w-100 h-100">
       <PageBackground/>
       <PageForeground>
         <div className={view == 1 ? "d-block" : "d-none"}>
           <FormHead/>
-          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
+          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn' autoFocus={true}/>
           <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='current-password webauthn'/>
           <div className="mt-4 mb-4">
             <FormLink text='ฉันไม่มีบัญชี' highlight='สมัครเลย' click={() => setView(2)}/>
@@ -62,8 +73,23 @@ export function Auth ()
           <FormStatus text={status}/>
           <FormButton text='ดำเนินการต่อ' click={() => clickForgot()}/>
         </div>
+        <div className={view == 4 ? "d-block" : "d-none"}>
+          <h3 className="mb-4">บัญชีของคุณถูกระงับ</h3>
+          <p className="mb-4">บัญชีของคุณถูกระงับซึ่งทำให้คุณไม่สามารถเข้าถึงบริการได้ โปรดติดต่อผู้ดูแลระบบเพื่อรับการช่วยเหลือ</p>
+          <p className="mb-4">บัญชีที่ถูกระงับ: {auth.getName()}</p>
+          <button onClick={() => setView(1)}>ย้อนกลับ</button>
+        </div>
       </PageForeground>
     </div>
+
+    function keydown (e)
+    {
+        if (e.key == "Enter")
+        {
+            e.preventDefault ();
+            clickLogin ();
+        }
+    }
 
     function finalize ()
     {
@@ -150,7 +176,7 @@ function PageForeground ({children})
   return <div className="position-absolute top-0 bottom-0 left-0 right-0 w-100 h-100 d-flex align-items-center justify-content-center p-4">
     <div
       className="border border-1 border-black rounded-4 shadow p-4 overflow-hidden overflow-y-auto" 
-      style={{height: '100%', width: '100%', maxWidth: '384px'}}>
+      style={{height: '75%', width: '100%', maxWidth: '384px'}}>
       {children}
     </div>
   </div>
@@ -160,20 +186,20 @@ function FormHead ()
   return <div>
     <img 
       className="align-items-center bg-secondary rounded-circle m-auto mt-4 mb-4 d-block"
-      style={{ width: '180px', height: '180px'}}
+      style={{ width: '144px', height: '144px'}}
       src={null}
     />
   </div>
 }
 
-function FormInput ({text, value, type,  autoComplete, change})
+function FormInput ({text, value, type,  autoComplete, autoFocus, change})
 {
   const [getValue, setValue] = value;
 
   return <div className="mb-2">
     <p className="form-label">{text}</p>
     <input 
-      type={type} autoComplete={autoComplete} 
+      type={type} autoComplete={autoComplete} autoFocus={autoFocus}
       className="form-control border-black bg-secondary-subtle rounded-4 px-3"
       value={getValue} onChange={(e) => { setValue(e.target.value); change(); }}/>
   </div>
@@ -197,7 +223,7 @@ function FormButton ({text, click})
 }
 function FormStatus ({text})
 {
-  return <p className="mt-4 mb-4 text-warning h-2">{text}</p>
+  return <p className="mt-4 mb-4 text-danger h-2">{text}</p>
 }
 
 export default Auth;
