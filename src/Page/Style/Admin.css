@@ -68,6 +68,11 @@
 
 }
 
+.page-admin .content-account-data label
+{
+    width: 128px;
+}
+
 @media (max-width: 512px)
 {
     .page-admin .menu 

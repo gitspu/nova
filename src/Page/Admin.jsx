@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+import { ArrowLeft } from "react-bootstrap-icons";
 import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox, ButtonIcon } from "./../Component/Common"
 import { ProfileCard } from './../Component/Profile';
 
@@ -136,6 +137,10 @@ function ContentDashboard ()
 }
 function ContentAuthentication ()
 {
+    const [register, setRegister] = useState (auth.stateServer.config.enableCreation);
+    const [login, setLogin] = useState (auth.stateServer.config.enableLogin);
+    const [deletion, setDeletion] = useState (auth.stateServer.config.enableDeletion);
+
     return <div>
         <div>
             <h1>การยืนยันตัวตน</h1>
@@ -143,37 +148,99 @@ function ContentAuthentication ()
             <br></br>
         </div>
         <div>
-            <Checkbox name='เปิดใช้งาน การสมัครบัญชี' description='อนุญาตให้ผู้ที่ต้องการสามารถสมัครสมาชิกเพื่อเข้าถึงแพลตฟอร์มได้'/>
-            <Checkbox name='เปิดใช้งาน การเข้าสู่ระบบ' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถเข้าสู่ระบบแพลตฟอร์ม ผู้ดูแลระบบยังสามารถเข้าถึงแพลตฟอร์มได้แม้ว่าตั้งค่านี้จะถูกปิดใช้งาน'/>
-            <Checkbox name='เปิดใช้งาน การลบบัญชี' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถลบบัญชีของตนเองได้'/>
+            <Checkbox state={[register, setRegister]} name='เปิดใช้งาน การสมัครบัญชี' description='อนุญาตให้ผู้ที่ต้องการสามารถสมัครสมาชิกเพื่อเข้าถึงแพลตฟอร์มได้'/>
+            <Checkbox state={[login, setLogin]} name='เปิดใช้งาน การเข้าสู่ระบบ' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถเข้าสู่ระบบแพลตฟอร์ม ผู้ดูแลระบบยังสามารถเข้าถึงแพลตฟอร์มได้แม้ว่าตั้งค่านี้จะถูกปิดใช้งาน'/>
+            <Checkbox state={[deletion, setDeletion]} name='เปิดใช้งาน การลบบัญชี' description='อนุญาตให้ผู้ใช้ที่สมัครสมาชิกแล้วสามารถลบบัญชีของตนเองได้'/>
             
         </div>
     </div>
 }
 function ContentAccount ()
 {
+    const [view, setView] = useState (1);
+    const [search, setSearch] = useState ("");
+
     return <div>
-        <div>
-            <h1>บัญชี</h1>
-            <hr></hr>
-            <br></br>
+        <div className={view == 1 ? "account-content d-block" : "d-none"}>
+            <div> { /* ส่วนหัว */ }
+                <h1>บัญชี</h1>
+                <hr></hr>
+                <br></br>
+            </div>
+            <div className="mb-2"> {/* ตัวเลือก */}
+                <button>รีเฟรชข้อมูล</button>
+                <button>เพิ่มบัญชี</button>
+            </div>
+            <div> {/* ช่องค้นหา */}
+                <input type='search' placeholder="ค้นหาบัญชีด้วย ชื่อ หรือ รหัสเฉพาะ" value={search} onChange={(e) => setSearch(e.target.value)} style={{width: '100%'}}></input>
+            </div>
+            <Table/>
         </div>
-        <div>
-            <button>รีเฟรชข้อมูล</button>
-            <button>เพิ่มบัญชี</button>
+        <div className={view == 2 ? "content-account-data d-block" : "d-none"}>
+            <div>
+                <h1>บัญชี: NAME</h1>
+                <hr></hr>
+                <br></br>
+            </div>
+            <div className="mb-4">
+                <button onClick={() => setView(1)}>
+                    <ArrowLeft className="m-2"/>
+                    <label>ย้อนกลับ</label>
+                </button>
+                <button onClick={() => {alert("Saved"); setView(1);}}>บันทึกข้อมูล</button>
+            </div>
+            <div>
+                <h4>ข้อมูลการยืนยันตัวตน</h4>
+                <div>
+                    <label>ชื่อประจำตัว</label>
+                    <input type="text" readOnly></input>
+                </div>
+                <div>
+                    <label>ชื่อผู้ใช้</label>
+                    <input type="text"></input>
+                </div>
+                <div>
+                    <label>รหัสผ่าน</label>
+                    <input type="text"></input>
+                </div>
+                <div>
+                    <label>บทบาท</label>
+                    <ToggleBar type='vertical'>
+                        <ToggleBarItem text='ผู้ใช้'/>
+                        <ToggleBarItem text='ผู้จ้าง'/>
+                        <ToggleBarItem text='ผู้ดูแลระบบ'/>
+                        <ToggleBarItem text='ผู้ทดสอบ'/>
+                        <ToggleBarItem text='ผู้พัฒนา'/>
+                    </ToggleBar>
+                </div>
+                <div>
+                    <label>สถานะ</label>
+                    <ToggleBar type='vertical'>
+                        <ToggleBarItem text='เปิดใช้งาน'/>
+                        <ToggleBarItem text='ปิดใช้งาน'/>
+                        <ToggleBarItem text='ถูกระงับ'/>
+                    </ToggleBar>
+                </div>
+            </div>
+            <div>
+                <h4>ข้อมูลโปรไฟล์</h4>
+            </div>
         </div>
-        <div>
-            <input type='search' placeholder="ค้นหาบัญชีด้วย ชื่อ หรือ รหัสเฉพาะ" style={{width: '100%'}}></input>
-        </div>
-        <List/>
     </div>
 
-    function List ()
+    function User ()
+    {
+        return 
+    }
+    function Table ()
     {
         const children = [];
+        let index = 0;
 
         for (const key of Object.keys (auth.stateServer.access))
         {
+            index += 1;
+
             const value = auth.stateServer.access[key];
             const name = value.name;
             const role = value.role == 1 ? "ผู้ใช้" :
@@ -186,7 +253,16 @@ function ContentAccount ()
                            value.status == 2 ? "ปิดใช้งาน" :
                            value.status == 3 ? "ถูกระงับ" : "ไม่รู้จัก";
 
-            children.push (<tr>
+            if (search != "")
+            {
+                if (name.toLowerCase().startsWith (search.toLowerCase()) == false && 
+                    name.toLowerCase().includes (search.toLowerCase()) == false &&
+                    key.toLowerCase().startsWith (search.toLowerCase()) == false &&
+                    key.toLowerCase().includes (search.toLowerCase()) == false)
+                    continue;
+            }
+
+            children.push (<tr key={index} onClick={() => setView(2)}>
                 <td>{name}</td>
                 <td>{role}</td>
                 <td>{status}</td>
