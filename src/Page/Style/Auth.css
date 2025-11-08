@@ -1,0 +1,130 @@
+
+.page-auth
+{
+    display: block;
+    position: absolute;
+    inset: 0px 0px 0px 0px;
+
+    width: 100%; height: 100%;
+    overflow: hidden;
+}
+.page-auth .background
+{
+    display: block;
+    position: absolute;
+    inset: 0px 0px 0px 0px;
+
+    background-color: var(--bg-primary);
+}
+.page-auth .foreground
+{
+    display: block;
+    position: absolute;
+    inset: 0px 0px 0px 0px;
+
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+
+    animation-name: show-foreground;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+}
+.page-auth .foreground-content
+{
+    width: 100%; max-width: 384px;
+    height: 680px;
+    padding: 24px;
+
+    @media (min-width: 512px)
+    {
+        background-color: var(--bg-secondary);
+        border: 1px solid grey;
+        border-radius: 24px;
+    }
+}
+
+.page-auth .foreground-content > *
+{
+    width: 100%;
+    height: 100%;
+
+    flex-direction: column;
+
+
+    animation-name: show-foreground-content;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+}
+
+.page-auth .foreground-content .logo
+{
+    width: 100%; min-height: 144px;
+    margin: 0px 0px 24px 0px;
+}
+.page-auth .foreground-content .input > label
+{
+    width: 100%;
+    margin: 0px 0px 4px 0px;
+}
+.page-auth .foreground-content .input > input
+{
+    width: 100%;
+    margin: 0px 0px 12px 0px;
+}
+.page-auth .foreground-content .option
+{
+    margin: 12px 0px 12px 0px;
+    flex-grow: 1;
+}
+.page-auth .foreground-content .option .highlight
+{
+    text-decoration: underline;
+}
+.page-auth .foreground-content .status
+{
+    animation-name: show-foreground-status;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+
+    min-height: 48px;
+    color: var(--text-warning);
+}
+.page-auth .foreground-content .button
+{
+    width: 100%;
+}
+
+@keyframes show-foreground 
+{
+    from { 
+        opacity: 0; 
+        transform: scale(0.75)
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1.0)
+    }
+}
+@keyframes show-foreground-content
+{
+    from { 
+        opacity: 0; 
+        transform: scale(0.75)
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1.0)
+    }
+}
+@keyframes show-foreground-status 
+{
+    20% { transform: translateX(-12px); }
+    40% { transform: translateX(+12px); }
+    60% { transform: translateX(-12px); }
+    80% { transform: translateX(+12px); }
+    100% { transform: translateX(0px);  } 
+}

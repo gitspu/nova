@@ -2,4 +2,7 @@
 # แฟ้ม
 #
 node_modules
+#
+# ไฟล์
+#
 package-lock.json

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { ArrowLeft } from "react-bootstrap-icons";
-import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox, ButtonIcon } from "./../Component/Common"
+import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox, Button } from "./../Component/Common"
 import { ProfileCard } from './../Component/Profile';
 
 import IconList from './../Asset/Icon/List.svg'
@@ -61,7 +61,7 @@ export function Admin ()
             <div className='header-inner'>
                 <h2>แผงควบคุมระบบ</h2>
                 <div style={{flexGrow: 1}}></div>
-                <ButtonIcon icon={IconList} click={() => setSelectionOpen(!selectionOpen)}/>
+                <Button layout='horizontal' icon={IconList} click={() => setSelectionOpen(!selectionOpen)}/>
                 <ProfileCard showBorder={!isNarrow()} showName={!isNarrow()}/>
             </div>
         </div>

@@ -1,8 +1,14 @@
+/**
+ * 
+ * โค็ดหน้าเว็บ เข้าสู่ระบบ และ สมัครสมาชิก 
+ * 
+*/
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
-import { ArrowLeft } from "react-bootstrap-icons";
+import { Button } from "../Component/Common";
 
 import * as auth from "../Script/Authentication"
+import * as icon from '../Script/Icon'
+
 import './Style/Auth.css'
 
 
@@ -14,81 +20,228 @@ export function Auth ()
     const [password, setPassword] = useState ("");
     const [passwordConfirm, setPasswordConfirm] = useState ("");
     const [status, setStatus] = useState ("");
-
-    document.title = "NOVA Authentication";
-
-
+    const [statusAnim, setStatusAnim] = useState (0);
 
     useEffect (() =>
     {
+        document.title = "NOVA เข้าสู่ระบบ";
+
         if (auth.isLogged () && auth.isActive ())
         {
             console.warn ("Already logged in, redirecting");
             finalize ();
             return;
         }
-        window.addEventListener ("keydown", keydown);
+        window.addEventListener ("keydown", onKeydown);
 
         return () =>
         {
-            window.removeEventListener ("keydown", keydown);
+            window.removeEventListener ("keydown", onKeydown);
         };
     });
     
-    return <div className="position-absolute w-100 h-100">
-      <PageBackground/>
-      <PageForeground>
-        <div className={view == 1 ? "d-block" : "d-none"}>
-          <FormHead/>
-          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn' autoFocus={true}/>
-          <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='current-password webauthn'/>
-          <div className="mt-4 mb-4">
-            <FormLink text='ฉันไม่มีบัญชี' highlight='สมัครเลย' click={() => setView(2)}/>
-            <FormLink text='ฉันลืมรหัสผ่าน' highlight='กู้คืนบัญชี' click={() => setView(3)}/>
+    return <div className="page-auth">
+      <div className="background"/>
+      <div className="foreground">
+        <div className="foreground-content">
+          {/* หน้าเข้าสู่ระบบ */}
+          <form className={view == 1 ? "d-flex" : "d-none"} action="#">
+            <img className="logo"src={null}/>
+            <div className="input">
+              <label>รหัสประจำตัว</label>
+              <input type="text" autoComplete="username webauthn" autoFocus={true}
+                     value={username} onChange={(e) => setUsername(e.target.value)}>       
+              </input>
+            </div>
+            <div className="input">
+              <label>รหัสผ่าน</label>
+              <input type="password" autoComplete="current-password webauthn"
+                     value={password} onChange={(e) => setPassword(e.target.value)}>
+              </input>
+            </div>
+            <div className="option">
+              <p>
+                <span>ฉันไม่มีบัญชี</span>
+                <span> </span>
+                <span className="highlight" onClick={() => setViewRegister ()}>สมัครเลย</span>
+              </p>
+              <p>
+                <span>ฉันลืมรหัสผ่าน</span>
+                <span> </span>
+                <span className="highlight" onClick={() => setViewRecovery ()}>กู้คืนบัญชี</span>
+              </p>
+            </div>
+            <p key={statusAnim} className="status">{status}</p>
+            <Button layout='horizontal-outlined' type="submit" icon={icon.Unlock} text='เข้าสู่ระบบ' click={(e) => clickLogin(e)}/>
+          </form>
+          {/* หน้าสมัครสมาชิก */}
+          <form className={view == 2 ? "d-flex" : "d-none"} action="#">
+            <img className="logo"src={null}/>
+            <div className="input">
+              <label>รหัสประจำตัว</label>
+              <input type="text" autoComplete="username webauthn" autoFocus={true}
+                     value={username} onChange={(e) => setUsername(e.target.value)}>       
+              </input>
+            </div>
+            <div className="input">
+              <label>รหัสผ่าน</label>
+              <input type="password" autoComplete="new-password webauthn"
+                     value={password} onChange={(e) => setPassword(e.target.value)}>
+              </input>
+            </div>
+            <div className="input">
+              <label>รหัสผ่าน (ยืนยัน)</label>
+              <input type="password" autoComplete="new-password webauthn"
+                     value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)}>
+              </input>
+            </div>
+            <div className="input">
+              <label>อีเมล</label>
+              <input type="email" autoComplete="email webauthn"
+                     value={email} onChange={(e) => setEmail(e.target.value)}>
+              </input>
+            </div>
+            <div className="option">
+              <p>
+                <span>ฉันมีบัญชีแล้ว</span>
+                <span> </span>
+                <span className="highlight" onClick={() => setViewLogin ()}>เข้าสู่ระบบ</span>
+              </p>
+            </div>
+            <p key={statusAnim} className="status">{status}</p>
+
+            <Button layout='horizontal-outlined' type="submit" icon={icon.PlusCircle} text='สมัครสมาชิก' click={(e) => clickRegister(e)}/>
+          </form>
+          {/* หน้าลืมรหัสผ่าน */}
+          <div className={view == 3 ? "d-flex" : "d-none"}>
+            <div>
+              <Button layout="horizontal" icon={icon.ArrowLeftCircle} text="ย้อนกลับ" click={(e) => setViewLogin (e)}/>
+            </div>
+            <div className="input">
+              <label>รหัสประจำตัว</label>
+              <input type="text" autoComplete="username webauthn" autoFocus={true}
+                     value={username} onChange={(e) => setUsername(e.target.value)}>       
+              </input>
+            </div>
+            <div className="option">
+
+            </div>
+            <p key={statusAnim} className="status">{status}</p>
+            <button className="button" onClick={(e) => clickRecovery (e)}>ดำเนินการต่อ</button>
           </div>
-          <FormStatus text={status}/>
-          <FormButton text='เข้าสู่ระบบ' click={() => clickLogin()}/>
-        </div>
-        <div className={view == 2 ? "d-block" : "d-none"}>
-          <FormHead/>
-          <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
-          <FormInput text='รหัสผ่าน' value={[password, setPassword]} change={() => setStatus("")} type='password' autoComplete='new-password webauthn'/>
-          <FormInput text='รหัสผ่าน (ยืนยัน)' value={[passwordConfirm, setPasswordConfirm]} change={() => setStatus("")} type='password' autoComplete='new-password webauthn'/>
-          <FormInput text='อีเมล' value={[email, setEmail]} change={() => setStatus("")} type='email' autoComplete='email webauthn'/>
-          <div className="mt-4 mb-4">
-            <FormLink text='ฉันมีบัญชีแล้ว' highlight='เข้าสู่ระบบ' click={() => setView(1)}/>
+          {/* หน้าบัญชีถูกระงับ หรือ ปิดใช้งาน */}
+          <div className={view == 4 ? "d-flex" : "d-none"}>
+            <h2>บัญชีของคุณถูกระงับ</h2>
+            <p className="mt-4 mb-4">
+              บัญชีของคุณถูกระงับการใช้โดยผู้ดูแลระบบ ซึ่งอาจมีสาเหตุจากคุณละเมิดข้อตกลงการให้บริการ
+              <br/><br/>
+              โปรดติดต่อผู้ดูแลระบบเพื่อรับความช่วยเหลือ
+            </p>
+            <div className="option">
+
+            </div>
+            <button className="button" onClick={() => setViewLogin ()}>ย้อนกลับ</button>
           </div>
-          <FormStatus text={status}/>
-          <FormButton text='สร้างบัญชี' click={() => clickRegister()}/>
         </div>
-        <div className={view == 3 ? "d-block" : "d-none"}>
-          <FormHead/>
-          <div className="mb-4" onClick={() => setView(1)}>
-            <ArrowLeft className="m-2"/>
-            <label>ย้อนกลับ</label>
-          </div>
-          <div className="mb-4">
-            <FormInput text='ชื่อผู้ใช้' value={[username, setUsername]} change={() => setStatus("")} type='text' autoComplete='username webauthn'/>
-          </div>
-          <FormStatus text={status}/>
-          <FormButton text='ดำเนินการต่อ' click={() => clickForgot()}/>
-        </div>
-        <div className={view == 4 ? "d-block" : "d-none"}>
-          <h3 className="mb-4">บัญชีของคุณถูกระงับ</h3>
-          <p className="mb-4">บัญชีของคุณถูกระงับซึ่งทำให้คุณไม่สามารถเข้าถึงบริการได้ โปรดติดต่อผู้ดูแลระบบเพื่อรับการช่วยเหลือ</p>
-          <p className="mb-4">บัญชีที่ถูกระงับ: {auth.getName()}</p>
-          <button onClick={() => setView(1)}>ย้อนกลับ</button>
-        </div>
-      </PageForeground>
+      </div>
     </div>
 
-    function keydown (e)
+    function onKeydown (e)
     {
+        setStatus ("");
+
         if (e.key == "Enter")
         {
             e.preventDefault ();
-            clickLogin ();
+            clickLogin (e);
         }
+    }
+
+
+    function setViewLogin ()
+    {
+        setStatus ("");
+        setView (1);
+    }
+    function setViewRegister ()
+    {
+        setStatus ("");
+        setView (2);
+    }
+    function setViewRecovery ()
+    {
+        setStatus ("");
+        setView (3);
+    }
+
+    function clickLogin (e)
+    {
+        e.preventDefault ();
+
+        setStatus ("");
+
+        if (username == "" && password == "")
+        {
+            setStatus ("โปรดป้อนชื่อผู้ใช้ และ รหัสผ่าน");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (username == "")
+        {
+            setStatus ("โปรดป้อนชื่อผู้ใช้");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (password == "")
+        {
+            setStatus ("โปรดป้อนรหัสผ่าน");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        try
+        {
+            auth.login (username, password);
+            finalize ();
+        }
+        catch (ex)
+        {
+            console.error (ex);
+
+            if (ex instanceof auth.ErrorCredential)
+            {
+                setStatus ("ขออภัย ชื่อผู้ใช้หรือรหัสผ่านของคุณนั้นไม่ถูกต้อง");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            if (ex instanceof auth.ErrorConfig)
+            {
+                setStatus ("ขออภัย คุณไม่สามารถเข้าสู่ระบบได้ในขณะนี้");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            if (ex instanceof auth.ErrorServer)
+            {
+                setStatus ("ขออภัย ระบบปลายทางไม่สามารถประมวลผลได้");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+            setStatusAnim (statusAnim + 1);
+        }
+    }
+    function clickRegister (e)
+    {
+        e.preventDefault ();
+
+        setStatus ("ขออภัย ชื่อผู้ใช้นี้ได้ถูกใช้ไปแล้ว โปรดใช้ชื่ออื่น");
+        setStatusAnim (statusAnim + 1);
+    }
+    function clickRecovery (e)
+    {
+        e.preventDefault ();
+
+        setStatus ("ขออภัย ระบบไม่พร้อมใช้งานในขณะนี้");
+        setStatusAnim (statusAnim + 1);
     }
 
     function finalize ()
@@ -113,117 +266,4 @@ export function Auth ()
             }
         }
     }
-  
-    function clickLogin ()
-    {
-        if (username == "" && password == "")
-        {
-            setStatus ("โปรดป้อนชื่อผู้ใช้ และ รหัสผ่าน");
-            return;
-        }
-        if (username == "")
-        {
-            setStatus ("โปรดป้อนชื่อผู้ใช้");
-            return;
-        }
-        if (password == "")
-        {
-            setStatus ("โปรดป้อนรหัสผ่าน");
-            return;
-        }
-        try
-        {
-            auth.login (username, password);
-            setStatus ("เข้าสู่ระบบสำเร็จ กำลังย้ายคุณไปหน้าที่ต้องการ");
-            finalize ();
-        }
-        catch (e)
-        {
-            if (e instanceof auth.ErrorCredential)
-            {
-                setStatus ("ขออภัย ชื่อผู้ใช้หรือรหัสผ่านของคุณนั้นไม่ถูกต้อง");
-                return;
-            }
-            if (e instanceof auth.ErrorConfig)
-            {
-                setStatus ("ขออภัย คุณไม่สามารถเข้าสู่ระบบได้ในขณะนี้");
-                return;
-            }
-            if (e instanceof auth.ErrorServer)
-            {
-                setStatus ("ขออภัย ระบบปลายทางไม่สามารถประมวลผลได้");
-                return;
-            }
-            setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
-        }
-    }
-    function clickRegister ()
-    {
-        setStatus ("ขออภัย ชื่อผู้ใช้นี้ได้ถูกใช้ไปแล้ว โปรดใช้ชื่ออื่น");
-    }
-    function clickForgot ()
-    {
-        setStatus ("ขออภัย ระบบไม่พร้อมใช้งานในขณะนี้");
-    }
 } 
-  
-function PageBackground ()
-{
-  return <div className="position-absolute top-0 bottom-0 left-0 right-0 w-100 h-100 bg-light"/>
-}
-function PageForeground ({children})
-{
-  return <div className="position-absolute top-0 bottom-0 left-0 right-0 w-100 h-100 d-flex align-items-center justify-content-center p-4">
-    <div
-      className="border border-1 border-black rounded-4 shadow p-4 overflow-hidden overflow-y-auto" 
-      style={{height: '75%', width: '100%', maxWidth: '384px'}}>
-      {children}
-    </div>
-  </div>
-}
-function FormHead ()
-{
-  return <div>
-    <img 
-      className="align-items-center bg-secondary rounded-circle m-auto mt-4 mb-4 d-block"
-      style={{ width: '144px', height: '144px'}}
-      src={null}
-    />
-  </div>
-}
-
-function FormInput ({text, value, type,  autoComplete, autoFocus, change})
-{
-  const [getValue, setValue] = value;
-
-  return <div className="mb-2">
-    <p className="form-label">{text}</p>
-    <input 
-      type={type} autoComplete={autoComplete} autoFocus={autoFocus}
-      className="form-control border-black bg-secondary-subtle rounded-4 px-3"
-      value={getValue} onChange={(e) => { setValue(e.target.value); change(); }}/>
-  </div>
-}
-function FormLink ({text, highlight, click})
-{
-  return <p className="m-0 text-primary">
-      <span>{text}</span>
-      <span> </span>
-      <span
-        style={{ textDecoration: 'underline', cursor: 'pointer' }}
-        onClick={click}>{highlight}</span>
-  </p>
-}
-function FormButton ({text, click})
-{
-  return <Button
-      variant={"success"}
-      className="py-3 w-100 fs-5 rounded-5 px-5"
-      onClick={click}>{text}</Button>
-}
-function FormStatus ({text})
-{
-  return <p className="mt-4 mb-4 text-danger h-2">{text}</p>
-}
-
-export default Auth;

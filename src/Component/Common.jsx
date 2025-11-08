@@ -4,11 +4,64 @@ import "./Style/Common.css"
 /**
  * ปุ่มกดที่เน้นแสดงรูปภาพแทนข้อความ
 */
-export function ButtonIcon ({icon, alt, click})
+export function Button ({
+    layout /* ประเภทปุ่มกดเช่น horizontal หรือ vertical */,
+    theme /* ธีมของปุ่มกด */,
+    type /* ประเภทปุ่ม */,
+    icon /* รูปภาพสำหรับปุ่มกด */, 
+    text /* ข้อความสำหรับปุ่มกด */,
+    click /* คำสั่งเมื่อปุ่มถูกกด */,
+})
 {
-    return <button className="component-buttonicon" onClick={click}>
-        <img src={icon} alt={alt}></img>
-    </button>
+    // จำเป็นต้องระบุประเภท (style)
+    // ซึ่งมี horizontal (แนวนอน) และ vertical (แนวตั้ง)
+
+    if (layout == "") {
+        throw new Error ('Type style is required');
+    }
+
+    if (layout == null)
+    {
+        return <>
+            <button>{text}</button>
+        </>
+    }
+    if (layout == "horizontal-outlined")
+    {
+        return <>
+            <button className={`component-button-horizontal component-button-horizontal-outlined component-button-theme-${theme}`} type={type} onClick={click}>
+                <img src={icon} alt=''></img>
+                <label>{text}</label>
+            </button>
+        </>
+    }
+    if (layout == "vertical-outlined")
+    {
+        return <>
+            <button className={`component-button-vertical component-button-vertical-outlined component-button-theme-${theme}`} type={type} onClick={click}>
+                <img src={icon} alt=''></img>
+                <label>{text}</label>
+            </button>
+        </>
+    }
+    if (layout == "horizontal")
+    {
+        return <>
+            <button className={`component-button-horizontal component-button-theme-${theme}`} type={type} onClick={click}>
+                <img src={icon} alt=''></img>
+                <label>{text}</label>
+            </button>
+        </>
+    }
+    if (layout == "vertical")
+    {
+        return <>
+            <button className={`component-button-vertical $component-button-theme-${theme}`} type={type} onClick={click}>
+                <img src={icon} alt=''></img>
+            </button>
+        </>
+    }
+    throw new Error ('Type style is invalid');
 }
 
 /**

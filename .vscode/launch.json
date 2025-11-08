@@ -1,0 +1,15 @@
+{
+    "configurations": 
+    [
+        {
+            "type":"node",
+            "request":"launch",
+            "name":"Launch Frontend",
+
+            "console": "integratedTerminal",
+            "runtimeExecutable":"vite",
+            "cwd":"${workspaceFolder}",
+            "args":[],
+        }
+    ]
+}

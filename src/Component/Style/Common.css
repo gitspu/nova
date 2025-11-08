@@ -1,15 +1,58 @@
 
-.component-buttonicon
+.component-button-horizontal
 {
-    width: 40px;
-    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
 
-    padding: 6px;
+    padding: 0px !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
 }
-.component-buttonicon > img
+
+.component-button-horizontal-outlined
 {
-    width: 28px;
-    height: 28px;
+    outline: var(--btn-normal-outline) !important;
+}
+.component-button-horizontal > img
+{
+    width: 32px;
+    height: 32px;
+    padding: 4px 4px 4px 8px;
+}
+.component-button-horizontal > img:only-child
+{
+    padding: 4px;
+}
+.component-button-horizontal > label
+{
+    width: auto;
+    height: 32px;
+    padding: 4px 8px 4px 4px;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-button-horizontal:hover, .component-button-horizontal:focus
+{
+    background-color: var(--btn-hover-bg) !important;
+    color: var(--btn-hover-text) !important;
+}
+.component-button-horizontal-outlined:hover, .component-button-horizontal-outlined:focus
+{
+    outline: var(--btn-hover-outline) !important;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-button-horizontal:active, .component-button-horizontal:active
+{
+    background-color: var(--btn-active-bg) !important;
+    color: var(--btn-active-text) !important;
+}
+.component-button-horizontal-outlined:active, .component-button-horizontal-outlined:active
+{
+    outline: var(--btn-active-outline) !important;
 }
 
 /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */

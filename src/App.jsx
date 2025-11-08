@@ -12,6 +12,7 @@ import './App.css'
 */
 import * as auth      from './Script/Authentication'
 import * as profile   from './Script/Profile'
+import * as api       from './Script/Api'
 import * as navigator from './Script/Navigator'
 /*
     นำเข้าหน้าเว็บ (page)
@@ -26,6 +27,8 @@ import {NavBar}   from './Component/NarBar';
 /*
     เริ่มต้นการทำงานแต่ละระบบ
 */
+api.init ();
+
 auth.init ();
 profile.init ();    
 
