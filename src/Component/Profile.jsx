@@ -1,19 +1,16 @@
 import { useState } from 'react';
-import { Back, BoxArrowLeft, BoxArrowRight, Gear, GearWideConnected } from 'react-bootstrap-icons';
+import { useNavigate } from 'react-router-dom';
+
 
 import IconProfile from './../Asset/Icon/EmojiSmile.svg'
 
-import * as auth from '../Script/Authentication'
-import * as profile from '../Script/Profile'
-
+import {auth, profile} from '../Script/Api'
+import {} from '../Script/Icon'
 import './Style/Profile.css'
 
-export function ProfileHead ()
-{
-    return <div>
-        <img src="" width={48} height={48}></img>
-    </div>
-}
+
+
+
 /**
  * ส่วนประกอบ สำหรับแสดงรูปโปรไฟล์พร้อมชื่อ (ตามที่กำหนด)
 */
@@ -30,6 +27,8 @@ export function ProfileCard ({
     let profileIcon = IconProfile;
     let viewportClass = ["component-profilecard", className].join (' ');
     let containerClass = ["container", showBorder ? "container-border" : ""].join (' ');
+    
+    const navigate = useNavigate ();
     const [open, setOpen] = useState (false);
 
     //
@@ -93,7 +92,7 @@ export function ProfileCard ({
 
     function clickProfile ()
     {
-
+        navigate ("/profile");
     }
     function clickSettings ()
     {

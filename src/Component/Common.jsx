@@ -1,5 +1,37 @@
 import React from "react";
+import * as icon from './../Script/Icon';
+
 import "./Style/Common.css"
+
+export function Button2 ({
+    layout /* ประเภทปุ่ม */,
+    icon /* รูปภาพสำหรับปุ่มกด */, 
+    text /* ข้อความสำหรับปุ่มกด */,
+    click /* คำสั่งเมื่อปุ่มถูกกด */,
+    
+    type /* ประเภทปุ่ม*/,
+    htmlFor /* ปุ่มนี้สำหรับ */,
+    style /* กำหนด css เพิ่มเติม */,
+    className /* กำหนดคลาสเพิ่มเติม */
+})
+{
+    let classImpl = "component-button";
+
+    if (layout != null)
+    {
+        for (const item of String(layout).split (' '))
+        {
+            classImpl = [classImpl, `component-button-${item}`].join (' ');    
+        }
+    }
+    classImpl = [classImpl, className].join (' ');
+
+    return <button className={classImpl} type={type} style={style} onClick={click}>
+        {icon != null ? <img src={icon}/> : <></>}
+        {text != null ? <label htmlFor={htmlFor}>{text}</label> : <></>}
+    </button>
+}
+
 
 /**
  * ปุ่มกดที่เน้นแสดงรูปภาพแทนข้อความ
@@ -11,6 +43,9 @@ export function Button ({
     icon /* รูปภาพสำหรับปุ่มกด */, 
     text /* ข้อความสำหรับปุ่มกด */,
     click /* คำสั่งเมื่อปุ่มถูกกด */,
+
+    style /* กำหนด css เพิ่มเติม */,
+    className /* กำหนดคลาสเพิ่มเติม */
 })
 {
     // จำเป็นต้องระบุประเภท (style)
@@ -30,8 +65,8 @@ export function Button ({
     {
         return <>
             <button className={`component-button-horizontal component-button-horizontal-outlined component-button-theme-${theme}`} type={type} onClick={click}>
-                <img src={icon} alt=''></img>
-                <label>{text}</label>
+                {icon != null ? <img src={icon} alt=''></img> : <></>}
+                {text != null ? <label>{text}</label> : <></>}
             </button>
         </>
     }
@@ -39,25 +74,30 @@ export function Button ({
     {
         return <>
             <button className={`component-button-vertical component-button-vertical-outlined component-button-theme-${theme}`} type={type} onClick={click}>
-                <img src={icon} alt=''></img>
-                <label>{text}</label>
+                {icon != null ? <img src={icon} alt=''></img> : <></>}
+                {text != null ? <label>{text}</label> : <></>}
             </button>
         </>
     }
     if (layout == "horizontal")
     {
         return <>
-            <button className={`component-button-horizontal component-button-theme-${theme}`} type={type} onClick={click}>
-                <img src={icon} alt=''></img>
-                <label>{text}</label>
+            <button className={`component-button-horizontal component-button-theme-${theme} ${className}`} 
+                    style={style}
+                    type={type} onClick={click}>
+                {icon != null ? <img src={icon} alt=''></img> : <></>}
+                {text != null ? <label>{text}</label> : <></>}
             </button>
         </>
     }
     if (layout == "vertical")
     {
         return <>
-            <button className={`component-button-vertical $component-button-theme-${theme}`} type={type} onClick={click}>
-                <img src={icon} alt=''></img>
+            <button className={`component-button-vertical $component-button-theme-${theme} ${className}`} 
+                    style={style}
+                    type={type} onClick={click}>
+                {icon != null ? <img src={icon} alt=''></img> : <></>}
+                {text != null ? <label>{text}</label> : <></>}
             </button>
         </>
     }
@@ -68,9 +108,9 @@ export function Button ({
  * ส่วนประกอบสำหรับการแสดงตัวเลือก พร้อมคำอธิบายประกอบ
 */
 export function Checkbox ({
-    state, 
-    name = "", 
-    description = ""
+    state /* [get, update] */, 
+    name /* ชื่อหัวข้อ */ = "", 
+    description /* คำอธิบายเพิ่มเติม */ = ""
 }) {
 
     function getState () {
@@ -85,6 +125,42 @@ export function Checkbox ({
         <label className='name'>{name}</label>
         <p className='description'>{description}</p>
     </div> 
+}
+
+export function VisibilityOption ({
+    state /* สถานะ [get, set] */,
+    click /* ตอนปุ่มถูกกด */,
+
+    style /* กำหนด css เพิ่มเติม */,
+    className /* กำหนดคลาสเพิ่มเติม */ 
+})
+{
+    const outClass = ["component-common-visopt", className].join (' ');
+    const outGet = state != null ? state[0] : null;
+    const outSet = state != null ? state[1] : null;
+
+    return <div className={outClass} style={style}>
+        <button onClick={(event) => onClick(event, 2)} className={outGet == 2 ? "active" : "normal"}>
+            <img src={icon.people}></img>
+        </button>
+        <button onClick={(event) => onClick(event, 3)} className={outGet == 3 ? "active" : "normal"}>
+            <img src={icon.person}></img>
+        </button>
+        <button onClick={(event) => onClick(event, 4)} className={outGet == 4 ? "active" : "normal"}>
+            <img src={icon.ban}></img>
+        </button>
+    </div>
+
+    function onClick (event, which)
+    {
+        event.preventDefault ();
+
+        if (outSet != null)
+            outSet (which);
+
+        if (click != null)
+            click (which);
+    }
 }
 
 /**

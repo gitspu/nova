@@ -1,0 +1,40 @@
+
+.page-home
+{
+    position: absolute; inset: 0px;
+}
+.page-home .left
+{
+    position: absolute; inset: 0px 75% 0px 0px;
+}
+.page-home .left > *
+{
+    max-width: 52mm;
+    margin: 0px auto;
+}
+
+.page-home .right
+{
+    position: absolute; inset: 0px 0px 0px 75%;
+}
+.page-home .right > *
+{
+    max-width: 74mm;
+}
+
+.page-home .main
+{
+    position: absolute; inset: 0px 25% 0px 25%;
+}
+.page-home .main > *
+{
+    max-width: 148mm;
+    margin: 0px auto;
+}
+
+@media (max-width: 720px)
+{
+    .page-home .left { display: none; }
+    .page-home .right { display: none; }
+    .page-home .main { inset: 0px; }
+}

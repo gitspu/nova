@@ -10,6 +10,12 @@ export class ErrorArgument extends Error {};
 export class ErrorConfig extends Error {};
 export class ErrorCredential extends Error {};
 
+export class DataBasic
+{
+    /* ชื่อบัญชี */
+    name = "";
+};
+
 /**
  * เริ่มต้นระบบยืนยันตัวตน
  * 
@@ -112,7 +118,7 @@ export function create (identifier, password)
         password == null)
         throw new ErrorArgument ("The identifier or password is null");
     if (typeof identifier != "string" || 
-        typeof identifier != "string")
+        typeof password != "string")
         throw new ErrorArgument ("The identifier or password must be string");
 
     if (state.init == false)
@@ -154,13 +160,91 @@ export function create (identifier, password)
 
     saveJson (json);
 
-    state.session = newAccess;
+    state.session = newSession;
     state.sessionExpired = null;
 
     state.name    = identifier;
     state.status  = 1;
     state.role    = 1;
     state.access  = newAccess;
+
+    // บันทึกรหัสประจำตัว
+    if (typeof localStorage != "undefined") 
+    {
+        localStorage.setItem ("AuthSession", state.session);
+        localStorage.setItem ("AuthSessionExpired", state.sessionExpired);
+    }
+}
+/**
+ * ทำการสร้างรหัสยืนยันตัวตน จากรหัสที่ได้รับจาก Facebook
+ * หลังจากนั้นจะเข้าสู่ระบบโดยอัตโนมัติ
+ * 
+ * ข้อผิดพลาด:
+ *  @see ErrorArgument ข้อมูลที่ป้อนไม่ถูกต้อง
+ *  @see ErrorState เรียกคำสั่งนี้ในขณะระบบยังไม่ได้ทำงาน
+ *  @see ErrorConfig เซิฟเวอร์ปิดคุณสมบัติการสร้าง
+ *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
+ *  @see ErrorCredential รหัสประจำตัวซ้ำกัน
+*/
+export function createFacebook (identifier)
+{
+    if (identifier == null)
+        throw new ErrorArgument ("The identifier is null");
+    if (typeof identifier != "string")
+        throw new ErrorArgument ("The identifier or password must be string");
+
+    if (state.init == false)
+        throw new ErrorState ("Authentication system must be initialized");
+
+    const json = loadJson ();
+    const dbConfig = json["config"];
+    const dbAccess = json["access"];
+    const dbFacebook = json["challenge"]["facebook"];
+    const dbSession = json["challenge"]["session"];
+
+    if (dbConfig["enableCreation"] == false)
+        throw new ErrorConfig ("Server disabled feature: authentication creation");
+
+    if (Object.hasOwn (dbFacebook, identifier))
+        throw new ErrorCredential ("The identifier is already been used");
+
+    // สร้างรหัสเข้าถึงที่ไม่ซ้ำกันกับผู้อื่น
+    const newAccess  = util.generateId (dbAccess);
+    const newSession = util.generateUUID (dbSession);
+
+    dbFacebook[identifier] = 
+    {
+        access: newAccess
+    };
+    dbSession[newSession] =
+    {
+        modified: new Date().toUTCString(),
+        expired: null,
+        access: newAccess
+    };
+    dbAccess[newAccess] =
+    {
+        name: identifier,
+        status: 1,
+        role: 1,
+    };
+
+    saveJson (json);
+
+    state.session = newSession;
+    state.sessionExpired = null;
+
+    state.name    = identifier;
+    state.status  = 1;
+    state.role    = 1;
+    state.access  = newAccess;
+
+    // บันทึกรหัสประจำตัว
+    if (typeof localStorage != "undefined") 
+    {
+        localStorage.setItem ("AuthSession", state.session);
+        localStorage.setItem ("AuthSessionExpired", state.sessionExpired);
+    }
 }
 /**
  * ทำการเข้าสู่ระบบ จากรหัสประจำตัวที่อยู่มี
@@ -175,7 +259,7 @@ export function login (identifier, password)
 {
      if (identifier == null || password == null)
         throw new ErrorArgument ("The identifier or password is null");
-    if (typeof identifier != "string" || typeof identifier != "string")
+    if (typeof identifier != "string" || typeof password != "string")
         throw new ErrorArgument ("The identifier or password must be string");
 
     if (state.init == false)
@@ -225,6 +309,68 @@ export function login (identifier, password)
     }
 }
 /**
+ * ทำการเข้าสู่ระบบ จากรหัสประจำตัวที่อยู่มี
+ * ข้อผิดพลาด:
+ *  @see ErrorArgument ข้อมูลที่ป้อนไม่ถูกต้อง
+ *  @see ErrorState เรียกคำสั่งนี้ในขณะระบบยังไม่ได้ทำงาน
+ *  @see ErrorConfig เซิฟเวอร์ปิดคุณสมบัติการเข้าสู่ระบบ
+ *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
+ *  @see ErrorCredential รหัสประจำตัวไม่ถูกต้อง
+*/
+export function loginFacebook (identifier)
+{
+     if (identifier == null)
+        throw new ErrorArgument ("The identifier or password is null");
+    if (typeof identifier != "string")
+        throw new ErrorArgument ("The identifier or password must be string");
+
+    if (state.init == false)
+        throw new ErrorState ("Authentication system must be initialized");
+
+    
+    // ข้อมูลจัดเก็บ
+    const json = loadJson ();
+    const dbConfig = json["config"];
+    const dbFacebook = json["challenge"]["facebook"];
+    const dbSession = json["challenge"]["session"];
+    const dbAccess = json["access"]
+
+    if (dbConfig["enableLogin"] == false)
+        throw new ErrorConfig ("Server disabled feature: authentication login");
+
+    const ixFacebook = dbFacebook[identifier];
+
+    if (ixFacebook == null)
+        throw new ErrorCredential ("The credential provided is invalid");
+
+    const ixAccess = dbAccess[ixFacebook["access"]];
+    const newSession = util.generateUUID (dbSession);
+
+    dbSession[newSession] =
+    {
+        modified: new Date(),
+        expired: null,
+        access: ixFacebook.access
+    };
+
+    saveJson (json);
+
+    state.session = newSession;
+    state.sessionExpired = null;
+
+    state.name    = ixAccess.name;
+    state.status  = ixAccess.status;
+    state.role    = ixAccess.role;
+    state.access  = ixFacebook.access;
+
+    // บันทึกรหัสประจำตัว
+    if (typeof localStorage != "undefined") 
+    {
+        localStorage.setItem ("AuthSession", state.session);
+        localStorage.setItem ("AuthSessionExpired", state.sessionExpired);
+    }
+}
+/**
  * ทำการนำผู้ใช้ออกจากระบบ
  * ข้อผิดพลาด:
  *  @see ErrorState เรียกคำสั่งนี้ในขณะระบบยังไม่ได้ทำงาน
@@ -253,6 +399,30 @@ export function logout ()
     state.role = 0;
     state.status = 0;
     state.access = 0;
+}
+/**
+ * รับข้อมูลพื้นฐานของบัญชี
+*/
+export function getBasic (which = NaN)
+{
+    if (state.init == false)
+        throw new ErrorState ("Authentication system must be initialized");
+    if (state.session == null)
+        throw new ErrorCredential ("Authentication must be logged before logout");
+
+    if (isNaN (which)) {
+        which = state.access;
+    }
+
+    const json = loadJson ();
+    const database = json["access"];
+    const block = database[which];
+    
+    const result = new DataBasic ();
+
+    result.name = block.name;
+
+    return result;
 }
 
 export const ROLE_UNKNOWN   = 0;
@@ -320,6 +490,77 @@ export function isExpired ()
     }
     return state.sessionExpired.getTime () < new Date().getTime ();
 }
+
+//                                                                  //
+// ################################################################ //
+// ||                                                            || //
+// ||                          PRIVILEGED                        || //
+// ||                                                            || //
+// ################################################################ //
+//                                                                  //
+
+/**
+ * รับตั้งค่าการทำงานของระบบ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
+*/
+export function getConfigInfo ()
+{
+    if (state.init == false)
+        throw new ErrorState ("Authentication system must be initialized");
+
+    if (isLogged () == false || isActive () == false)
+        throw new ErrorState ("Authentication must be logged and active");
+    
+    if (getRole () < ROLE_ADMIN)
+        throw new ErrorState ("Insufficient permission");
+
+    return loadJson()["config"];
+}
+/**
+ * รับดัชนีตำแหน่งของข้อมูลโปรไฟล์ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
+*/
+export function getAccessKeyList ()
+{
+    if (state.init == false)
+        throw new ErrorState ("Authentication system must be initialized");
+
+    if (isLogged () == false || isActive () == false)
+        throw new ErrorState ("Authentication must be logged and active");
+    
+    if (getRole () < ROLE_ADMIN)
+        throw new ErrorState ("Insufficient permission");
+
+    const result = [""]; result.splice (0, 1);
+
+    const json = loadJson ();
+    const itemList = json["access"];
+
+    for (const key of Object.keys (itemList)) {
+        result.push (String (key));
+    }
+
+    return result;
+}
+/**
+ * รับข้อมูลการเข้าถึง จากตำแหน่งดัชนีที่ระบุ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
+*/
+export function getAccessKeyInfo (key)
+{
+    if (state.init == false)
+        throw new ErrorState ("Authentication system must be initialized");
+
+    if (isLogged () == false || isActive () == false)
+        throw new ErrorState ("Authentication must be logged and active");
+    
+    if (getRole () < ROLE_ADMIN)
+        throw new ErrorState ("Insufficient permission");
+
+    const json = loadJson ();
+    const itemList = json["access"];
+
+    return itemList[key];
+}
+
+
 //                                                                  //
 // ################################################################ //
 // ||                                                            || //
@@ -328,7 +569,7 @@ export function isExpired ()
 // ################################################################ //
 //                                                                  //
 
-const state =
+export const state =
 {
     init: false,
     session: "",
@@ -352,5 +593,5 @@ function loadJson ()
 }
 function saveJson (data)
 {
-    localStorage.setItem (key, data);
+    localStorage.setItem (key, JSON.stringify (data));
 }

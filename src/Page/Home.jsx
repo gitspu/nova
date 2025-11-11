@@ -1,91 +1,136 @@
-import React from "react";
-// นำเข้า Components หลักจาก React Bootstrap สำหรับการจัดเลย์เอาต์
-import { Container, Row, Col, Navbar } from "react-bootstrap";
-// Import: Components หลักจาก React Bootstrap
-import { Card, ListGroup, Button } from "react-bootstrap";
-// Import: Icons สำหรับเมนูและข้อมูลโปรไฟล์
-import {
-  BookmarkFill, // Saved Posts
-  BoxArrowRight, // Logout
-  PeopleFill, // Groups
-  Newspaper, // Newsletters
-  CalendarEvent, // Events
-  GeoAltFill, // Location
-} from "react-bootstrap-icons";
-// Import: Components หลักจาก React Bootstrap
-// Import: Icons สำหรับใช้งานในแถบด้านข้าง
-import {
-  InfoSquareFill, // Icon สำหรับข้อมูล/ช่วยเหลือ
-  ArrowRightShort, // Icon ลูกศร
-  PersonCircle, // Icon รูปบุคคล (Placeholder Avatar)
-  RssFill, // Icon สำหรับ News/Feed
-} from "react-bootstrap-icons";
-// Import: Components หลักจาก React Bootstrap
-import { Form, InputGroup } from "react-bootstrap";
-// Import: Icons สำหรับปุ่มสร้างโพสต์
-import {
-  Image, // Photo
-  PlayBtn, // Video
-  CalendarDate, // Event
-  PencilSquare, // Article
-  Send, // Send Button
-} from "react-bootstrap-icons";
-// Import: Components หลักจาก React Bootstrap
-// Import: Icons สำหรับ Action Buttons
-import {
-  HandThumbsUp, // Like
-  ChatText, // Comment
-  Share, // Share
-} from "react-bootstrap-icons";
+import React, { useEffect, useState } from "react";
 
-// Import: Link สำหรับการทำ Client-side Routing ไปหน้าโปรไฟล์
-import { Link } from "react-router-dom";
+import { Button, Button2 } from "../Component/Common";
+import 
+{ 
+  PostContainer, 
+  PostHead,
+  PostBody, 
+  PostBodyText, 
+  PostBodyImage, 
+  PostBodyVideo, 
+  PostBodyAudio, 
+  PostAction, 
+} 
+from "../Component/ProfilePost";
 
-import * as auth from "../Script/Authentication";
-import * as profile from "../Script/Profile";
+import * as api   from "../Script/Api";
+import * as icon  from '../Script/Icon'
+import './Style/Home.css'
 
+/**
+ * หน้าเว็บสำหรับ: หน้าแรก
+*/
 export function Home ()
 {
-    const block = profile.getPersonal ();
+    return <div className="page-home">
+      <ElementMain/>
+      <ElementLeft/>
+      <ElementRight/>
+    </div>
 
-    let icon = block.icon != null && block.icon != undefined ? `data:image/jepg;base64, ${block.icon}` : null;
-    let name = [block.firstName.value, block.middleName.value, block.lastName.value].join (' ');
-    let location = block.location.value;
+    function ElementLeft ()
+    {
+        return <div className="left mt-4 ms-4">
+          <div>
+            <Button2 type='list-vertical' icon={icon.house} text='หน้าหลัก'/>
+            <Button2 type='list-vertical' icon={icon.sticky} text='บันทึกโพสต์'/>
+            <Button2 type='list-vertical' icon={icon.people} text='กลุ่ม'/>
+            <Button2 type='list-vertical' icon={icon.newspaper} text='ข่าวสาร'/>
+            <Button2 type='list-vertical' icon={icon.calendar} text='กิจกรรม'/>
+          </div>
+        </div>
+    }
+    function ElementRight ()
+    {
+        return <div className="right mt-4 me-4">
+          <div className="trending-news">
+            <label className="h4">กำลังมาแรง</label>
+            <div>
+              <div>
+                <label className="fw-bold text-dark">#ReactJS hits 100k commits</label>
+                <label className="text-muted small">Trending in Software • 5k posts</label>
+              </div>
+              <div>
+                <label className="fw-bold text-dark">AI Summit announces new date</label>
+                <label className="text-muted small">Trending in Tech • 2k posts</label>
+              </div>
+            </div>
+            <div>
+              <label>เพิ่มเติม</label>
+            </div>
+          </div>
+        </div>
+    }
+    function ElementMain ()
+    {
+        const [postNewText, setPostNewText]  = useState ("");
+        const [postNewUpload] = useState ("");
+        const [postList] = useState ("");
+
+        useEffect (() => {
+            doRefresh ();
+        });
+
+        return <div className='main mt-4 ms-4 me-4'>
+          <div>
+              <input className='w-100' type='text' placeholder='เริ่มโพสต์'
+                     value={postNewText} onChange={(e) => setPostNewText (e.target.value)}/>
+          </div>
+          <div>
+            {postNewUpload}
+          </div>
+          <div className="d-flex flex-grow-1 w-100 mt-2 mb-2">
+            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.image} text='รูปภาพ'/>
+            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.fileEarmarkPlay} text='วิดีโอ'/>
+            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.calendar} text='เหตุการณ์'/>
+            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.backquoteLeft} text='บทความ'/>
+          </div>
+          <div>
+            {postList}
+          </div>
+        </div>
 
 
-    return <>
-      {/* Container fluid: กำหนดให้ Container มีความกว้างเต็มหน้าจอ (100%)
-        pt-4 px-5: เพิ่ม Padding ด้านบน (p) ขนาด 4 และ Padding ซ้ายขวา (x) ขนาด 5 
-      */}
-      <Container fluid className="pt-4 px-5">
-        {/* Row: แถวหลักสำหรับจัดวาง 3 คอลัมน์ (Sidebar ซ้าย, Feed กลาง, Sidebar ขวา) */}
-        <Row>
-          {/* Col md={2}: คอลัมน์ขนาด 2 สำหรับหน้าจอขนาดกลาง (md) ขึ้นไป
-            d-none d-lg-block: ซ่อนคอลัมน์นี้ในทุกขนาดหน้าจอ 
-            ยกเว้นจะแสดงผลในหน้าจอขนาดใหญ่ (lg) ขึ้นไปเท่านั้น (Left Sidebar จะหายไปในจอเล็กและกลาง)
-          */}
-          <Col md={2} className="d-none d-lg-block">
-            <LeftSidebar /> {/* แสดง Left Sidebar */}
-          </Col>
+        function doRefresh ()
+        {
+            console.log ("Feed Refreshed");
+        }
+    }
 
-          {/* Col xs={12} lg={7}: คอลัมน์หลักสำหรับ Feed
-            xs={12}: ในหน้าจอขนาดเล็กที่สุด (xs) และกลาง (md) จะใช้ความกว้างเต็ม 12 คอลัมน์
-            lg={7}: ในหน้าจอขนาดใหญ่ (lg) ขึ้นไป จะใช้ความกว้าง 7 คอลัมน์ 
-          */}
-          <Col xs={12} lg={7}>
-            <Main /> {/* แสดง Feed หลัก */}
-          </Col>
+    // return <>
+    //   {/* Container fluid: กำหนดให้ Container มีความกว้างเต็มหน้าจอ (100%)
+    //     pt-4 px-5: เพิ่ม Padding ด้านบน (p) ขนาด 4 และ Padding ซ้ายขวา (x) ขนาด 5 
+    //   */}
+    //   <Container fluid className="pt-4 px-5">
+    //     {/* Row: แถวหลักสำหรับจัดวาง 3 คอลัมน์ (Sidebar ซ้าย, Feed กลาง, Sidebar ขวา) */}
+    //     <Row>
+    //       {/* Col md={2}: คอลัมน์ขนาด 2 สำหรับหน้าจอขนาดกลาง (md) ขึ้นไป
+    //         d-none d-lg-block: ซ่อนคอลัมน์นี้ในทุกขนาดหน้าจอ 
+    //         ยกเว้นจะแสดงผลในหน้าจอขนาดใหญ่ (lg) ขึ้นไปเท่านั้น (Left Sidebar จะหายไปในจอเล็กและกลาง)
+    //       */}
+    //       <Col md={2} className="d-none d-lg-block">
+    //         <LeftSidebar /> {/* แสดง Left Sidebar */}
+    //       </Col>
 
-          {/* Col md={3}: คอลัมน์ขนาด 3 สำหรับหน้าจอขนาดกลาง (md) ขึ้นไป
-            d-none d-md-block: ซ่อนคอลัมน์นี้ในหน้าจอขนาดเล็ก (xs) 
-            และจะแสดงผลในหน้าจอขนาดกลาง (md) ขึ้นไปเท่านั้น
-          */}
-          <Col md={3} className="d-none d-md-block">
-            <RightSidebar /> {/* แสดง Right Sidebar */}
-          </Col>
-        </Row>
-      </Container>
-    </>
+    //       {/* Col xs={12} lg={7}: คอลัมน์หลักสำหรับ Feed
+    //         xs={12}: ในหน้าจอขนาดเล็กที่สุด (xs) และกลาง (md) จะใช้ความกว้างเต็ม 12 คอลัมน์
+    //         lg={7}: ในหน้าจอขนาดใหญ่ (lg) ขึ้นไป จะใช้ความกว้าง 7 คอลัมน์ 
+    //       */}
+    //       <Col xs={12} lg={7}>
+    //         <Main /> {/* แสดง Feed หลัก */}
+    //       </Col>
+
+    //       {/* Col md={3}: คอลัมน์ขนาด 3 สำหรับหน้าจอขนาดกลาง (md) ขึ้นไป
+    //         d-none d-md-block: ซ่อนคอลัมน์นี้ในหน้าจอขนาดเล็ก (xs) 
+    //         และจะแสดงผลในหน้าจอขนาดกลาง (md) ขึ้นไปเท่านั้น
+    //       */}
+    //       <Col md={3} className="d-none d-md-block">
+    //         <RightSidebar /> {/* แสดง Right Sidebar */}
+    //       </Col>
+    //     </Row>
+    //   </Container>
+    // </>
 
     function LeftSidebar ()
     {
@@ -97,7 +142,7 @@ export function Home ()
 
         return (
           // Layout Container: กำหนดให้ Component 'sticky' อยู่ด้านบนของ Viewport
-          <div className="sticky-top d-grid gap-3" style={{ top: "12px" }}>
+          <div className="d-grid gap-3 mt-4" >
             {/* Card 1: User Profile and Logout Section */}
             <Card className="custom-card">
               <div className="text-center p-3">
@@ -175,7 +220,7 @@ export function Home ()
     {
         return (
           // Layout Container: กำหนดให้ Component 'sticky' อยู่ด้านบนของ Viewport
-          <div className="sticky-top" style={{ top: "12px" }}>
+          <div className="mt-4">
             {/* Card 1: Trending News Section (ไม่มีการเปลี่ยนแปลง) */}
             <Card className="custom-card mb-4">
               {/* Card Header: หัวข้อ "Trending News" */}
@@ -294,147 +339,4 @@ export function Home ()
         );
     }
 }
-
-function LeftSidebar ()
-{
-    // Handler: จัดการการคลิกปุ่มเพิ่มประสบการณ์
-  
-}
-function RightSidebar ()
-{
    
-}
-function Main ()
-{
-    return (
-    <div>
-      {/* Card 1: Create Post Area (กล่องสำหรับสร้างโพสต์ใหม่) */}
-      <Card className="feed-card p-3 mb-4">
-        {/* Row 1: Avatar และ Input Field */}
-        <div className="d-flex align-items-center mb-3">
-          {/* User Avatar */}
-          <img
-            src="https://via.placeholder.com/50/6c5ce7/FFFFFF?text=P"
-            alt="User Avatar"
-            className="rounded-circle me-3"
-            style={{ width: "50px", height: "50px", objectFit: "cover" }}
-          />
-          {/* Input Group: ช่องกรอกข้อความโพสต์ */}
-          <InputGroup>
-            <Form.Control
-              placeholder="Start a post"
-              className="post-input-box"
-            />
-          </InputGroup>
-        </div>
-
-        {/* Row 2: Action Buttons และปุ่ม Send */}
-        <div className="d-flex justify-content-between border-top pt-2">
-          {/* Action Buttons: Photo, Video, Event, Article */}
-          <div className="d-flex gap-1">
-            <Button variant="light">
-              <Image className="me-2 text-info" /> **Photo**
-            </Button>
-            <Button variant="light">
-              <PlayBtn className="me-2 text-success" /> **Video**
-            </Button>
-            <Button variant="light">
-              <CalendarDate className="me-2 text-warning" /> **Event**
-            </Button>
-            <Button variant="light">
-              <PencilSquare className="me-2 text-danger" /> **Article**
-            </Button>
-          </div>
-
-          {/* Send Button: ปุ่มสำหรับส่งโพสต์ */}
-          <Button
-            variant="dark"
-            className="rounded-pill px-4 fw-bold align-self-center"
-          >
-            Send <Send className="ms-1" />
-          </Button>
-        </div>
-      </Card>
-
-      {/* Feed Divider: ส่วนแสดงตัวกรอง/การเรียงลำดับโพสต์ */}
-      <div className="text-center my-3 border-bottom pb-2">
-        <span className="text-muted small fw-bold">
-          Sort by: <span className="text-primary">Top</span>
-        </span>
-      </div>
-
-      {/* Post List: แสดงรายการโพสต์ที่ดึงมาจาก PostCard Component */}
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      {/* หมายเหตุ: ในแอปพลิเคชันจริง ส่วนนี้ควรใช้ map() loop เพื่อแสดงรายการโพสต์จาก State/API */}
-    </div>
-  );
-}
-function PostCard ()
-{
-      return (
-    // Card Container: โพสต์แต่ละอัน
-    <Card className="custom-card mb-4">
-      {/* Card Header: ส่วนหัวของโพสต์ (ข้อมูลผู้ใช้) */}
-      <Card.Header className="d-flex align-items-center bg-white border-0 p-3">
-        {/* User Avatar */}
-        <PersonCircle size={40} className="me-3 text-primary" />
-        <div>
-          {/* User Name */}
-          <Card.Title className="mb-0 fs-6 fw-bold">**User Name**</Card.Title>
-          {/* Metadata: ตำแหน่งงานและเวลาโพสต์ */}
-          <Card.Subtitle className="text-muted small">
-            Job Title • 1h ago
-          </Card.Subtitle>
-        </div>
-      </Card.Header>
-
-      {/* Card Body: ส่วนเนื้อหาโพสต์ */}
-      <Card.Body className="pt-0 pb-2">
-        {/* Post Text: เนื้อหาข้อความของโพสต์ */}
-        <Card.Text className="text-dark">
-          ตัวอย่างเนื้อหาโพสต์ #SmartPersona
-        </Card.Text>
-
-        {/* Post Media: รูปภาพ/วิดีโอ (Placeholder) */}
-        <img
-          src="https://via.placeholder.com/600x300/e0e0e0/555555?text=Post+Content"
-          alt="Post Content"
-          className="img-fluid rounded-3 mt-2"
-        />
-      </Card.Body>
-
-      {/* Card Footer: Action Buttons (Like, Comment, Share, Send) */}
-      <Card.Footer className="bg-white border-top border-light p-3">
-        {/* Row: จัดเรียงปุ่มเป็น 4 คอลัมน์ (Col) */}
-        <Row className="text-center">
-          {/* Action: Like */}
-          <Col>
-            <Button variant="light" className="w-100 post-action-btn">
-              <HandThumbsUp className="me-1" /> **Like**
-            </Button>
-          </Col>
-          {/* Action: Comment */}
-          <Col>
-            <Button variant="light" className="w-100 post-action-btn">
-              <ChatText className="me-1" /> **Comment**
-            </Button>
-          </Col>
-          {/* Action: Share */}
-          <Col>
-            <Button variant="light" className="w-100 post-action-btn">
-              <Share className="me-1" /> **Share**
-            </Button>
-          </Col>
-          {/* Action: Send (Direct Message) */}
-          <Col>
-            <Button variant="light" className="w-100 post-action-btn">
-              <Send className="me-1" /> **Send**
-            </Button>
-          </Col>
-        </Row>
-      </Card.Footer>
-    </Card>
-  );
-}

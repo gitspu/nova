@@ -26,6 +26,10 @@
 
     width: 100%; max-width: 30%; 
 }
+.page-admin .menu-button
+{
+    display: none;
+}
 .page-admin .content
 {
     position: absolute;
@@ -47,8 +51,8 @@
     background-color: var(--bg-secondary);
     border-radius: 12px;
     outline: 1px solid grey;
-    width: 192px; height: 144px;
-    margin: 12px;
+    width: 144px; height: 128px;
+    margin: 4px;
 }
 .page-admin .content-dashboard .item-child .value
 {
@@ -73,19 +77,23 @@
     width: 128px;
 }
 
-@media (max-width: 512px)
+@media (max-width: 680px)
 {
     .page-admin .menu 
     {
         top: 0px; bottom: 0px;
         left: 0px; right: 0px;
 
-        background-color: rgba(0,0,0,0.5);
+        background-color: rgba(0,0,0,0.75);
     
         width: 100%; max-width: 100%;
         height: auto; max-height: 100%;
 
         color: white;
+    }
+    .page-admin .menu-button
+    {
+        display: block;
     }
     .page-admin .content
     {
@@ -129,7 +137,7 @@
     height: auto;
 }
 
-@media (max-width: 512px)
+@media (max-width: 680px)
 {
     .page-admin .menu-inner
     {

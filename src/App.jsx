@@ -10,8 +10,6 @@ import './App.css'
 /*
     นำเข้าระบบ (script/logic)
 */
-import * as auth      from './Script/Authentication'
-import * as profile   from './Script/Profile'
 import * as api       from './Script/Api'
 import * as navigator from './Script/Navigator'
 /*
@@ -22,15 +20,13 @@ import {Auth}     from "./Page/Auth";
 import {Home}     from "./Page/Home";
 import {Profile}  from "./Page/Profile";
 import {Job}      from './Page/Job'
+import {Settings} from './Page/Settings';
 import {NavBar}   from './Component/NarBar';
 
 /*
     เริ่มต้นการทำงานแต่ละระบบ
 */
 api.init ();
-
-auth.init ();
-profile.init ();    
 
 /*
     ให้ react ประมวลและแสดงหน้าเว็บ
@@ -55,6 +51,7 @@ export function App ()
           <Route path="/" element={<Home/>}/>
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/job" element={<Job/>}/>
+          <Route path="/settings" element={<Settings/>}/>
         </Route>
         <Route element={<SystemRoute/>}>
           <Route path="/auth" element={<Auth/>}/>
@@ -70,7 +67,7 @@ export function App ()
 */
 function MainRoute ()
 {
-    if (auth.isLogged () == false || auth.isActive () == false)
+    if (api.auth.isLogged () == false || api.auth.isActive ()   == false)
     {
         navigator.auth ();
         return;

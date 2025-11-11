@@ -4,9 +4,10 @@
  * 
 */
 import { useEffect, useState } from "react";
-import { Button } from "../Component/Common";
+import { Button, Button2 } from "../Component/Common";
 
-import * as auth from "../Script/Authentication"
+import {auth, profile} from "../Script/Api"
+import * as api from "../Script/Api"
 import * as icon from '../Script/Icon'
 
 import './Style/Auth.css'
@@ -14,7 +15,9 @@ import './Style/Auth.css'
 
 export function Auth () 
 {
-    const [view, setView] = useState (1);
+    const [view, setView] = useState (0);
+
+
     const [email, setEmail] = useState ("");
     const [username, setUsername] = useState ("");
     const [password, setPassword] = useState ("");
@@ -32,21 +35,42 @@ export function Auth ()
             finalize ();
             return;
         }
+
         window.addEventListener ("keydown", onKeydown);
 
         return () =>
         {
             window.removeEventListener ("keydown", onKeydown);
         };
-    });
+    }, 
+    [onKeydown]);
     
     return <div className="page-auth">
+      <div className="system">
+        
+      </div>
       <div className="background"/>
       <div className="foreground">
         <div className="foreground-content">
+          {/* หน้าแรก */}
+          <div className={view == 0 ? "d-flex" : "d-none"}>
+            <img className="logo"src={null}/>
+            <label className="h3">ยินดีต้อนรับ</label>
+            <div className="option">
+              <Button2 layout='horizontal outlined' icon={icon.arrowRight} text='เข้าสู่ระบบ โดยตรง' click={(e) => setViewLogin(e)}/>
+              <Button2 layout='horizontal' icon={icon.facebook} text='เข้าสู่ระบบด้วย Facebook' click={(e) => clickLoginFacebook(e)}/>
+              <Button2 layout='horizontal' icon={icon.google} text='เข้าสู่ระบบด้วย Google' click={(e) => clickLoginGoogle(e)}/>
+            </div>
+            <div>
+              <p key={statusAnim} className="status">{status}</p>
+            </div>
+          </div>
           {/* หน้าเข้าสู่ระบบ */}
           <form className={view == 1 ? "d-flex" : "d-none"} action="#">
             <img className="logo"src={null}/>
+            <div>
+              <Button2 layout='horizontal outlined' icon={icon.arrowLeftCircle} text='ย้อนกลับ' click={(e) => setViewSelect(e)}/>
+            </div>
             <div className="input">
               <label>รหัสประจำตัว</label>
               <input type="text" autoComplete="username webauthn" autoFocus={true}
@@ -63,16 +87,16 @@ export function Auth ()
               <p>
                 <span>ฉันไม่มีบัญชี</span>
                 <span> </span>
-                <span className="highlight" onClick={() => setViewRegister ()}>สมัครเลย</span>
+                <span className="highlight" onClick={(e) => setViewRegister (e)}>สมัครเลย</span>
               </p>
               <p>
                 <span>ฉันลืมรหัสผ่าน</span>
                 <span> </span>
-                <span className="highlight" onClick={() => setViewRecovery ()}>กู้คืนบัญชี</span>
+                <span className="highlight" onClick={(e) => setViewRecovery (e)}>กู้คืนบัญชี</span>
               </p>
             </div>
             <p key={statusAnim} className="status">{status}</p>
-            <Button layout='horizontal-outlined' type="submit" icon={icon.Unlock} text='เข้าสู่ระบบ' click={(e) => clickLogin(e)}/>
+            <Button2 layout='horizontal' type="submit" icon={icon.unlock} text='เข้าสู่ระบบ' click={(e) => clickLogin(e)}/>
           </form>
           {/* หน้าสมัครสมาชิก */}
           <form className={view == 2 ? "d-flex" : "d-none"} action="#">
@@ -105,7 +129,7 @@ export function Auth ()
               <p>
                 <span>ฉันมีบัญชีแล้ว</span>
                 <span> </span>
-                <span className="highlight" onClick={() => setViewLogin ()}>เข้าสู่ระบบ</span>
+                <span className="highlight" onClick={(e) => setViewLogin (e)}>เข้าสู่ระบบ</span>
               </p>
             </div>
             <p key={statusAnim} className="status">{status}</p>
@@ -115,7 +139,7 @@ export function Auth ()
           {/* หน้าลืมรหัสผ่าน */}
           <div className={view == 3 ? "d-flex" : "d-none"}>
             <div>
-              <Button layout="horizontal" icon={icon.ArrowLeftCircle} text="ย้อนกลับ" click={(e) => setViewLogin (e)}/>
+              <Button2 type='horizontal' icon={icon.arrowLeftCircle} text="ย้อนกลับ" click={(e) => setViewLogin (e)}/>
             </div>
             <div className="input">
               <label>รหัสประจำตัว</label>
@@ -140,7 +164,7 @@ export function Auth ()
             <div className="option">
 
             </div>
-            <button className="button" onClick={() => setViewLogin ()}>ย้อนกลับ</button>
+            <button className="button" onClick={(e) => setViewLogin (e)}>ย้อนกลับ</button>
           </div>
         </div>
       </div>
@@ -153,23 +177,42 @@ export function Auth ()
         if (e.key == "Enter")
         {
             e.preventDefault ();
-            clickLogin (e);
+
+            switch (view)
+            {
+                case 1: clickLogin(e); break;
+                case 2: clickRegister (e); break;
+                case 3: clickRecovery (e); break;
+            }
         }
     }
 
 
-    function setViewLogin ()
+    function setViewSelect (e)
     {
+        e.preventDefault ();
+      
+        setStatus ("");
+        setView (0);
+    } 
+    function setViewLogin (e)
+    {
+        e.preventDefault ();
+
         setStatus ("");
         setView (1);
     }
-    function setViewRegister ()
+    function setViewRegister (e)
     {
+        e.preventDefault ();
+      
         setStatus ("");
         setView (2);
     }
-    function setViewRecovery ()
+    function setViewRecovery (e)
     {
+        e.preventDefault ();
+
         setStatus ("");
         setView (3);
     }
@@ -178,17 +221,15 @@ export function Auth ()
     {
         e.preventDefault ();
 
-        setStatus ("");
-
         if (username == "" && password == "")
         {
-            setStatus ("โปรดป้อนชื่อผู้ใช้ และ รหัสผ่าน");
+            setStatus ("โปรดป้อนรหัสประจำตัว และ รหัสผ่าน");
             setStatusAnim (statusAnim + 1);
             return;
         }
         if (username == "")
         {
-            setStatus ("โปรดป้อนชื่อผู้ใช้");
+            setStatus ("โปรดป้อนรหัสประจำตัว");
             setStatusAnim (statusAnim + 1);
             return;
         }
@@ -201,6 +242,7 @@ export function Auth ()
         try
         {
             auth.login (username, password);
+
             finalize ();
         }
         catch (ex)
@@ -209,7 +251,7 @@ export function Auth ()
 
             if (ex instanceof auth.ErrorCredential)
             {
-                setStatus ("ขออภัย ชื่อผู้ใช้หรือรหัสผ่านของคุณนั้นไม่ถูกต้อง");
+                setStatus ("ขออภัย รหัสประจำตัวหรือรหัสผ่านของคุณนั้นไม่ถูกต้อง");
                 setStatusAnim (statusAnim + 1);
                 return;
             }
@@ -227,14 +269,242 @@ export function Auth ()
             }
             setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
             setStatusAnim (statusAnim + 1);
+            return;
         }
+    }
+
+    function clickLoginFacebook (e)
+    {
+        e.preventDefault ();
+
+        setStatus ("");
+
+        function onLogin (info)
+        {
+            if (info.status == "not_authorized")
+            {
+                setStatus ("คุณได้ยกเลิกการเข้าสู่ระบบ");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            if (info.status == "unknown")
+            {
+                setStatus ("การเข้าสู่ระบบถูกขัดจังหวะ");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            if (info.status == "connected")
+            {
+                try
+                {
+                    auth.loginFacebook (info.authResponse.userID);
+                    finalize ();
+                }
+                catch (ex)
+                {
+                    if (ex instanceof auth.ErrorCredential)
+                    {
+                        onLoginCreate (info.authResponse.userID);
+                        return;
+                    }
+                    else if (ex instanceof auth.ErrorConfig)
+                    {
+                        setStatus ("ขออภัย คุณไม่สามารถเข้าสู่ระบบได้ในขณะนี้");
+                        setStatusAnim (statusAnim + 1);
+                        return;
+                    }
+                    else if (ex instanceof auth.ErrorServer)
+                    {
+                        setStatus ("ขออภัย ระบบปลายทางไม่สามารถประมวลผลได้");
+                        setStatusAnim (statusAnim + 1);
+                        return;
+                    }
+                    else
+                    {
+                        setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+                        setStatusAnim (statusAnim + 1);
+                        return;
+                    }
+                }
+                
+                return;
+            }
+            setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+            setStatusAnim (statusAnim + 1);
+            return;
+
+        }
+        function onLoginCreate (id = "")
+        {
+            // eslint-disable-next-line no-undef
+            FB.api("/me", { fields: "id,name,email,birthday,picture" }, async function (me) 
+            {
+                if (me == null)
+                {
+                    setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+                    setStatusAnim (statusAnim + 1);    
+                    return;
+                }
+                const email     = String (me.email);
+                const birthday  = String (me.birthday);
+                const username  = String (me.name);
+                const usernameSplit = username.split (' ');
+                const icon      = me.picture != null ? 
+                                  me.picture.data != null ?
+                                  String (me.picture.data.url) : null : null;
+
+                const newContact = new profile.DataContact ();
+                const newPersonal = new profile.DataPersonal ();
+
+                if (email != null)    { newContact.email.set(email, profile.VISIBILITY_PRIVATE); }
+                if (birthday != null) { newPersonal.birthday.set(birthday, profile.VISIBILITY_PRIVATE); }
+                if (username != null) { newPersonal.nickname.set(username, profile.VISIBILITY_PRIVATE); }
+                
+                switch (usernameSplit.length)
+                {
+                    case 2:
+                      newPersonal.firstName.set (usernameSplit[0], profile.VISIBILITY_PRIVATE);
+                      newPersonal.lastName.set (usernameSplit[1], profile.VISIBILITY_PRIVATE);
+                      break;
+                    case 3:
+                      newPersonal.firstName.set (usernameSplit[0], profile.VISIBILITY_PRIVATE);
+                      newPersonal.middleName.set (usernameSplit[1], profile.VISIBILITY_PRIVATE);
+                      newPersonal.lastName.set (usernameSplit[2], profile.VISIBILITY_PRIVATE);
+                      break;
+                }
+
+                if (icon != null)
+                {
+                    const request = await fetch (icon);
+
+                    if (request.ok)
+                    {
+                        const blob = await request.blob ();
+                        const data = await new Promise ((resolve, reject) => 
+                        {
+                            const reader = new FileReader ();
+                        
+                            reader.onloadend = function () { resolve (reader.result); }
+                            reader.onerror = function () { reject (); }
+                        
+                            reader.readAsDataURL (blob);
+                        });
+                        newPersonal.icon = api.encodeImage (data);
+                    }
+                    else
+                    {
+                        console.warn ("Authentication: Cannot fetch profile image: " + request.statusText);
+                    }
+                }
+
+                try
+                {
+                    auth.createFacebook (id);
+                    profile.create ();
+                    profile.setContact (newContact);
+                    profile.setPersonal (newPersonal);
+                    finalize ();
+                }
+                catch (ex)
+                {
+                    console.error (ex);
+
+                    setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+                    setStatusAnim (statusAnim + 1);    
+                    return;
+                }
+            });   
+        }
+        // eslint-disable-next-line no-undef
+        FB.login (onLogin);
+    }
+    function clickLoginGoogle (e)
+    {
+        e.preventDefault ();
     }
     function clickRegister (e)
     {
         e.preventDefault ();
 
-        setStatus ("ขออภัย ชื่อผู้ใช้นี้ได้ถูกใช้ไปแล้ว โปรดใช้ชื่ออื่น");
-        setStatusAnim (statusAnim + 1);
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (username == "")
+        {
+            setStatus ("โปรดป้อนรหัสประจำตัว");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (password == "")
+        {
+            setStatus ("โปรดป้อนรหัสผ่าน");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (passwordConfirm == "")
+        {
+            setStatus ("โปรดป้อนรหัสผ่านยืนยัน");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (password != passwordConfirm)
+        {
+            setStatus ("รหัสผ่านของคุณไม่ตรงกัน");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (email == "")
+        {
+            setStatus ("โปรดป้อนอีเมล");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+        if (emailRegex.test (email) == false)
+        {
+            setStatus ("รูปแบบอีเมลที่คุณป้อนไม่ถูกต้อง");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
+
+        try
+        {
+            auth.create (username, password);
+            profile.create ();
+
+            const initialContact = new profile.DataContact ();
+            const initialPersonal = new profile.DataPersonal ();
+            
+            initialContact.email = email;
+            initialPersonal.nickname.value = username;
+
+         
+        }
+        catch (ex)
+        {
+            console.error (ex);
+
+            // Auth
+            if (ex instanceof auth.ErrorCredential)
+            {
+                setStatus ("ขออภัย รหัสประจำตัวนี้ถูกใช้ไปแล้ว โปรดใช้รหัสอื่น");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            if (ex instanceof auth.ErrorConfig)
+            {
+                setStatus ("ขออภัย คุณไม่สมัครสมาชิกได้ในขณะนี้");
+                setStatusAnim (statusAnim + 1);
+                return;  
+            }
+            if (ex instanceof auth.ErrorServer)
+            {
+                setStatus ("ขออภัย ระบบปลายทางไม่สามารถประมวลผลได้");
+                setStatusAnim (statusAnim + 1);
+                return;
+            }
+            setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+            setStatusAnim (statusAnim + 1);
+            return;
+        }
     }
     function clickRecovery (e)
     {

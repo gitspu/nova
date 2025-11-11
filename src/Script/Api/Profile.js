@@ -14,16 +14,22 @@ export class DataContact
     website = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /* อีเมล */
     email = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /* เบอร์โทรศัพท์ */
     phone = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
 };
 /**
@@ -42,6 +48,8 @@ export class DataInterest
     visibility = VISIBILITY_PUBLIC;
     /** รายการแท็กความสนใจ */
     item = [""];
+    /** ตั้งค่าข้อมูล */
+    set (value = [], visibility = 0) { this.value = value; this.visibility = visibility; }
 };
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลการทำงาน
@@ -62,6 +70,26 @@ export class DataJob
         /** วันสุดท้ายที่ทำงาน */
         end: new Date(undefined),
     }];
+    /** ตั้งค่าข้อมูล */
+    set (value = []) { this.value = value; }
+};
+/**
+ * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลโพสต์ (หนึ่งรายการ)
+*/
+export class DataPost
+{
+     /** วันที่โพสต์นี้ถูกสร้าง */
+    created = new Date(undefined);
+    /** วันที่โพสต์นี้ถูกแก้ไข (ถ้ามี) */
+    modified = new Date(undefined);
+    /** ข้อความในโพสต์นั้น */
+    text = "";
+    /** ข้อมูลสื่อ (ถ้ามี) */
+    media = 
+    [{
+        /** ประเภทสื่อ*/ type: 0,
+        /** ข้อมูลสื่อ*/ value: "",
+    }];
 };
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลส่วนตัว
@@ -76,46 +104,64 @@ export class DataPersonal
     status = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** ชื่อจริง */
     firstName = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** ชื่อกลาง */
     middleName = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** นามสกุล */
     lastName = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** ชื่อเล่น */
     nickname = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** สรรพนาม */
     pronoun = {
         /** ค่าที่เก็บ */   value: PRONOUN_UNSPECIFIED,
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = 0, visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** แนะนำตัวเอง */
     bio = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** วันเกิด */
     birthday = {
         /** ค่าที่เก็บ */   value: new Date(undefined),
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = new Date(), visibility = 0) { this.value = value; this.visibility = visibility; }
     }
     /** สถานที่อยู่ */
     location = {
         /** ค่าที่เก็บ */   value: "",
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
+        /** ตั้งค่าข้อมูล */
+        set (value = "", visibility = 0) { this.value = value; this.visibility = visibility; }
     }
 }
 /**
@@ -164,24 +210,6 @@ export class DataSocial
         /** การมองเห็น */ visibility: VISIBILITY_PUBLIC,
     }
 };
-/**
- * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลโพสต์ (หนึ่งรายการ)
-*/
-export class DataPost
-{
-     /** วันที่โพสต์นี้ถูกสร้าง */
-    created = new Date(undefined);
-    /** วันที่โพสต์นี้ถูกแก้ไข (ถ้ามี) */
-    modified = new Date(undefined);
-    /** ข้อความในโพสต์นั้น */
-    text = "";
-    /** ข้อมูลสื่อ (ถ้ามี) */
-    media = 
-    [{
-        /** ประเภทสื่อ*/ type: "",
-        /** ข้อมูลสื่อ*/ value: "",
-    }];
-};
 
 export class ErrorState extends Error {};
 export class ErrorServer extends Error {};
@@ -219,13 +247,41 @@ export function create (which = NaN)
     if (isFinite (which) && auth.getRole () < auth.ROLE_ADMIN)
         throw new ErrorAuth ("Insufficient permission");
 
+    if (isNaN (which)) {
+        which = auth.getAccess ();
+    }
+
     const json = loadJson ();
     const itemList = json["item"];
 
     if (itemList == null) throw new ErrorServer ("Server contains inproper JSON data");
     if (itemList[String(which)] != null) throw new ErrorState ("Profile is already been created");
 
-    setPersonal (new DataPersonal ());
+    itemList[String(which)] = {};
+
+    saveJson (json);
+
+    const newContact    = new DataContact ();
+    const newEducation  = new DataEducation ();
+    const newInterest   = new DataInterest ();
+    const newJob        = new DataJob ();
+    const newPersonal   = new DataPersonal ();
+    const newSkill      = new DataSkill ();
+    const newSocial     = new DataSocial ();
+
+    //
+    // ล้างข้อมูล prototype ออก
+    //
+    newInterest.item = [];
+    newSkill.item = [];
+
+    setContact (newContact);
+    setEducation (newEducation);
+    setInterest (newInterest);
+    setJob (newJob);
+    setPersonal (newPersonal);
+    setSkill (newSkill);
+    setSocial (newSocial);
 }
 /**
  * ขอข้อมูลติดต่อ จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
@@ -291,6 +347,45 @@ export function getPersonal (which = NaN)
 {
     const result = new DataPersonal (); getBlock (result, which, "personal");
     return result;
+}
+/**
+ * ขอข้อมูลโพสต์ จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
+ * 
+ * ข้อผิดพลาดที่เป็นไปได้
+ *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
+ *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
+ *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
+*/
+export function getPost (index = NaN, which = NaN)
+{
+    const item = getBlockRaw (which, "post")["item"][index];
+
+    if (item == null)
+        throw new ErrorArgument ("Out of Bounds");
+
+    const result = new DataPost ();
+
+    util.objectDeserialize (result, item);
+
+    return result;
+}
+/**
+ * ขอข้อมูลจำนวนโพสต์ทั้งหมดที่มีในโปรไฟล์ (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
+ * 
+ * ข้อผิดพลาดที่เป็นไปได้
+ *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
+ *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
+ *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
+*/
+export function getPostHead (which = NaN)
+{
+    const item = getBlockRaw (which, "post");
+
+    const prototype = 
+    {
+        count: item["item"].length
+    };
+    return prototype;
 }
 /**
  * ขอข้อมูลทักษะ จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
@@ -436,6 +531,42 @@ export const PRONOUN_HE             = 2;
 export const PRONOUN_SHE            = 3;
 export const PRONOUN_THEY           = 4;
 export const PRONOUN_OTHER          = 5;
+
+
+//                                                                  //
+// ################################################################ //
+// ||                                                            || //
+// ||                          PRIVILEGED                        || //
+// ||                                                            || //
+// ################################################################ //
+//                                                                  //
+
+/**
+ * รับดัชนีตำแหน่งของข้อมูลโปรไฟล์ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
+*/
+export function getMap ()
+{
+    if (state.init == false)
+        throw new ErrorState ("Profile system must be initialized");
+
+    if (auth.isLogged () == false || auth.isActive () == false)
+        throw new ErrorAuth ("Authentication must be logged and active");
+    
+    if (auth.getRole () < auth.ROLE_ADMIN)
+        throw new ErrorAuth ("Insufficient permission");
+
+    const result = [""]; result.splice (0, 1);
+
+    const json = loadJson ();
+    const itemList = json["item"];
+
+    for (const key of Object.keys (itemList)) {
+        result.push (String (key));
+    }
+
+    return result;
+}
+
 //                                                                  //
 // ################################################################ //
 // ||                                                            || //
@@ -444,7 +575,7 @@ export const PRONOUN_OTHER          = 5;
 // ################################################################ //
 //                                                                  //
 
-const state =
+export const state =
 {
     init: false,
 };
@@ -452,13 +583,17 @@ const key = "DbProfile";
 
 function getBlock (structure, which, name)
 {
-     if (state.init == false)
+    util.objectDeserialize (structure, getBlockRaw (which, name));
+}
+function getBlockRaw (which, name)
+{
+    if (state.init == false)
         throw new ErrorState ("Profile system must be initialized");
 
     if (auth.isLogged () == false || auth.isActive () == false)
         throw new ErrorAuth ("Authentication must be logged and active");
     
-    if (isFinite (which) && auth.getRole () < auth.ROLE_ADMIN)
+    if (isFinite (which) && (auth.getRole() != auth.ROLE_ADMIN || auth.getRole() != auth.ROLE_DEVELOPER))
         throw new ErrorAuth ("Insufficient permission");
 
     if (isNaN (which)) {
@@ -469,9 +604,9 @@ function getBlock (structure, which, name)
     const itemList = json["item"];
 
     if (itemList[String(which)] == null) 
-        throw new ErrorArgument ("No specified profile was found");
+        throw new ErrorArgument ("No specified profile was found: ");
 
-    util.objectDeserialize (structure, itemList[String(which)][name]);
+    return itemList[String(which)][String(name)];
 }
 function setBlock (structure, which, name)
 {
@@ -481,7 +616,7 @@ function setBlock (structure, which, name)
     if (auth.isLogged () == false || auth.isActive () == false)
         throw new ErrorAuth ("Authentication must be logged and active");
     
-    if (isFinite (which) && auth.getRole () < auth.ROLE_ADMIN)
+    if (isFinite (which) && (auth.getRole() != auth.ROLE_ADMIN || auth.getRole() != auth.ROLE_DEVELOPER))
         throw new ErrorAuth ("Insufficient permission");
 
     if (isNaN (which)) {

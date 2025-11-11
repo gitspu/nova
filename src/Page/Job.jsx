@@ -24,11 +24,11 @@ export function Job ()
 
     function Container ({children})
     {
-        return <div className="page-job container">{children}</div>
+        return <div className="page-job">{children}</div>
     }
     function Title ()
     {
-        return <h3 className="mt-4 mb-4">ค้นหางาน</h3>
+        return <h1 className="mt-4 mb-4">ค้นหางาน</h1>
     }
 
     function Filter ({children})

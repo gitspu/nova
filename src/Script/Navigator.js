@@ -3,6 +3,8 @@
 */
 
 const HOME = "/";
+const PROFILE = "/profile";
+
 const AUTH = "/auth";
 const ADMIN = "/admin";
 

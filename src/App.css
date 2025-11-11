@@ -5,22 +5,52 @@
 
 #app
 {
-    --bg-primary: #ECF4E8;
-    --bg-secondary: #D6F4ED;
+    --bg-primary:       #ECF4E8; /* พื้นหลังหลัก        */
+    --bg-secondary:     #D6F4ED; /* พื้นหลังรอง        */
+    --bg-tertiary:      #D6F4ED; /* พื้นหลังรอง รอง    */
 
-    --text-primary: #06202B;
-    --text-secondary: #001C30;
+    
+    --text-primary:     #06202B; /* สีข้อความหลัก */
+    --text-secondary:   #001C30; /* สีข้อความรอง */
 
-    --text-warning: #e9491c;
-    --text-danger: #c03a3a;
+    --text-warning:     #e9491c; /* สีข้อความ (เตือน) */
+    --text-danger:      #c03a3a; /* สีข้อความ (อันตราย) */
 
-    --btn-normal-bg: #DDF4E7;
-    --btn-normal-text: #06202B;
+    --text-link:        #e9491c; /* สีข้อความ (ลิงค์)*/
+    --text-link-hover:  #e9491c; /* สีข้อความ (ลิงค์)*/
+    --text-link-active: #e9491c; /* สีข้อความ (ลิงค์)*/
+    --text-link-disabled: #e9491c; /* สีข้อความ (ลิงค์)*/
+
+    --text-size-h1:     2.00rem;    /* 32px */
+    --text-size-h2:     1.50rem;    /* 24px */
+    --text-size-h3:     1.25rem;    /* 20px */
+    --text-size-h4:     1.00rem;    /* 16px */
+    --text-size-h5:     0.75rem;    /* 12px */
+    --text-size-h6:     0.50rem;    /* 8px */
+
+    --btn-normal-bg:    #DDF4E7;
+    --btn-normal-text:  #06202B;
     --btn-normal-outline: 1px solid grey;
 
     --btn-hover-bg: #c4edd6;
     --btn-hover-text: #06202B;
     --btn-hover-outline: 1px solid grey;
+
+    --btn-active-bg: green;
+}
+
+#app-theme-light
+{
+    
+}
+#app-theme-dark
+{
+
+}
+
+@media (prefers-color-scheme: dark)
+{
+
 }
 #app > .navigation
 {
@@ -64,18 +94,20 @@ h1, h2, h3, h4, h5, h6
 h1 
 {
     margin: 0px; padding: 0px;
-    /* font-size: 2rem; */
+    font-size: 2rem;
     font-weight: bold;
 }
 h2
 {
     margin: 0px; padding: 0px;
-    /* font-size: 1.5rem; */
+    font-size: 1.5rem;
     font-weight: bold;
 }
 h3
 {
     margin: 0px; padding: 0px;
+    font-size: 1.25rem;
+    font-weight: bold;
 }
 
 button
