@@ -35,7 +35,7 @@ export function init ()
     }
 }
 
-export function decodeImage (value)
+export function decodeContent (value)
 {
     if (value == "" || value == null)
         return toIcon.transparent;
@@ -50,15 +50,13 @@ export function decodeImage (value)
 
     return `data:${mime};base64,${content}`;
 }
-export function encodeImage (value)
+export function encodeContent (value)
 {
     const regex = /^data:([a-zA-Z0-9/+.-]+);base64,([a-zA-Z0-9+/=]+)$/;
     const group = String(value).match(regex);
 
     const mime = group[1];
     const content = group[2];
-
-    console.log (mime + " " + content);
 
     return `${mime} ${content}`;
 }

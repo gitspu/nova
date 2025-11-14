@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { ArrowLeft } from "react-bootstrap-icons";
-import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox, Button } from "./../Component/Common"
+import { ToggleBar, ToggleBarItem, ToggleBarSeparator, Checkbox, ButtonOld } from "./../Component/Common"
 import { ProfileCard } from './../Component/Profile';
 
 import IconList from './../Asset/Icon/List.svg'
@@ -74,7 +74,7 @@ export function Admin ()
             <div className='header-inner'>
                 <h2>แผงควบคุมระบบ</h2>
                 <div style={{flexGrow: 1}}></div>
-                <Button className='menu-button' layout='horizontal'  icon={IconList} click={() => setSelectionOpen(!selectionOpen)}/>
+                <ButtonOld className='menu-button' layout='horizontal'  icon={IconList} click={() => setSelectionOpen(!selectionOpen)}/>
                 <ProfileCard showBorder={!isNarrow()} showName={!isNarrow()}/>
             </div>
         </div>
@@ -452,7 +452,7 @@ function ContentTestAPI ()
 }
 function ContentTestUI ()
 {
-    return <div>
+    return <div className="content-test-ui">
         <div>
             <h1>ทดสอบระบบ UI</h1>
             <hr></hr>
@@ -468,15 +468,29 @@ function ContentTestUI ()
             <div className="mb-4">
                 <h3>ข้อความ</h3>
                 <hr/>
-                <h1>หัวเรื่อง 1</h1>
-                <h2>หัวเรื่อง 2</h2>
-                <h3>หัวเรื่อง 3</h3>
-                <h4>หัวเรื่อง 4</h4>
-                <h5>หัวเรื่อง 5</h5>
-                <h6>หัวเรื่อง 6</h6>
+                <h1 className="heading-1">หัวเรื่อง 1</h1>
+                <h2 className="heading-2">หัวเรื่อง 2</h2>
+                <h3 className="heading-3">หัวเรื่อง 3</h3>
+                <h4 className="heading-4">หัวเรื่อง 4</h4>
+                <h5 className="heading-5">หัวเรื่อง 5</h5>
+                <h6 className="heading-6">หัวเรื่อง 6</h6>
                 <hr/>
+            </div>
+            <div className="mb-4">
+                <h3>ข้อความลิงค์</h3>
+                <hr/>
+                <a href="#" className="me-4">เริ่มต้น</a>
+                <a href="#" className="me-4 text-link">พลวัต</a>
+                <a href="#" className="me-4 text-link-normal">ปกติ</a>
+                <a href="#" className="me-4 text-link-hover">วาง</a>
+                <a href="#" className="me-4 text-link-active">ทำงาน</a>
+                <a href="#" className="me-4 text-link-disabled" disabled={true}>ปิดใช้งาน</a>
+                <hr/>
+            </div>
+            <div className="mb-4">
                 <p>สีเริ่มต้น</p>
-                <p>สีลิงค์</p>
+                <p className="text-normal">สีปกติ</p>
+                <p className="text-link">สีลิงค์</p>
                 <br/>
                 <p>สีเขียว</p>
                 <p>สีเหลือง</p>
@@ -490,12 +504,13 @@ function ContentTestUI ()
             </div>
             <div className="mb-4">
                 <h3 className="pb-3">ปุ่มกด</h3>
-                <button>เริ่มต้น</button>
-                <button>ปกติ</button>
-                <button>สีเขียว</button>
-                <button>สีเหลือง</button>
-                <button>สีแดง</button>
-                <button>สีฟ้า</button>
+                <button className="me-1">เริ่มต้น</button>
+                <button className="me-1 button-normal">ปกติ</button>
+                <button className="me-1">สีเขียว</button>
+                <button className="me-1">สีเหลือง</button>
+                <button className="me-1">สีแดง</button>
+                <button className="me-1">สีฟ้า</button>
+                <button className="me-1 button-normal" disabled={true}>ปิดใช้งาน</button>
             </div>
         </div>
     </div>

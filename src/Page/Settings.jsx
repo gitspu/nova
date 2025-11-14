@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import * as api from './../Script/Api'
 import * as icon from './../Script/Icon'
+import * as navigator from './../Script/Navigator'
 
 import { ToggleBar, ToggleBarItem, VisibilityOption } from '../Component/Common'
 
@@ -49,11 +50,11 @@ export function CategoryAccount ()
         <button>ตั้งค่าใหม่</button>
       </div>
       <div className='w-100 mb-5'>
-        <button>ออกจากระบบ</button>
+        <button onClick={(event) => doLogout(event)}>ออกจากระบบ</button>
       </div>
       <div className='w-100 mb-5'>
-        <button className='me-2'>ปิดใช้งาน</button>
-        <button className='me-2'>ลบบัญชี</button>
+        <button className='me-2' onClick={(event) => doDisable(event)}>ปิดใช้งาน</button>
+        <button className='me-2' onClick={(event) => doDelete(event)}>ลบบัญชี</button>
       </div>
     </>
 
@@ -62,6 +63,23 @@ export function CategoryAccount ()
         const basic = auth.getBasic ();
 
         setName (basic.name);
+    }
+    function doLogout (event)
+    {
+        event.preventDefault ();
+
+        try { auth.logout (); }
+        catch (ex) { console.error (ex); }
+
+        navigator.auth ("/", "/");
+    }
+    function doDisable (event)
+    {
+        event.preventDefault ();
+    }
+    function doDelete (event)
+    {
+        event.preventDefault ();
     }
 }
 export function CategoryProfile ()
@@ -190,8 +208,8 @@ export function CategoryProfile ()
         {
             const block = profile.getPersonal ();
             
-            setIcon (api.decodeImage (block.icon));
-            setBackground (api.decodeImage (block.background));
+            setIcon (api.decodeContent (block.icon));
+            setBackground (api.decodeContent (block.background));
 
             setNickname (block.nickname.value);
             setNicknameVis (block.nickname.visibility);
@@ -229,13 +247,15 @@ export function CategoryProfile ()
             const target = e.target;
             const file = target.files[0];
 
+            if (file == null) { return; }
+
             var reader = new FileReader ();
             
-            reader.readAsDataURL (file);
             reader.onloadend = function ()
             {
-                setIcon (reader.result);
+              setIcon (reader.result);
             }
+            reader.readAsDataURL (file);
         }
         function onChangeBackground (e)
         {
@@ -244,33 +264,59 @@ export function CategoryProfile ()
             const target = e.target;
             const file = target.files[0];
 
+            if (file == null) { return; }
+
             var reader = new FileReader ();
             
-            reader.readAsDataURL (file);
             reader.onloadend = function ()
             {
-                setBackground (reader.result);
+              setBackground (reader.result);
             }
+            reader.readAsDataURL (file);
         }
     }
     function SectionContact ()
     {
+        const [email,      setEmail]      = useState ("");
+        const [emailVis,   setEmailVis]   = useState (0);
+        const [website,    setWebsite]    = useState ("");        
+        const [websiteVis, setWebsiteVis] = useState (0);
+        const [phone,      setPhone]      = useState ("");
+        const [phoneVis,   setPhoneVis]   = useState (0);
+
+        useEffect (() => { doLoad(); }, []);
+
         return <>
-        <div>
-          <h2 className='mt-4 mb-4'>ข้อมูลติดต่อ</h2>
-          <div className='w-100 mb-1 input-text'>
-            <label>อีเมล</label>
-            <input type="email"></input>
+          <div>
+            <h2 className='mt-4 mb-4'>ข้อมูลติดต่อ</h2>
+            <div className='w-100 mb-1 input-text'>
+              <label>อีเมล</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
+              <VisibilityOption state={[emailVis, setEmailVis]}/>
+            </div>
+            <div className='w-100 mb-1 input-text'>
+              <label>เว็บไซต์</label>
+              <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)}></input>
+              <VisibilityOption state={[websiteVis, setWebsiteVis]}/>
+            </div>
+            <div className='w-100 mb-1 input-text'>
+              <label>เบอร์โทรศัพท์</label>
+              <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)}></input>
+              <VisibilityOption state={[phoneVis, setPhoneVis]}/>
+            </div>
           </div>
-          <div className='w-100 mb-1 input-text'>
-            <label>เว็บไซต์</label>
-            <input type="text"></input>
-          </div>
-          <div className='w-100 mb-1 input-text'>
-            <label>เบอร์โทรศัพท์</label>
-            <input type="number"></input>
-          </div>
-        </div>
         </>
+
+        function doLoad ()
+        {
+            const block = profile.getContact ();
+
+            setEmail (block.email.value);
+            setEmailVis (block.email.visibility);
+            setWebsite (block.website.value);
+            setWebsiteVis (block.website.visibility);
+            setPhone (block.phone.value);
+            setPhoneVis (block.phone.visibility);
+        }
     }
 }

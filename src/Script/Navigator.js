@@ -20,10 +20,11 @@ export function home ()
  * 
  * @param redirect หลังจากเข้าสู่ระบบ ให้นำผู้ใช้ไปยังหน้าอะไร (เริ่มต้นคือหน้าปัจจุบัน)
 */
-export function auth (redirect = window.location.href)
+export function auth (redirect = window.location.href, redirectCreate = window.location.href)
 {
     window.location.href = `${AUTH}?context=${btoa(JSON.stringify({
-        redirect: redirect
+        redirect: redirect,
+        redirectCreate: redirectCreate,
     }))}`;
 }
 /**

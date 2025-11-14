@@ -1,5 +1,19 @@
 /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
 
+.component-common-button
+{
+    display: inline-block;
+    min-width: 40px; min-height: 40px;
+    
+    margin: 0px !important; padding: 0px !important;
+}
+.component-common-button
+{
+
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
 .component-common-visopt
 {
     display: inline-block;

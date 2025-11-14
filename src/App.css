@@ -39,19 +39,102 @@
     --btn-active-bg: green;
 }
 
-#app-theme-light
+.app-theme-light
 {
+    --app-background-primary:   #ECF4E8;
+    --app-background-secondary: #D6F4ED;
+    --app-background-tertiary:  #b7d4cd;
+
+    --app-outline-primary:      1px solid grey;
+    --app-outline-secondary:    1px solid grey;
+    --app-outline-tertiary:     1px solid grey;
+
+    --app-text-primary:         #06202B;
+    --app-text-secondary:       #001C30;
+    --app-text-highlight:       #3a699f;
+
+    --app-text-h1-size:         2.00rem;
+    --app-text-h1-color:        var(--app-text-primary);
+    --app-text-h1-weight:       bolder;
+
+    --app-text-h2-size:         1.50rem;
+    --app-text-h2-color:        var(--app-text-primary);
+    --app-text-h2-weight:       bold;
+
+    --app-text-h3-size:         1.25rem;
+    --app-text-h3-color:        var(--app-text-primary);
+    --app-text-h3-weight:       bold;
+
+    --app-text-h4-size:         1.00rem;
+    --app-text-h4-color:        var(--app-text-primary);
+    --app-text-h4-weight:       bold;
+
+    --app-text-h5-size:         0.75rem;
+    --app-text-h5-color:        var(--app-text-primary);
+    --app-text-h5-weight:       bold;
+
+    --app-text-h6-size:         0.50rem;
+    --app-text-h6-color:        var(--app-text-primary);
+    --app-text-h6-weight:       bold;
     
+    /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+    --app-text-link-size:                   1.00rem;
+    --app-text-link-color:                  var(--app-text-highlight);
+    --app-text-link-weight:                 normal;
+    --app-text-link-decoration:             underline;
+
+    --app-text-link-hover-size:             1.00rem;
+    --app-text-link-hover-color:            var(--app-text-highlight);
+    --app-text-link-hover-weight:           normal;
+    --app-text-link-hover-decoration:       underline;
+
+    --app-text-link-active-size:            1.00rem;
+    --app-text-link-active-color:           var(--app-text-highlight);
+    --app-text-link-active-weight:          normal;
+    --app-text-link-active-decoration:      underline;
+
+    --app-text-link-disabled-size:          1.00rem;
+    --app-text-link-disabled-color:         var(--app-text-highlight);
+    --app-text-link-disabled-weight:        normal;
+    --app-text-link-disabled-decoration:    underline;
+
+    /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+
+    --app-text-size:            1.00rem;
+    --app-text-color:           var(--app-text-primary);
+    --app-text-weight:          normal;
+    
+    --app-button-normal-background:     #DDF4E7;
+    --app-button-normal-text:           var(--app-text-primary);
+    --app-button-normal-outline:        1px solid grey;
+    --app-button-normal-radius:         12px;
+    --app-button-normal-padding:        8px;
+
+    --app-button-hover-background:      #c4edd6;
+    --app-button-hover-text:            var(--app-text-primary);
+    --app-button-hover-outline:         1px solid grey;
+    --app-button-hover-radius:          12px;
+    --app-button-hover-padding:         8px;
+
+    --app-button-active-background:     #a3ceb6;
+    --app-button-active-text:           var(--app-text-primary);
+    --app-button-active-outline:        1px solid grey;
+    --app-button-active-radius:         12px;
+    --app-button-active-padding:        8px;
+
+    --app-button-disabled-background:   #95b895;
+    --app-button-disabled-text:         var(--app-text-primary);
+    --app-button-disabled-outline:      1px solid grey;
+    --app-button-disabled-radius:       4px;
+    --app-button-disabled-padding:      8px;
 }
 #app-theme-dark
 {
 
 }
 
-@media (prefers-color-scheme: dark)
-{
-
-}
 #app > .navigation
 {
     position: absolute;

@@ -6,6 +6,7 @@
 .page-home .left
 {
     position: absolute; inset: 0px 75% 0px 0px;
+    pointer-events: none;
 }
 .page-home .left > *
 {
@@ -15,6 +16,7 @@
 
 .page-home .right
 {
+    display: none;
     position: absolute; inset: 0px 0px 0px 75%;
 }
 .page-home .right > *
@@ -24,11 +26,16 @@
 
 .page-home .main
 {
-    position: absolute; inset: 0px 25% 0px 25%;
+    position: absolute; inset: 0px 0px 0px 0px;
+    overflow-y: scroll;
 }
-.page-home .main > *
+.page-home .main-inner
 {
-    max-width: 148mm;
+    position: absolute; inset: 0px 25% auto 25%;
+}
+.page-home .main-inner > *
+{
+    max-width: 210  mm;
     margin: 0px auto;
 }
 

@@ -4,7 +4,7 @@
  * 
 */
 import { useEffect, useState } from "react";
-import { Button, Button2 } from "../Component/Common";
+import { ButtonOld, Button } from "../Component/Common";
 
 import {auth, profile} from "../Script/Api"
 import * as api from "../Script/Api"
@@ -32,7 +32,7 @@ export function Auth ()
         if (auth.isLogged () && auth.isActive ())
         {
             console.warn ("Already logged in, redirecting");
-            finalize ();
+            finalize (false);
             return;
         }
 
@@ -57,9 +57,9 @@ export function Auth ()
             <img className="logo"src={null}/>
             <label className="h3">ยินดีต้อนรับ</label>
             <div className="option">
-              <Button2 layout='horizontal outlined' icon={icon.arrowRight} text='เข้าสู่ระบบ โดยตรง' click={(e) => setViewLogin(e)}/>
-              <Button2 layout='horizontal' icon={icon.facebook} text='เข้าสู่ระบบด้วย Facebook' click={(e) => clickLoginFacebook(e)}/>
-              <Button2 layout='horizontal' icon={icon.google} text='เข้าสู่ระบบด้วย Google' click={(e) => clickLoginGoogle(e)}/>
+              <Button layout='horizontal outlined' icon={icon.arrowRight} text='เข้าสู่ระบบ โดยตรง' click={(e) => setViewLogin(e)}/>
+              <Button layout='horizontal' icon={icon.facebook} text='เข้าสู่ระบบด้วย Facebook' click={(e) => clickLoginFacebook(e)}/>
+              <Button layout='horizontal' icon={icon.google} text='เข้าสู่ระบบด้วย Google' click={(e) => clickLoginGoogle(e)}/>
             </div>
             <div>
               <p key={statusAnim} className="status">{status}</p>
@@ -69,7 +69,7 @@ export function Auth ()
           <form className={view == 1 ? "d-flex" : "d-none"} action="#">
             <img className="logo"src={null}/>
             <div>
-              <Button2 layout='horizontal outlined' icon={icon.arrowLeftCircle} text='ย้อนกลับ' click={(e) => setViewSelect(e)}/>
+              <Button layout='horizontal outlined' icon={icon.arrowLeftCircle} text='ย้อนกลับ' click={(e) => setViewSelect(e)}/>
             </div>
             <div className="input">
               <label>รหัสประจำตัว</label>
@@ -96,7 +96,7 @@ export function Auth ()
               </p>
             </div>
             <p key={statusAnim} className="status">{status}</p>
-            <Button2 layout='horizontal' type="submit" icon={icon.unlock} text='เข้าสู่ระบบ' click={(e) => clickLogin(e)}/>
+            <Button layout='horizontal' type="submit" icon={icon.unlock} text='เข้าสู่ระบบ' click={(e) => clickLogin(e)}/>
           </form>
           {/* หน้าสมัครสมาชิก */}
           <form className={view == 2 ? "d-flex" : "d-none"} action="#">
@@ -134,12 +134,12 @@ export function Auth ()
             </div>
             <p key={statusAnim} className="status">{status}</p>
 
-            <Button layout='horizontal-outlined' type="submit" icon={icon.PlusCircle} text='สมัครสมาชิก' click={(e) => clickRegister(e)}/>
+            <ButtonOld layout='horizontal-outlined' type="submit" icon={icon.PlusCircle} text='สมัครสมาชิก' click={(e) => clickRegister(e)}/>
           </form>
           {/* หน้าลืมรหัสผ่าน */}
           <div className={view == 3 ? "d-flex" : "d-none"}>
             <div>
-              <Button2 type='horizontal' icon={icon.arrowLeftCircle} text="ย้อนกลับ" click={(e) => setViewLogin (e)}/>
+              <Button type='horizontal' icon={icon.arrowLeftCircle} text="ย้อนกลับ" click={(e) => setViewLogin (e)}/>
             </div>
             <div className="input">
               <label>รหัสประจำตัว</label>
@@ -243,7 +243,7 @@ export function Auth ()
         {
             auth.login (username, password);
 
-            finalize ();
+            finalize (false);
         }
         catch (ex)
         {
@@ -298,7 +298,7 @@ export function Auth ()
                 try
                 {
                     auth.loginFacebook (info.authResponse.userID);
-                    finalize ();
+                    finalize (false);
                 }
                 catch (ex)
                 {
@@ -389,7 +389,7 @@ export function Auth ()
                         
                             reader.readAsDataURL (blob);
                         });
-                        newPersonal.icon = api.encodeImage (data);
+                        newPersonal.icon = api.encodeContent (data);
                     }
                     else
                     {
@@ -403,7 +403,7 @@ export function Auth ()
                     profile.create ();
                     profile.setContact (newContact);
                     profile.setPersonal (newPersonal);
-                    finalize ();
+                    finalize (true);
                 }
                 catch (ex)
                 {
@@ -514,7 +514,7 @@ export function Auth ()
         setStatusAnim (statusAnim + 1);
     }
 
-    function finalize ()
+    function finalize (newAccount = false)
     {
         if (auth.isLogged () && auth.isActive ())
         {
@@ -525,8 +525,9 @@ export function Auth ()
             {
                 let json = JSON.parse (atob(ctx));
                 let redirect = json["redirect"];
+                let redirectCreate = json["redirectCreate"];
             
-                window.location.href = redirect;
+                window.location.href = newAccount ? redirectCreate : redirect;
                 return;
             }
             else

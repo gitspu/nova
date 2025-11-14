@@ -3,7 +3,7 @@ import * as icon from './../Script/Icon';
 
 import "./Style/Common.css"
 
-export function Button2 ({
+export function Button ({
     layout /* ประเภทปุ่ม */,
     icon /* รูปภาพสำหรับปุ่มกด */, 
     text /* ข้อความสำหรับปุ่มกด */,
@@ -26,17 +26,23 @@ export function Button2 ({
     }
     classImpl = [classImpl, className].join (' ');
 
-    return <button className={classImpl} type={type} style={style} onClick={click}>
-        {icon != null ? <img src={icon}/> : <></>}
-        {text != null ? <label htmlFor={htmlFor}>{text}</label> : <></>}
+    return <button className={classImpl} type={type} style={style} onClick={(event) => onClick(event)}>
+        {icon != null ? <img onClick={(event) => onClick(event)} src={icon}/> : <></>}
+        {text != null ? <label onClick={(event) => onClick(event)} htmlFor={htmlFor}>{text}</label> : <></>}
     </button>
-}
 
+    function onClick (event)
+    {        
+        if (click != null) {
+            click (event);
+        }
+    }
+}
 
 /**
  * ปุ่มกดที่เน้นแสดงรูปภาพแทนข้อความ
 */
-export function Button ({
+export function ButtonOld ({
     layout /* ประเภทปุ่มกดเช่น horizontal หรือ vertical */,
     theme /* ธีมของปุ่มกด */,
     type /* ประเภทปุ่ม */,
@@ -140,13 +146,13 @@ export function VisibilityOption ({
     const outSet = state != null ? state[1] : null;
 
     return <div className={outClass} style={style}>
-        <button onClick={(event) => onClick(event, 2)} className={outGet == 2 ? "active" : "normal"}>
+        <button title="ทุกคน" onClick={(event) => onClick(event, 2)} className={outGet == 2 ? "active" : "normal"}>
             <img src={icon.people}></img>
         </button>
-        <button onClick={(event) => onClick(event, 3)} className={outGet == 3 ? "active" : "normal"}>
+        <button title="เพื่อน และ ผู้จ้าง" onClick={(event) => onClick(event, 3)} className={outGet == 3 ? "active" : "normal"}>
             <img src={icon.person}></img>
         </button>
-        <button onClick={(event) => onClick(event, 4)} className={outGet == 4 ? "active" : "normal"}>
+        <button title="เฉพาะฉัน" onClick={(event) => onClick(event, 4)} className={outGet == 4 ? "active" : "normal"}>
             <img src={icon.ban}></img>
         </button>
     </div>

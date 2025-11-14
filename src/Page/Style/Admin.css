@@ -151,3 +151,111 @@
     }
 }
 /* ------------------------------- */
+
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.page-admin .content-test-ui .heading-1 
+{
+    font-size:      var(--app-text-h1-size) !important;
+    font-weight:    var(--app-text-h1-weight) !important;
+    color:          var(--app-text-h1-color) !important;
+}
+.page-admin .content-test-ui .heading-2
+{
+    font-size:      var(--app-text-h2-size) !important;
+    font-weight:    var(--app-text-h2-weight) !important;
+    color:          var(--app-text-h2-color) !important;
+}
+.page-admin .content-test-ui .heading-3
+{
+    font-size:      var(--app-text-h3-size) !important;
+    font-weight:    var(--app-text-h3-weight) !important;
+    color:          var(--app-text-h3-color) !important;
+}
+.page-admin .content-test-ui .heading-4
+{
+    font-size:      var(--app-text-h4-size) !important;
+    font-weight:    var(--app-text-h4-weight) !important;
+    color:          var(--app-text-h4-color) !important;
+}
+.page-admin .content-test-ui .heading-5
+{
+    font-size:      var(--app-text-h5-size) !important;
+    font-weight:    var(--app-text-h5-weight) !important;
+    color:          var(--app-text-h5-color) !important;
+}
+.page-admin .content-test-ui .heading-6
+{
+    font-size:      var(--app-text-h6-size) !important;
+    font-weight:    var(--app-text-h6-weight) !important;
+    color:          var(--app-text-h6-color) !important;
+}
+
+
+.page-admin .content-test-ui .text-link,
+.page-admin .content-test-ui .text-link:enabled
+{
+    font-size:       var(--app-text-link-size) !important;
+    font-weight:     var(--app-text-link-weight) !important;
+    color:           var(--app-text-link-color) !important;
+    text-decoration: var(--app-text-link-decoration) !important;
+}
+.page-admin .content-test-ui .text-link:enabled:hover,
+.page-admin .content-test-ui .text-link:enabled:focus
+{
+    font-size:       var(--app-text-link-hover-size) !important;
+    font-weight:     var(--app-text-link-hover-weight) !important;
+    color:           var(--app-text-link-hover-color) !important;
+    text-decoration: var(--app-text-link-hover-decoration) !important;
+}
+.page-admin .content-test-ui .text-link:enabled:active
+{
+    font-size:       var(--app-text-link-active-size) !important;
+    font-weight:     var(--app-text-link-active-weight) !important;
+    color:           var(--app-text-link-active-color) !important;
+    text-decoration: var(--app-text-link-active-decoration) !important;
+}
+
+
+.page-admin .content-test-ui .text-link:disabled:active
+{
+    font-size:       var(--app-text-link-disabled-size) !important;
+    font-weight:     var(--app-text-link-disabled-weight) !important;
+    color:           var(--app-text-link-disabled-color) !important;
+    text-decoration: var(--app-text-link-disabled-decoration) !important;
+}
+
+.page-admin .content-test-ui .button-normal:enabled
+{
+    background-color:   var(--app-button-normal-background) !important;
+    color:              var(--app-button-normal-text) !important;
+    outline:            var(--app-button-normal-outline) !important;
+    border-radius:      var(--app-button-normal-radius) !important;
+    padding:            var(--app-button-normal-padding) !important;
+}
+.page-admin .content-test-ui .button-normal:enabled:hover,
+.page-admin .content-test-ui .button-normal:enabled:focus
+{
+    background-color:   var(--app-button-hover-background) !important;
+    color:              var(--app-button-hover-text) !important;
+    outline:            var(--app-button-hover-outline) !important;
+    border-radius:      var(--app-button-hover-radius) !important;
+    padding:            var(--app-button-hover-padding) !important;
+}
+.page-admin .content-test-ui .button-normal:enabled:active
+{
+    background-color:   var(--app-button-active-background) !important;
+    color:              var(--app-button-active-text) !important;
+    outline:            var(--app-button-active-outline) !important;
+    border-radius:      var(--app-button-active-radius) !important;
+    padding:            var(--app-button-active-padding) !important;
+}
+.page-admin .content-test-ui .button-normal:disabled
+{
+    background-color:   var(--app-button-disabled-background) !important;
+    color:              var(--app-button-disabled-text) !important;
+    outline:            var(--app-button-disabled-outline) !important;
+    border-radius:      var(--app-button-disabled-radius) !important;
+    padding:            var(--app-button-disabled-padding) !important;
+}

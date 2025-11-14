@@ -1,5 +1,5 @@
 import './Style/ProfilePost.css'
-import { Button } from "./Common";
+import { ButtonOld } from "./Common";
 import * as icon from '../Script/Icon'
 
 export function PostContainer ({children})
@@ -38,14 +38,14 @@ export function PostBodyAudio ({value})
 }
 export function PostBodyVideo ({value})
 {
-    return <video className="body-video" src={value} controls={true}/>
+    return <video className="body-video" src={value} controls={true} controlsList='nodownload'/>
 }
 export function PostAction ()
 {
     return <div className="action">
-        <Button layout='horizontal' icon={icon.thumbUp} text='ถูกใจ'/>
-        <Button layout='horizontal' icon={icon.chatSquare} text='ความคิดเห็น'/>
-        <Button layout='horizontal' icon={icon.share} text='แชร์'/>
-        <Button layout='horizontal' icon={icon.send} text='ส่ง'/>
+        <ButtonOld layout='horizontal' icon={icon.thumbUp} text='ถูกใจ'/>
+        <ButtonOld layout='horizontal' icon={icon.chatSquare} text='ความคิดเห็น'/>
+        <ButtonOld layout='horizontal' icon={icon.share} text='แชร์'/>
+        <ButtonOld layout='horizontal' icon={icon.send} text='ส่ง'/>
     </div>
 }

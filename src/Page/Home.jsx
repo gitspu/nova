@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, Button2 } from "../Component/Common";
+import { ButtonOld, Button } from "../Component/Common";
 import 
 { 
   PostContainer, 
@@ -33,11 +33,11 @@ export function Home ()
     {
         return <div className="left mt-4 ms-4">
           <div>
-            <Button2 type='list-vertical' icon={icon.house} text='หน้าหลัก'/>
-            <Button2 type='list-vertical' icon={icon.sticky} text='บันทึกโพสต์'/>
-            <Button2 type='list-vertical' icon={icon.people} text='กลุ่ม'/>
-            <Button2 type='list-vertical' icon={icon.newspaper} text='ข่าวสาร'/>
-            <Button2 type='list-vertical' icon={icon.calendar} text='กิจกรรม'/>
+            <Button type='list-vertical' icon={icon.house} text='หน้าหลัก'/>
+            <Button type='list-vertical' icon={icon.sticky} text='บันทึกโพสต์'/>
+            <Button type='list-vertical' icon={icon.people} text='กลุ่ม'/>
+            <Button type='list-vertical' icon={icon.newspaper} text='ข่าวสาร'/>
+            <Button type='list-vertical' icon={icon.calendar} text='กิจกรรม'/>
           </div>
         </div>
     }
@@ -64,33 +64,129 @@ export function Home ()
     }
     function ElementMain ()
     {
-        const [postNewText, setPostNewText]  = useState ("");
-        const [postNewUpload] = useState ("");
-        const [postList] = useState ("");
+        const [newText, setNewText]  = useState ("");
+        const [newUpload, setNewUpload] = useState ([]);
+        const [newUploadData, setNewUploadData] = useState ([]);
+
+        const [postList, setPostList] = useState ([]);
 
         useEffect (() => {
             doRefresh ();
         });
 
-        return <div className='main mt-4 ms-4 me-4'>
-          <div>
-              <input className='w-100' type='text' placeholder='เริ่มโพสต์'
-                     value={postNewText} onChange={(e) => setPostNewText (e.target.value)}/>
+        return <>
+          <div className='main'>
+            <div className="main-inner mt-4 ms-4 me-4">
+              <div className="position-relative mb-2">
+                  <input className='w-100' type='text' placeholder='เริ่มโพสต์' value={newText} onChange={(e) => setNewText (e.target.value)}/>
+                  <Button className='position-absolute top-0 bottom-0 left-0' style={{ display: (newText.length != 0 || newUpload.length != 0) ? 'block' : 'none', right: '0px'}} icon={icon.send} click={(event) => onNewClick(event)}/>
+              </div>
+              <div className="mb-2">
+                {newUpload}
+              </div>
+              <div className="d-flex flex-grow-1 w-100 mb-2">
+                <span>
+                  <input type="file" id="post-upload-image" accept="image/*" className="d-none" onChange={(event) => onNewUploadImage(event)}/>
+                  <input type="file" id="post-upload-video" accept="video/*" className="d-none" onChange={(event) => onNewUploadVideo(event)}/>
+                </span>
+                <Button htmlFor='post-upload-image' className='flex-grow-1' layout='horizontal' icon={icon.image} text='รูปภาพ'/>
+                <Button htmlFor='post-upload-video' className='flex-grow-1' layout='horizontal' icon={icon.fileEarmarkPlay} text='วิดีโอ'/>
+                <Button className='flex-grow-1' layout='horizontal' icon={icon.calendar} text='เหตุการณ์'/>
+                <Button className='flex-grow-1' layout='horizontal' icon={icon.backquoteLeft} text='บทความ'/>
+              </div>
+              <div className="d-flex flex-column gap-2">
+                {postList}
+              </div>
+            </div>
           </div>
-          <div>
-            {postNewUpload}
-          </div>
-          <div className="d-flex flex-grow-1 w-100 mt-2 mb-2">
-            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.image} text='รูปภาพ'/>
-            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.fileEarmarkPlay} text='วิดีโอ'/>
-            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.calendar} text='เหตุการณ์'/>
-            <Button2 className='flex-grow-1' layout='horizontal' icon={icon.backquoteLeft} text='บทความ'/>
-          </div>
-          <div>
-            {postList}
-          </div>
-        </div>
+        </>;
+        
+        function onNewClick (event)
+        {
+            event.preventDefault ();
 
+            const basic = api.auth.getBasic ();
+            const personal = api.profile.getPersonal ();
+
+            let title = [personal.firstName.value, personal.middleName.value, personal.lastName.value].join (' ');
+
+            if (title == "") title = personal.nickname.value;
+            if (title == "") title = basic.name;
+
+            let subtitle = "เมื่อสักครู่นี้";
+            let icon = personal.icon;
+
+            setPostList ([
+              <PostContainer key={0}>
+                <PostHead icon={api.decodeContent (icon)} title={title} subtitle={subtitle}/>
+                <PostBody>
+                  {newText.length != 0 ? <PostBodyText key={1} value={newText}/> : <></>}
+                  {newUploadData.map ((upload, index) => 
+                  {
+                      switch (upload.type)
+                      {
+                        case 2: return <PostBodyImage key={1 + index} value={api.decodeContent(upload.data)}/>
+                        case 3: return <PostBodyVideo key={1 + index} value={api.decodeContent(upload.data)}/>
+                      }
+                      return <></>
+                  })}
+                </PostBody>
+                <PostAction/>
+              </PostContainer>,
+              ... postList.map ((value, index) => 
+              {
+                  return React.cloneElement (value, {
+                    key: 1 + index
+                  });
+              })
+            ]);
+            setNewText ("");
+            setNewUpload ([]);
+            setNewUploadData ([]);
+        }
+        function onNewUploadImage (event)
+        {
+            event.preventDefault ();
+
+            const target = event.target;
+            const file = target.files[0];
+
+            if (file == null) { return; }
+
+            var reader = new FileReader ();
+
+            reader.onloadend = function ()
+            {
+                setNewUpload (newUpload.concat (<button key={newUpload.length} className="me-1 mb-1">{file.name}</button>));
+                setNewUploadData (newUploadData.concat ({
+                    type: 2,
+                    data: api.encodeContent (reader.result)
+                }))
+            }
+            reader.readAsDataURL (file);
+        }
+        function onNewUploadVideo (event)
+        {
+            event.preventDefault ();
+
+            const target = event.target;
+            const file = target.files[0];
+
+            if (file == null) { return; }
+
+            var reader = new FileReader ();
+
+            reader.onloadend = function ()
+            {
+                setNewUpload (newUpload.concat (<button key={newUpload.length} className="me-1 mb-1">{file.name}</button>));
+                setNewUploadData (newUploadData.concat ({
+                    type: 3,
+                    data: api.encodeContent (reader.result)
+                }))
+            }
+            reader.readAsDataURL (file);
+
+        }
 
         function doRefresh ()
         {
@@ -167,13 +263,13 @@ export function Home ()
                 </Link>
 
                 {/* Action Button: ปุ่มสำหรับเพิ่มประสบการณ์/ทักษะ */}
-                <Button
+                <ButtonOld
                   className="btn-dashed"
                   variant="outline-secondary"
                   onClick={handleAddExperience}
                 >
                   + ประสบการณ์
-                </Button>
+                </ButtonOld>
               </div>
 
               {/* ListGroup: Logout Link (แยกออกมาจากเมนูหลัก) */}
@@ -277,13 +373,13 @@ export function Home ()
                       <div className="text-muted small">Industry</div>
                     </div>
                     {/* Action Button: Follow (ย้ายไปด้านขวา) */}
-                    <Button
+                    <ButtonOld
                       variant="outline-dark"
                       size="sm"
                       className="rounded-pill fw-bold"
                     >
                       + Follow
-                    </Button>
+                    </ButtonOld>
                   </div>
                 </ListGroup.Item>
 
@@ -297,13 +393,13 @@ export function Home ()
                       <div className="text-muted small">Role</div>
                     </div>
                     {/* Action Button: Follow (ย้ายไปด้านขวา) */}
-                    <Button
+                    <ButtonOld
                       variant="outline-dark"
                       size="sm"
                       className="rounded-pill fw-bold"
                     >
                       + Follow
-                    </Button>
+                    </ButtonOld>
                   </div>
                 </ListGroup.Item>
 
@@ -316,13 +412,13 @@ export function Home ()
                       <div className="text-muted small">Content Creator</div>
                     </div>
                     {/* Action Button: Follow (ย้ายไปด้านขวา) */}
-                    <Button
+                    <ButtonOld
                       variant="outline-dark"
                       size="sm"
                       className="rounded-pill fw-bold"
                     >
                       + Follow
-                    </Button>
+                    </ButtonOld>
                   </div>
                 </ListGroup.Item>
 
