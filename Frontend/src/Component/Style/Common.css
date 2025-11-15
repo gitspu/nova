@@ -1,0 +1,194 @@
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-button:enabled, .component-button:disabled
+{
+    padding: 0px;
+}
+.component-button:enabled > img, .component-button:disabled > img
+{
+    padding: 6px 4px 6px 8px;
+}
+.component-button:enabled > label, .component-button:disabled > label
+{
+    padding: 6px 8px 6px 4px;
+}
+.component-button > *:only-child
+{
+
+}
+
+.component-common-button
+{
+    display: inline-block;
+    min-width: 40px; min-height: 40px;
+    
+    margin: 0px !important; padding: 0px !important;
+}
+.component-common-button
+{
+
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-common-visopt
+{
+    display: inline-block;
+}
+.component-common-visopt > button
+{
+    display: inline-block;
+    padding: 0px !important;
+    min-width: 40px; min-height: 40px;
+}
+.component-common-visopt > button { border-radius: 0px 0px 0px 0px;}
+.component-common-visopt > button:first-child { border-radius: 12px 0px 0px 12px; }
+.component-common-visopt > button:last-child { border-radius: 0px 12px 12px 0px;}
+
+.component-common-visopt > button > img
+{
+    width: 1rem; height: 1rem;
+}
+.component-common-visopt > .normal
+{
+    background-color: transparent !important;
+}
+.component-common-visopt > .active
+{
+    background-color: var(--btn-active-bg) !important;
+    color: var(--btn-active-text) !important;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+
+
+.component-checkbox
+{
+    display: block;
+    position: relative;
+}
+.component-checkbox .field
+{
+    position: absolute;
+    top: 0px; bottom: auto;
+
+    min-width: 24px; min-height: 24px;
+    max-width: 24px; max-height: 24px;
+}
+.component-checkbox .name
+{
+    display: block;
+    margin: 0px 0px 0px 32px; align-content: center;
+
+    min-height: 32px; max-height: 32px;
+    color: var(--text-primary);
+}
+.component-checkbox .description
+{
+    display: block;
+    margin: 0px 0px 0px 32px;
+
+    color: var(--text-secondary);
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-togglebar-horizontal
+{
+    display: flex; align-items: center; justify-content: center;
+    width: auto; height: 100%;
+}
+.component-togglebar-horizontal > button
+{
+    position: relative;
+    min-width: 40px; min-height: 40px;
+
+    background-color: transparent;
+    border: none; outline: none;
+
+    font-size: 0.75rem;
+}
+.component-togglebar-horizontal > button:hover,
+.component-togglebar-horizontal > button:focus
+{
+    background-color: #D8D8D8;
+    color: var(--text-primary);
+}
+.component-togglebar-horizontal > button > img
+{
+    width: 100%; height: 100%;
+    /* position: absolute;
+    top: 0px; bottom: auto;
+    left: 0px; right: 0px;
+    margin: 0px auto; */
+}
+.component-togglebar-horizontal > button > label
+{
+    position: absolute;
+    top: auto; bottom: 0px;
+    left: 0px; right: 0px;
+    margin: 0px auto;
+}
+
+
+
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.component-togglebar-vertical
+{
+    width: 100%;
+}
+.component-togglebar-vertical > button
+{
+    width: 100%;
+    height: 48px;
+    padding: 12px; margin-bottom: 2px;
+    border-radius: 4px;
+    text-align: start;
+}
+.component-togglebar-vertical > p
+{
+    width: 100%;
+    height: 40px;
+    align-content: center;
+}
+
+.component-togglebar-vertical .normal
+{
+    color: black;
+    background-color: rgb(215, 215, 215);
+    border: none; outline: none;
+    box-sizing: border-box;
+}
+.component-togglebar-vertical .normal:hover,
+.component-togglebar-vertical .normal:focus
+{
+    color: black;
+    background-color: rgb(128, 215, 215);
+}
+.component-togglebar-vertical .normal:active
+{
+    color: black;
+    background-color: rgb(128, 215, 215);
+}
+
+.component-togglebar-vertical .toggled
+{
+    color: white;
+    background-color: rgb(149, 204, 255);
+    border: none; outline: none;
+    box-sizing: border-box;
+}
+.component-togglebar-vertical .toggled:hover,
+.component-togglebar-vertical .toggled:focus
+{
+    color: white;
+    background-color: rgb(120, 204, 255);
+}
+.component-togglebar-vertical .toggled:active
+{
+    color: white;
+    background-color: rgb(120, 104, 100);    
+}

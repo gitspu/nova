@@ -1,0 +1,333 @@
+/*
+    พื้นที่สำหรับ CSS ที่โค็ดทั้งหมดในไฟล์จะมีผลต่อทุกหน้า (page)
+    ดังนั้นจงระวังไว้ และใช้อย่างชาญฉลาด 
+*/
+@import "bootstrap";
+
+.app-theme-light
+{
+    color-scheme: light;
+
+    /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+    --app-background-primary:   #ECF4E8;
+    --app-background-secondary: #D6F4ED;
+    --app-background-tertiary:  #b7d4cd;
+
+    --app-outline-primary:      1px solid darkgrey;
+    --app-outline-secondary:    1px solid darkgrey;
+    --app-outline-tertiary:     1px solid darkgrey;
+
+    --app-text-primary:         #06202B;
+    --app-text-secondary:       #001C30;
+    --app-text-tertiary:        #001C30;
+
+    --app-text-button:         white;
+
+    --app-text-link:            #3a699f;
+    --app-text-link-hover:      #3a699f;
+    --app-text-link-active:     #3a699f;
+    --app-text-link-disabled:   #3a699f;
+
+    --app-size-h1:              2.00rem;
+    --app-size-h2:              1.50rem;
+    --app-size-h3:              1.25rem;
+    --app-size-h4:              1.00rem;
+    --app-size-h5:              0.75rem;
+    --app-size-h6:              0.50rem;
+    --app-size-text:            1.00rem;
+   
+    --app-button-background:           #387a55;
+    --app-button-background-hover:     #266341;
+    --app-button-background-active:    #164029;
+    --app-button-background-disabled:  #95b895;
+    --app-button-border:                0px solid #387a55;
+    --app-button-border-hover:          0px solid #387a55;
+    --app-button-border-active:         0px solid #387a55;
+    --app-button-border-disabled:       0px solid #387a55;
+    --app-button-radius:                8px;
+    --app-button-text:                  var(--app-text-primary);
+
+    --app-input-background:           #DDF4E7;
+    --app-input-background-hover:     #c4edd6;
+    --app-input-background-active:    #a3ceb6;
+    --app-input-background-disabled:  #95b895;
+    --app-input-border:                1px solid grey;
+    --app-input-border-hover:          1px solid grey;
+    --app-input-border-active:         1px solid grey;
+    --app-input-border-disabled:       1px solid grey;
+    --app-input-radius:                8px;
+    --app-input-text:                  var(--app-text-primary);
+    --app-input-placeholder:           var(--app-text-secondary);
+
+    /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+}
+.app-theme-dark
+{
+    color-scheme: dark;
+
+    /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+    --app-background-primary:   #000000;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+
+.h1, h1
+{
+    display:        block;
+    font-weight:    bold;
+    font-size:      var(--app-size-h1);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.h2, h2
+{
+    display:        block;
+    font-weight:    bold;
+    font-size:      var(--app-size-h2);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.h3, h3
+{
+    display:        block;
+    font-weight:    bold;
+    font-size:      var(--app-size-h3);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.h4, h4
+{
+    display:        block;
+    font-weight:    bold;
+    font-size:      var(--app-size-h4);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.h5, h5
+{
+    display:        block;
+    font-weight:    bold;
+    font-size:      var(--app-size-h5);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.h6, h6
+{
+    display:        block;
+    font-weight:    bold;
+    font-size:      var(--app-size-h6);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.p, p
+{
+    display:        block;
+    font-weight:    normal;
+    font-size:      var(--app-size-text);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+.label, label
+{
+    display:        inline-block;
+    font-weight:    normal;
+    font-size:      var(--app-size-text);
+    color:          var(--app-text-primary);
+    margin:         0px;
+    padding:        0px;
+}
+
+.a, 
+ a
+{
+    display:         inline-block;
+    font-weight:     normal;
+    font-size:       var(--app-size-text);
+    color:           var(--app-text-link);
+    margin:          0px;
+    padding:         0px;
+    text-decoration: none;
+
+}
+.a:hover, a:focus, 
+ a:hover, a:focus
+{
+    display:         inline-block;
+    font-weight:     normal;
+    font-size:       var(--app-size-text);
+    color:           var(--app-text-link-hover);
+    margin:          0px;
+    padding:         0px;
+    text-decoration: underline;
+}
+.a:active, 
+ a:active
+{
+    display:         inline-block;
+    font-weight:     normal;
+    font-size:       var(--app-size-text);
+    color:           var(--app-text-link-hover);
+    margin:          0px;
+    padding:         0px;
+    text-decoration: underline;
+}
+.a:disabled, 
+ a:disabled
+{
+    display:        inline-block;
+    font-weight:    normal;
+    font-size:      var(--app-size-text);
+    color:          var(--app-text-link-disabled);
+    margin:         0px;
+    padding:        0px;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.button:enabled, 
+ button:enabled
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-text-button);
+    background-color:   var(--app-button-background);
+    border:             var(--app-button-border);
+    border-radius:      var(--app-button-radius);
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.button:enabled:hover, .button:enabled:focus,
+ button:enabled:hover, button:enabled:focus
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-text-button);
+    background-color:   var(--app-button-background-hover);
+    border:             var(--app-button-border-hover);
+    border-radius:      var(--app-button-radius);
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.button:enabled:active, .button:enabled:active,
+ button:enabled:active, button:enabled:active
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-text-button);
+    background-color:   var(--app-button-background-active);
+    border:             var(--app-button-border-active);
+    border-radius:      var(--app-button-radius);
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.button:disabled, button:disabled
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-text-button);
+    background-color:   var(--app-button-background-disabled);
+    border:             var(--app-button-border-disabled);
+    border-radius:      var(--app-button-radius);
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.input:enabled, input:enabled
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-input-text);
+    background-color:   var(--app-input-background);
+    border:             var(--app-input-border);
+    border-radius:      var(--app-input-radius);
+    outline:            none;
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.input::placeholder, input::placeholder
+{
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-input-placeholder);
+    background-color:   transparent;
+    border:             none;
+    border-radius:      none;
+    margin:             0px;
+    padding:            0px 0px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.input:enabled:hover, input:enabled:hover,
+.input:enabled:focus, input:enabled:focus
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-input-text);
+    background-color:   var(--app-input-background-hover);
+    border:             var(--app-input-border-hover);
+    border-radius:      var(--app-input-radius);
+    outline:            none;
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.input:enabled:active, input:enabled:active
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-input-text);
+    background-color:   var(--app-input-background-active);
+    border:             var(--app-input-border-active);
+    border-radius:      var(--app-input-radius);
+    outline:            none;
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}
+.input:disabled, input:disabled
+{
+    display:            inline-block;
+    font-weight:        normal;
+    font-size:          var(--app-size-text);
+    color:              var(--app-input-text);
+    background-color:   var(--app-input-background-disabled);
+    border:             var(--app-input-border-disabled);
+    border-radius:      var(--app-input-radius);
+    outline:            none;
+    margin:             0px;
+    padding:            0px 8px;
+    min-width:          96px;
+    min-height:         40px;
+}

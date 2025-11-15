@@ -1,0 +1,152 @@
+
+.page-home
+{
+    position: absolute; inset: 0px 0px 0px 0px;
+    overflow: hidden hidden;
+
+    background-color: var(--app-background-primary);
+    color: var(--app-text-primary);
+}
+.page-home > .navigation
+{
+    position: absolute; inset: 0px 70% 0px 0px;
+    overflow: hidden hidden;
+    pointer-events: none;
+}
+.page-home > .navigation > *
+{
+    margin: 12px 0px 0px auto;
+    max-width: 224px;
+}
+.page-home > .main
+{
+    display: block;
+    position: absolute; inset: 0px 0px 0px 0px;
+    overflow: hidden scroll;
+}
+.page-home > .main > *
+{
+    margin: 12px 30% 0px 30%;
+    max-width: 40%;
+    padding: 0px 12px;
+}
+.page-home > .sidebar
+{
+    display: block;
+    position: absolute; inset: 0px 0px 0px 70%;
+    overflow: hidden hidden;
+    pointer-events: none;
+}
+.page-home > .sidebar > *
+{
+    margin: 12px auto 0px 0px;
+    max-width: 224px;
+}
+
+@media (max-width: 1152px)
+{
+    .page-home > .navigation
+    {
+        inset: 0px 80% 0px 0px;
+    }
+    .page-home > .navigation > *
+    {
+        margin: 12px 0px 0px 24px;
+    }
+    .page-home > .main > *
+    {
+        margin: 12px 20% 0px 20%;
+        max-width: 60%;
+    }
+    .page-home > .sidebar
+    {
+        inset: 0px 0px 0px 80%;
+    }
+    .page-home > .sidebar > *
+    {
+        margin: 12px 24px 0px 0px;
+    }
+}
+@media (max-width: 768px)
+{
+    .page-home > .navigation
+    {
+        display: none;
+    }
+    .page-home > .main > *
+    {
+        margin: 12px auto;
+        width: 100%;
+        max-width: 100%;
+    }
+    .page-home > .sidebar
+    {
+        display: none;
+    }
+}
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.page-home > .main > .new-text
+{
+    position: relative;
+    width: 100%;
+}
+.page-home > .main > .new-text > *:nth-child(1)
+{
+    width: 100%;
+}
+.page-home > .main > .new-text > *:nth-child(2)
+{
+    position: absolute;
+    inset: 0px 0px 0px auto;
+    margin: 0px 12px;
+}
+.page-home > .main > .new-upload-list:empty
+{
+    display: none;
+}
+.page-home > .main > .new-upload-list
+{
+    width: 100%;
+
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.page-home > .main > .new-upload-list > *
+{
+    padding: 8px;
+    border: var(--app-outline-primary);
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.page-home > .main > .new-upload-list > * > label
+{
+    word-break: break-all;
+}
+.page-home > .main > .new-upload-logic
+{
+    display: none;
+}
+.page-home > .main > .new-upload
+{
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%; margin-bottom: 12px;
+    gap: 4px;
+}
+.page-home > .main > .new-upload > *
+{
+    flex-grow: 1;
+}
+.page-home > .main > .post > *
+{
+    margin-bottom: 12px;
+}

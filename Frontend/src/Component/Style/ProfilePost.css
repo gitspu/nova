@@ -1,0 +1,88 @@
+
+.component-profilepost
+{
+    width: 100%;
+
+    background-color: var(--app-background-secondary);
+    border-radius: 12px;
+    outline: 1px solid grey;
+    padding: 12px;
+}
+.component-profilepost .head
+{
+    display: flex; flex-direction: row;
+    height: 40px; margin: 0px 0px 16px 0px;
+}
+.component-profilepost .head-image
+{
+    width: 40px; height: 40px;
+    border-radius: 100%;
+    margin-right: 12px;
+}
+.component-profilepost .head-title
+{
+    display: block;
+
+    font-weight: bold;
+    font-size: 1rem;
+}
+.component-profilepost .head-subtitle
+{
+    display: block;
+
+    font-weight: normal;
+    font-size: 0.75rem;
+}
+.component-profilepost .body
+{
+    width: 100%;
+}
+.component-profilepost .body > *
+{
+    width: 100%; height: auto;
+    display: block;
+}
+.component-profilepost .body-text
+{
+    margin: 0px 0px 12px 0px;
+}
+.component-profilepost .body-image
+{
+    width: 100%; height: 324px;
+    margin: 0px 0px 12px 0px;
+
+    border-radius: 24px;
+    background-color: var(--app-background-tertiary);
+    object-fit: contain;
+}
+.component-profilepost .body-audio
+{
+    width: 100%; height: 40px;
+    margin: 0px 0px 12px 0px;
+}
+.component-profilepost .body-video
+{
+    width: 100%; height: 324px;
+    margin: 0px 0px 12px 0px;
+    border-radius: 24px;
+    object-fit: cover;
+}
+.component-profilepost .body-video:fullscreen,
+.component-profilepost .body-video:-ms-fullscreen,
+.component-profilepost .body-video:-moz-full-screen,
+.component-profilepost .body-video:-webkit-full-screen
+{
+    margin: 0px;
+    border-radius: 0px !important;
+}
+.component-profilepost .action
+{
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.component-profilepost .action > *
+{
+    flex: 1;
+}

@@ -1,0 +1,5 @@
+{
+  "name": "My Extension",
+  "version": "1.0",
+  "permissions": ["unlimitedStorage"]
+}

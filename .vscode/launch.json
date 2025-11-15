@@ -8,8 +8,24 @@
 
             "console": "integratedTerminal",
             "runtimeExecutable":"vite",
-            "cwd":"${workspaceFolder}",
+            "cwd":"${workspaceFolder}/Frontend",
             "args":[],
+        },
+        {
+            "type":"node",
+            "request":"launch",
+            "name":"Launch Backend",
+
+            "console": "integratedTerminal",
+            "runtimeExecutable":"node",
+            "cwd":"${workspaceFolder}/Backend",
+            "args":["${workspaceFolder}/Backend/Main.ts"],
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch",
+            "configurations": [ "Launch Backend", "Launch Frontend" ]
         }
     ]
 }

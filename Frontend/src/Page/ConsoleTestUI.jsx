@@ -1,0 +1,5 @@
+
+export function ConsoleTestUI ()
+{
+    return <></>
+}

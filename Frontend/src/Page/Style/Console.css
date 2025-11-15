@@ -1,0 +1,65 @@
+
+.page-console-header
+{
+    position: fixed; inset: 0px 0px 0px 0px; 
+    min-height: 48px; max-height: 48px;
+    overflow: hidden hidden;
+
+    padding: 0px 192px;
+    width: 100%;
+
+    display: flex; flex-direction: row; flex-wrap: nowrap;
+    align-items: center; justify-content: center;
+    
+    background-color: var(--app-background-secondary);
+    border: var(--app-outline-primary);
+    border-width: 0px 0px 1px 0px;
+}
+.page-console-header > *:last-child
+{
+    flex-grow: 1;
+}
+.page-console-menu
+{
+    position: fixed; inset: 48px auto auto 0px;
+    overflow: none auto;
+
+    padding: 24px 192px;
+}
+.page-console-body
+{
+    position: absolute; inset: 48px 0px 0px 0px;
+    overflow: none; overflow-y: scroll;
+
+    padding: 24px 192px;
+
+    background-color: var(--app-background-primary);
+}
+.page-console-body > *
+{
+    max-width: 210mm;
+    margin: 0px auto;
+}
+
+@media (max-width: 1024px)
+{
+    .page-console-header
+    {
+        padding: 12px 32px;
+    }
+    .page-console-body
+    {
+        padding: 12px 32px;
+    }
+}
+@media (max-width: 512px)
+{
+    .page-console-header
+    {
+        padding: 12px 24px;
+    }
+    .page-console-body
+    {
+        padding: 12px 24px;
+    }
+}
