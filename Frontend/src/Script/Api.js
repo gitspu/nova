@@ -16,24 +16,24 @@ export function init ()
     profileOf.init ();
     feed.init ();
 
-    try
-    {
-        if (auth.isLogged () && auth.isActive ())
-        {
-            // อัพเดทข้อมูล เป็นเวอร์ชั่นใหม่ (ถ้ามี)
-            profile.setContact (profile.getContact ());
-            profile.setEducation (profile.getEducation ());
-            profile.setInterest (profile.getInterest ());
-            profile.setJob (profile.getJob ());
-            profile.setPersonal (profile.getPersonal ());
-            profile.setSkill (profile.getSkill ());
-            profile.setSocial (profile.getSocial ());
-        }
-    }
-    catch (ex)
-    {
-        console.error (ex);
-    }
+    // try
+    // {
+    //     if (auth.isLogged () && auth.isActive ())
+    //     {
+    //         // อัพเดทข้อมูล เป็นเวอร์ชั่นใหม่ (ถ้ามี)
+    //         profile.setContact (profile.getContact ());
+    //         profile.setEducation (profile.getEducation ());
+    //         profile.setInterest (profile.getInterest ());
+    //         profile.setJob (profile.getJob ());
+    //         profile.setPersonal (profile.getPersonal ());
+    //         profile.setSkill (profile.getSkill ());
+    //         profile.setSocial (profile.getSocial ());
+    //     }
+    // }
+    // catch (ex)
+    // {
+    //     console.error (ex);
+    // }
 }
 
 export function decodeContent (value)
@@ -61,3 +61,13 @@ export function encodeContent (value)
 
     return `${mime} ${content}`;
 }
+export default
+{
+    auth,
+    profile,
+    profileOf,
+    feed,
+
+    decodeContent,
+    encodeContent,
+};

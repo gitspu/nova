@@ -3,50 +3,111 @@ import { ButtonOld } from "./Common";
 import * as icon from '../Script/Icon'
 import { ButtonLabel } from './Common2';
 
-export function PostContainer ({children})
+const Root = ({children}) =>
 {
-    return <div className="component-profilepost">{children}</div>
+    return (
+      <div className='profile-post'>
+          {children}
+      </div>
+    );
 }
-export function PostHead ({
-    icon = null, 
-    title = "", 
-    subtitle = ""
-})
+Root.Head = ({icon, title, subtitle, onClick }) =>
 {
-    return <div className="head">
-        <img className='head-image' src={icon} alt=''/>
-        <div>
-            <label className='head-title'>{title}</label>
-            <label className='head-subtitle'>{subtitle}</label>
+    return (
+      <div className='head'>
+        <img className='image' src={icon} alt='' onClick={onClick}/>
+        <div className='text'>
+          <label className='title' onClick={onClick}>{title}</label>
+          <label className='subtitle'>{subtitle}</label>
         </div>
-    </div>
+      </div>
+    );
 }
-export function PostBody ({children})
+Root.Body = ({children}) =>
 {
-    return <div className="body">{children}</div>
+    return (
+      <div className="body">
+        {children}
+      </div>
+    );
 }
-export function PostBodyText ({value})
+Root.Body.Text = ({value}) => 
 {
-    return <p className="body-text">{value}</p>
+    return (
+      <p className="text">
+        {value}
+      </p>
+    );
 }
-export function PostBodyImage ({value})
+Root.Body.Image = ({value}) =>
 {
-    return <img className="body-image" src={value}/>
+    return (
+      <img className="image" src={value}/>
+    );
 }
-export function PostBodyAudio ({value})
+Root.Body.Video = ({value}) =>
 {
-    return <audio className="body-audio" src={value} controls={true}/>
+    return (
+      <video className="video" src={value} controls={true} controlsList='nodownload'/>
+    );
 }
-export function PostBodyVideo ({value})
+Root.Body.Audio = ({value}) =>
 {
-    return <video className="body-video" src={value} controls={true} controlsList='nodownload'/>
+    return (
+      <audio className="audio" src={value} controls={true}/>
+    );
 }
-export function PostAction ()
+Root.Action = ({children}) =>
 {
-    return <div className="action">
-        <ButtonLabel icon={icon.thumbUp} text='ถูกใจ'/>
-        <ButtonLabel icon={icon.chatSquare} text='ความคิดเห็น'/>
-        <ButtonLabel icon={icon.share} text='แชร์'/>
-        <ButtonLabel icon={icon.send} text='ส่ง'/>
-    </div>
+    return (
+      <div className='action'>
+        {children}
+      </div>
+    );
 }
+Root.Action.Like = () => 
+{
+    return (
+      <button className='button-primary button-outlined'>
+        <label>
+          <img src={icon.thumbUp} alt=''/>
+          <span>ถูกใจ</span>
+        </label>
+      </button>
+    );
+}
+Root.Action.Comment = () => 
+{
+    return (
+      <button className='button-primary button-outlined'>
+        <label>
+          <img src={icon.chatSquare} alt=''/>
+          <span>ความคิดเห็น</span>
+        </label>
+      </button>
+    );
+}
+Root.Action.Share = () => 
+{
+    return (
+      <button className='button-primary button-outlined'>
+        <label>
+          <img src={icon.share} alt=''/>
+          <span>แชร์</span>
+        </label>
+      </button>
+    );
+}
+Root.Action.Send = () => 
+{
+    return (
+      <button className='button-primary button-outlined'>
+        <label>
+          <img src={icon.send} alt=''/>
+          <span>ส่ง</span>
+        </label>
+      </button>
+    );
+}
+
+export default Root;

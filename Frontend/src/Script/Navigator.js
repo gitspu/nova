@@ -20,11 +20,17 @@ export function home ()
  * 
  * @param redirect หลังจากเข้าสู่ระบบ ให้นำผู้ใช้ไปยังหน้าอะไร (เริ่มต้นคือหน้าปัจจุบัน)
 */
-export function auth (redirect = window.location.href, redirectCreate = window.location.href)
+export function auth ({redirectLogin, redirectRegister} = {
+    redirectLogin: window.location.toString (),
+    redirectRegister: window.location.toString (),
+})
 {
+    if (redirectLogin == null) throw new Error ('Login Redirect link is invalid');
+    if (redirectRegister == null) throw new Error ('Register redirect link is invalid');
+
     window.location.href = `${AUTH}?context=${btoa(JSON.stringify({
-        redirect: redirect,
-        redirectCreate: redirectCreate,
+        redirectLogin: redirectLogin,
+        redirectRegister: redirectRegister,
     }))}`;
 }
 /**

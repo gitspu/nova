@@ -1,3 +1,5 @@
 Frontend/node_modules
 Frontend/package-lock.json
-Database
+Database/
+Database/Authentication.json
+Database/Profile.json

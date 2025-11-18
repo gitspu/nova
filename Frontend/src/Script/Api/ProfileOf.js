@@ -121,7 +121,7 @@ export class DataPost
     /** ข้อมูลสื่อ (ถ้ามี) */
     media = 
     [{
-        /** ประเภทสื่อ*/ type: "",
+        /** ประเภทสื่อ*/ type: 0,
         /** ข้อมูลสื่อ*/ value: "",
     }];
 
@@ -192,9 +192,9 @@ export function getContact (which = NaN)
     const result = new DataContact ();
     const block = getBlock (which, "contact");
 
-    result.website = block.website.visibility == profile.VISIBILITY_PUBLIC ? block.website.value : "";
-    result.email = block.email.visibility == profile.VISIBILITY_PUBLIC ? block.email.value : "";
-    result.phone = block.phone.visibility == profile.VISIBILITY_PUBLIC ? block.phone.value : "";
+    if (block.website != null) result.website = block.website.visibility == profile.VISIBILITY_PUBLIC ? block.website.value : "";
+    if (block.email != null) result.email = block.email.visibility == profile.VISIBILITY_PUBLIC ? block.email.value : "";
+    if (block.phone != null) result.phone = block.phone.visibility == profile.VISIBILITY_PUBLIC ? block.phone.value : "";
 
     return result;
 }
@@ -277,7 +277,13 @@ export function getTheme (which)
     if (isNaN (which))
         throw new ErrorArgument ("Profile identifier isn't specified or valid");
 
-    return new DataTheme ();
+    const result = new DataTheme ();
+    const block = getBlock (which, "theme");
+
+    result.color = block.color;
+    result.layout = block.layout;
+
+    return result;
 }
 
 //                                                                  //

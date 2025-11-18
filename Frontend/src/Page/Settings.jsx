@@ -4,6 +4,8 @@ import * as api from './../Script/Api'
 import * as icon from './../Script/Icon'
 import * as navigator from './../Script/Navigator'
 
+import Menu from '../Component/MeunBar'
+
 import { ToggleBar, ToggleBarItem, VisibilityOption } from '../Component/Common'
 
 import './Style/Settings.css'
@@ -18,10 +20,12 @@ export function Settings ({inset = '0px 0px 0px 0px'})
         {category == 2 ? <CategoryProfile/> : <></>}
       </div>
       <div className="menu pt-4">
-        <ToggleBar type='vertical' className='menu-inner' state={[category, setCategory]}>
-          <ToggleBarItem value={1} text='บัญชี'/>
-          <ToggleBarItem value={2} text='โปรไฟล์'/>
-        </ToggleBar>
+        <div>
+          <Menu direction='vertical' state={[category, setCategory]}>
+            <Menu.Child state={1} icon={icon.person} text='บัญชี'/>
+            <Menu.Child state={2} icon={icon.briefcase} text='โปรไฟล์'/>
+          </Menu>
+        </div>
       </div>
     </div>   
 }

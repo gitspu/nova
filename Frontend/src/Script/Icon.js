@@ -26,6 +26,8 @@ import IconShare            from './../Asset/Icon/Share.svg';
 import IconSticky           from './../Asset/Icon/Sticky.svg';
 import IconThumbUp          from './../Asset/Icon/ThumbUp.svg';
 import IconUnlock           from './../Asset/Icon/Unlock.svg';
+import IconX                from './../Asset/Icon/X.svg';
+import IconXCircle          from './../Asset/Icon/XCircle.svg';
 
 
 
@@ -56,3 +58,38 @@ export const share              = IconShare;
 export const sticky             = IconSticky;
 export const thumbUp            = IconThumbUp;
 export const unlock             = IconUnlock;
+export const x                  = IconX;
+export const xCircle            = IconXCircle;
+
+export default
+{
+    arrowLeft,
+    arrowLeftCircle,
+    arrowRight,
+    backquoteLeft,
+    ban,
+    bell,
+    briefcase,
+    calendar,
+    chat,
+    chatSquare,
+    emojiSmile,
+    facebook,
+    fileEarmarkPlay,
+    google,
+    house,
+    image,
+    list,
+    newspaper,
+    people,
+    person,
+    plusCircle,
+    transparent,
+    send,
+    share,
+    sticky,
+    thumbUp,
+    unlock,
+    x,
+    xCircle
+};

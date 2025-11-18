@@ -418,6 +418,9 @@ export function getBasic (which = NaN)
     const json = loadJson ();
     const database = json["access"];
     const block = database[which];
+
+    if (block == null)
+        throw new ErrorArgument ("No auth data was found");
     
     const result = new DataBasic ();
 

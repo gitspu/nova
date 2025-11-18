@@ -65,6 +65,7 @@ export function objectSerialize (baseObject, rawObject)
                         const clone = {}; objectSerialize (value, clone);
     
                         rawObject[key].push (clone);
+                        continue;
                     }
                     rawObject[key].push (value);
                 }

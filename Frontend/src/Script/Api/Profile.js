@@ -79,7 +79,7 @@ export class DataJob
 */
 export class DataPost
 {
-     /** วันที่โพสต์นี้ถูกสร้าง */
+    /** วันที่โพสต์นี้ถูกสร้าง */
     created = new Date(undefined);
     /** วันที่โพสต์นี้ถูกแก้ไข (ถ้ามี) */
     modified = new Date(undefined);
@@ -558,10 +558,13 @@ export function createPost (data, which = NaN)
 
     const block = getBlockRaw (which, "post");
     const blockItem = block["item"];
+    const index = blockItem.length;
 
     blockItem.push (data);
 
     setBlock (block, which, "post");
+
+    return index;
 }
 
 export const VISIBILITY_UNKNOWN     = 0;

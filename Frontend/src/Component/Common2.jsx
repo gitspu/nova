@@ -139,6 +139,7 @@ export function ButtonLabel ({
     icon = null,
     text = '',
     htmlFor = null,
+    disabled = false,
 
     onClick = () => {},
 
@@ -151,7 +152,8 @@ export function ButtonLabel ({
       <button type={type}
               onClick={(event) => handleClick(event)} 
               className={["button-label", className].join(' ')} 
-              style={style}>
+              style={style} 
+              disabled={disabled}>
         <label htmlFor={htmlFor} onClick={(event) => handleClick(event)}>
             {icon != null ? <img src={icon}/> : <></>}
             {text}
@@ -164,4 +166,12 @@ export function ButtonLabel ({
         if (onClick != null)
             onClick (event);
     }
+}
+export function Br ()
+{
+    return <br className='br'/>
+}
+export function Hr ()
+{
+    return <hr className='hr'/>
 }

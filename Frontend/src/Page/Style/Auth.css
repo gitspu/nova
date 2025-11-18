@@ -1,106 +1,154 @@
 
+
+/* พื้นที่หลักของ หน้าเข้าสู่ระบบ */
 .page-auth
 {
-    display: block;
-    position: absolute;
-    inset: 0px 0px 0px 0px;
-
-    width: 100%; height: 100%;
+    position: absolute; inset: 0;
     overflow: hidden;
 }
-.page-auth .system
-{
-    display: none;
-}
-.page-auth .background
-{
-    display: block;
-    position: absolute;
-    inset: 0px 0px 0px 0px;
 
-    background-color: var(--bg-primary);
-}
-.page-auth .foreground
+/* พื้นหลังของ หน้าเข้าสู่ระบบ */
+.page-auth > .background
 {
-    display: block;
-    position: absolute;
-    inset: 0px 0px 0px 0px;
+    position: absolute; inset: 0;
+    overflow: hidden;
+
+    background-color: var(--app-background-primary);
+}
+.page-auth > .background > .content
+{
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+/* พื้นหน้าของ หน้าเข้าสู่ระบบ */
+.page-auth > .foreground
+{
+    position: absolute; inset: 0;
+    overflow: hidden;
+    padding: var(--app-spacing-3);
 
     display: flex;
-    align-items: center; 
-    justify-content: center;
-    overflow-y: auto;
+    align-items: center; justify-content: center;
+}
+.page-auth > .foreground > .inner
+{
+    position: relative;
+
+    width: 100%; max-width: 1024px;
+    height: 100%; max-height: 680px;
+
+    background-color: var(--app-background-secondary);
+    border: var(--app-border-primary);
+    border-radius: var(--app-radius-2);
 
     animation-name: show-foreground;
     animation-duration: 500ms;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     animation-fill-mode: forwards;
 }
-.page-auth .foreground-content
-{
-    width: 100%; max-width: 384px;
-    max-height: 680px;
-    padding: 24px;
 
-    @media (min-width: 512px)
-    {
-        background-color: var(--bg-secondary);
-        border: 1px solid grey;
-        border-radius: 24px;
-    }
+.page-auth > .foreground > .inner > .image
+{
+    position: absolute; inset: 0px 40% 0px 0px;
+    padding: 0px 40% 0px 0px;
+    width: 100%; height: 100%;
+
+    border-radius: var(--app-radius-2);
+    object-fit: cover;
 }
-
-.page-auth .foreground-content > *
+.page-auth > .foreground > .inner > .image-gradient
 {
-    width: 100%;
+    position: absolute; inset: 0px 40% 0px 0px;
+
+    background: linear-gradient(to right, #00000000, var(--app-background-secondary));
+}
+.page-auth > .foreground > .inner > .content
+{
+    position: absolute; inset: 0px auto 0px 60%;
+    width: 40%;
     height: 100%;
 
+    overflow-y: auto;
+
+    display: flex; flex-direction: column;
+}
+.page-auth > .foreground > .inner > .content > .head
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--app-spacing-2);
+    padding: var(--app-spacing-3);
+}
+.page-auth > .foreground > .inner > .content > .body
+{
+    padding: 0px var(--app-spacing-3) var(--app-spacing-3) var(--app-spacing-3);
+
+    display: flex;
     flex-direction: column;
-
-
-    animation-name: show-foreground-content;
+}
+.page-auth > .foreground > .inner > .content > .body > *
+{
+    animation-name: show-foreground;
     animation-duration: 500ms;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     animation-fill-mode: forwards;
 }
-
-.page-auth .foreground-content .logo
-{
-    width: 100%; min-height: 144px;
-    margin: 0px 0px 24px 0px;
-}
-.page-auth .foreground-content .input > label
-{
-    width: 100%;
-    margin: 0px 0px 4px 0px;
-}
-.page-auth .foreground-content .input > input
-{
-    width: 100%;
-    margin: 0px 0px 12px 0px;
-}
-.page-auth .foreground-content .option
-{
-    margin: 12px 0px 12px 0px;
-    flex-grow: 1;
-}
-.page-auth .foreground-content .option .highlight
-{
-    text-decoration: underline;
-}
-.page-auth .foreground-content .status
+.page-auth > .foreground > .inner > .content > .body .status
 {
     animation-name: show-foreground-status;
     animation-duration: 500ms;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     animation-fill-mode: forwards;
-
-    min-height: 48px;
-    color: var(--text-warning);
 }
-.page-auth .foreground-content .button
+
+@media (max-width: 768px)
 {
-    width: 100%;
+    .page-auth > .foreground > .inner > .image
+    {
+        inset: 0px 60% 0px 0px;
+        padding: 0px 60% 0px 0px;
+    }
+    .page-auth > .foreground > .inner > .image-gradient
+    {
+        position: absolute; inset: 0px 60% 0px 0px;
+    }
+    .page-auth > .foreground > .inner > .content
+    {
+        inset: 0px auto 0px 40%;
+        width: 60%;
+        height: 100%;
+    }
+}
+@media (max-width: 512px)
+{
+    .page-auth > .foreground
+    {
+        padding: 0;
+    }
+    .page-auth > .foreground > .inner
+    {
+        border: none;
+        background-color: transparent;
+        padding: 0;
+    }
+    .page-auth > .foreground > .inner > .image
+    {
+        display: none;
+    }
+    .page-auth > .foreground > .inner > .image-gradient
+    {
+        display: none;
+    }
+    .page-auth > .foreground > .inner > .content
+    {
+        inset: 0;
+        width: 100%;
+
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 @keyframes show-foreground 
