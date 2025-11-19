@@ -16,6 +16,18 @@ export class DataBasic
     /* ชื่อบัญชี */
     name = "";
 };
+export class DataSecurity
+{
+    /* รหัสผ่านบัญชี */
+    password = "";
+}
+export class DataRestricted
+{
+    /** บทบาทบัญชี */
+    role = 0;
+    /** สถานะบัญชี */
+    status = 0;
+}
 
 /**
  * เริ่มต้นระบบยืนยันตัวตน
@@ -35,7 +47,7 @@ export function init ()
     let authName = null;
     let authRole = 0;
     let authStatus = 0;
-    let authAccess = 0;
+    let authAccess = NaN;
 
     if (typeof localStorage != "undefined") 
     {
@@ -113,7 +125,7 @@ export function init ()
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสประจำตัวซ้ำกัน
 */
-export function create (identifier, password)
+export function create (identifier, password, login = true)
 {
     if (identifier == null || 
         password == null)
@@ -161,19 +173,22 @@ export function create (identifier, password)
 
     saveJson (json);
 
-    state.session = newSession;
-    state.sessionExpired = null;
-
-    state.name    = identifier;
-    state.status  = 1;
-    state.role    = 1;
-    state.access  = newAccess;
-
-    // บันทึกรหัสประจำตัว
-    if (typeof localStorage != "undefined") 
+    if (login)
     {
-        localStorage.setItem ("AuthSession", state.session);
-        localStorage.setItem ("AuthSessionExpired", state.sessionExpired);
+        state.session = newSession;
+        state.sessionExpired = null;
+    
+        state.name    = identifier;
+        state.status  = 1;
+        state.role    = 1;
+        state.access  = newAccess;
+    
+        // บันทึกรหัสประจำตัว
+        if (typeof localStorage != "undefined") 
+        {
+            localStorage.setItem ("AuthSession", state.session);
+            localStorage.setItem ("AuthSessionExpired", state.sessionExpired);
+        }
     }
 }
 /**
@@ -408,10 +423,15 @@ export function getBasic (which = NaN)
 {
     if (state.init == false)
         throw new ErrorState ("Authentication system must be initialized");
-    if (state.session == null)
-        throw new ErrorCredential ("Authentication must be logged before logout");
+    // if (state.session == null)
+    //     throw new ErrorCredential ("Authentication must be logged before logout");
 
-    if (isNaN (which)) {
+    if (isNaN (which) && isLogged () == false)
+    {
+        throw new ErrorArgument ('Authentication must be logged before retriving basic data');
+    }
+
+    if (state.session != null && isNaN (which)) {
         which = state.access;
     }
 
@@ -420,13 +440,27 @@ export function getBasic (which = NaN)
     const block = database[which];
 
     if (block == null)
-        throw new ErrorArgument ("No auth data was found");
+        throw new ErrorArgument (`No authentication basic data was found: ${which}`);
     
     const result = new DataBasic ();
 
     result.name = block.name;
 
     return result;
+}
+/**
+ * รับข้อมูลเกี่ยวกับความปลอดภัย
+*/
+export function getSecurity (which = NaN)
+{
+
+}
+/**
+ * รับข้อมูลที่ถูกจำกัดไว้เฉพาะผู้มีสิทธิ์ระดับสูงเท่านั้น
+*/
+export function getRestricted (which = NaN)
+{
+
 }
 
 export const ROLE_UNKNOWN   = 0;
@@ -493,6 +527,10 @@ export function isExpired ()
         return false;
     }
     return state.sessionExpired.getTime () < new Date().getTime ();
+}
+export function isInit ()
+{
+    return state.init;
 }
 
 //                                                                  //

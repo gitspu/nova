@@ -73,6 +73,19 @@ Root.Search = ({placeholder, value, onChange }) =>
 }
 /**
  * 
+ * ส่วนประกอบที่แสดงรายการย่อย
+ * 
+*/
+Root.Menu = ({onClick}) =>
+{
+  return (
+      <button className='profile button-primary button-outlined' onClick={onClick}>
+        <img src={icon.list}/>
+      </button>
+    );
+}
+/**
+ * 
  * ส่วนประกอบที่แสดงรูปโปรไฟล์ (สามารถกดได้)
  * 
 */

@@ -1,7 +1,6 @@
-import './Style/ProfilePost.css'
-import { ButtonOld } from "./Common";
 import * as icon from '../Script/Icon'
-import { ButtonLabel } from './Common2';
+
+import './Style/ProfilePost.css'
 
 const Root = ({children}) =>
 {

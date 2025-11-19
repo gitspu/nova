@@ -567,6 +567,11 @@ export function createPost (data, which = NaN)
     return index;
 }
 
+export function isInit ()
+{
+    return state.init;
+}
+
 export const VISIBILITY_UNKNOWN     = 0;
 export const VISIBILITY_DEFAULT     = 1;
 export const VISIBILITY_PUBLIC      = 2;
@@ -648,7 +653,7 @@ function getBlockRaw (which, name)
     if (auth.isLogged () == false || auth.isActive () == false)
         throw new ErrorAuth ("Authentication must be logged and active");
     
-    if (isFinite (which) && (auth.getRole() != auth.ROLE_ADMIN || auth.getRole() != auth.ROLE_DEVELOPER))
+    if (isFinite (which) && (auth.getRole() != auth.ROLE_ADMIN && auth.getRole() != auth.ROLE_DEVELOPER))
         throw new ErrorAuth ("Insufficient permission");
 
     if (isNaN (which)) {

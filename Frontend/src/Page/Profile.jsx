@@ -1,8 +1,6 @@
 import api from '../Script/Api'
 import icon from '../Script/Icon'
 
-import { Br, Button, H1, H2, H3, Hr, P } from "../Component/Common2";
-
 import './Style/Profile.css'
 
 
@@ -202,10 +200,10 @@ const ThemeLavender = ({state}) =>
     let basic      = new api.auth.DataBasic ();
     let contact    = new api.profileOf.DataContact ();
     // let education  = new API.profileOf.DataEducation ();
-    let interest   = new api.profileOf.DataInterest ();
+    // let interest   = new api.profileOf.DataInterest ();
     // let job        = new API.profileOf.DataJob ();
     let personal   = new api.profileOf.DataPersonal ();
-    let skill      = new api.profileOf.DataSkill ();
+    // let skill      = new api.profileOf.DataSkill ();
     // let social     = new API.profileOf.DataSocial ();
     // let theme      = new API.profileOf.DataTheme ();
     let editable   = Boolean (state.editable);
@@ -213,14 +211,14 @@ const ThemeLavender = ({state}) =>
     basic       = state.basic;
     contact     = state.contact;
     // education   = state.education;
-    interest    = state.interest;
+    // interest    = state.interest;
     // job         = state.job;
     personal    = state.personal;
-    skill       = state.skill;
+    // skill       = state.skill;
     // social      = state.social;
     // theme       = state.theme;
 
-    let showBackground = api.decodeContent (personal.background);
+    // let showBackground = api.decodeContent (personal.background);
     let showIcon       = api.decodeContent (personal.icon);
     let showName       = [personal.firstName, personal.middleName, personal.lastName].join (' ').trimEnd ();
     let showNickname   = personal.nickname;

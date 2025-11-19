@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import IconProfile from './../Asset/Icon/EmojiSmile.svg'
 
 import {auth, profile} from '../Script/Api'
-import {} from '../Script/Icon'
 import './Style/Profile.css'
 
 

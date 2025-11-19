@@ -73,6 +73,11 @@ export function get ()
     return result;
 }
 
+export function isInit ()
+{
+    return state.init;
+}
+
 export const TYPE_UNKNOWN = 0;
 export const TYPE_NORMAL = 1;
 export const TYPE_SPONSORED = 2;

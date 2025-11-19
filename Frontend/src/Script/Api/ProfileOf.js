@@ -286,6 +286,11 @@ export function getTheme (which)
     return result;
 }
 
+export function isInit ()
+{
+    return state.init;
+}
+
 //                                                                  //
 // ################################################################ //
 // ||                                                            || //

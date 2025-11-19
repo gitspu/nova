@@ -11,29 +11,10 @@ export const feed = toFeed;
 
 export function init ()
 {
-    auth.init ();
-    profile.init ();
-    profileOf.init ();
-    feed.init ();
-
-    // try
-    // {
-    //     if (auth.isLogged () && auth.isActive ())
-    //     {
-    //         // อัพเดทข้อมูล เป็นเวอร์ชั่นใหม่ (ถ้ามี)
-    //         profile.setContact (profile.getContact ());
-    //         profile.setEducation (profile.getEducation ());
-    //         profile.setInterest (profile.getInterest ());
-    //         profile.setJob (profile.getJob ());
-    //         profile.setPersonal (profile.getPersonal ());
-    //         profile.setSkill (profile.getSkill ());
-    //         profile.setSocial (profile.getSocial ());
-    //     }
-    // }
-    // catch (ex)
-    // {
-    //     console.error (ex);
-    // }
+    if (!auth.isInit()) auth.init ();
+    if (!profile.isInit()) profile.init ();
+    if (!profileOf.isInit()) profileOf.init ();
+    if (!feed.isInit ()) feed.init ();
 }
 
 export function decodeContent (value)

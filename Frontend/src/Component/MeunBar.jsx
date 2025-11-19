@@ -3,7 +3,7 @@
  * ไฟล์ที่จัดเก็บส่วนประกอบ รายการเมนู
  * 
 */
-import React from 'react';
+import React, { Fragment } from 'react';
 import './Style/MenuBar.css'
 
 const Child = ({
@@ -31,8 +31,17 @@ const Separator = () =>
         <br/>
     );
 }
-const Root = ({direction = 'horizontal', state, children }) =>
+// eslint-disable-next-line no-unused-vars
+const Condition = ({state, children}) =>
 {
+    return <>{children}</>;
+}
+const Root = ({direction = 'horizontal', state, className, children }) =>
+{
+    const typeChild = (<Child/>).type;
+    const typeSeparator = (<Separator/>).type;
+    const typeCondition = (<Condition/>).type;
+
     const getState = () =>
     {
         if (Array.isArray (state) == false) return null;
@@ -47,42 +56,49 @@ const Root = ({direction = 'horizontal', state, children }) =>
 
         state[1](value);
     }
+    const iterate = (root, index) =>
+    {
+        if (root.type === typeCondition)
+        {
+            if (root.props.state)
+                return React.Children.map (root.props.children, iterate);
 
-    const typeChild = (<Child/>).type;
-    const typeSeparator = (<Separator/>).type;
+            return;
+        }
+        if (root.type === typeChild)
+        {
+            return React.cloneElement (root, 
+            {
+                key: index,
+                className: getState () == root.props.state ? 'active' : 'normal',
+                onClick: (event) => 
+                {
+                    const value = root.props.state;
+                    const callback = root.props.onClick;
+
+                    setState (value);
+
+                    if (typeof callback == 'function')
+                        callback (event);
+                }
+            });
+        }
+        if (root.type === typeSeparator)
+        {
+            return React.cloneElement (root, 
+            {
+                key: index
+            });
+        }
+        throw new Error ('Children contain invalid element');
+    }
+
+
 
     return (
-        <div className='menu-bar'>
+        <div className={['menu-bar', className].join (' ')}>
             <div className={direction}>
-                {children.map ((root, index) => 
-                {
-                    if (root.type === typeChild)
-                    {
-                        return React.cloneElement (root, 
-                        {
-                            key: index,
-                            className: getState () == root.props.state ? 'active' : 'normal',
-                            onClick: (event) => 
-                            {
-                                const value = root.props.state;
-                                const callback = root.props.onClick;
-
-                                setState (value);
-
-                                if (typeof callback == 'function')
-                                    callback (event);
-                            }
-                        });
-                    }
-                    if (root.type === typeSeparator)
-                    {
-                        return React.cloneElement (root, 
-                        {
-                            key: index
-                        });
-                    }
-                    throw new Error ('Children contain invalid element');
-                })}
+                {children.map (iterate)}
             </div>
         </div>
     )
@@ -90,5 +106,6 @@ const Root = ({direction = 'horizontal', state, children }) =>
 
 Root.Child = Child;
 Root.Separator = Separator;
+Root.Condition = Condition;
 
 export default Root;

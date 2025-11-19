@@ -1,5 +1,0 @@
-
-export function ConsoleAuthentication ()
-{
-    return <></>
-}

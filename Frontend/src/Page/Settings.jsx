@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import * as api from './../Script/Api'
-import * as icon from './../Script/Icon'
-import * as navigator from './../Script/Navigator'
+import api        from './../Script/Api'
+import icon       from './../Script/Icon'
+import navigator  from './../Script/Navigator'
 
-import Menu from '../Component/MeunBar'
-
-import { ToggleBar, ToggleBarItem, VisibilityOption } from '../Component/Common'
+import Menu       from '../Component/MeunBar'
+import VisOpt     from '../Component/VisOpt'
 
 import './Style/Settings.css'
 
@@ -38,6 +37,7 @@ export function CategoryAccount ()
     {
         doLoad ();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
 
     return <>
@@ -157,10 +157,10 @@ export function CategoryProfile ()
           <div className='w-100 mb-4 input-image-profile-upload'>
               <input id='upload-icon' type='file' accept='image/*' className='d-none' onChange={(e) => onChangeIcon (e)}/>
               <input id='upload-background' type='file' accept='image/*' className='d-none' onChange={(e) => onChangeBackground (e)}/>
-              <button>
+              <button className='button-primary'>
                 <label htmlFor='upload-icon'>เปลี่ยนรูปโปรไฟล์</label>
               </button>
-              <button>
+              <button className='button-primary'>
                 <label htmlFor='upload-background'>เปลี่ยนรูปพื้นหลัง</label>
               </button>
           </div>
@@ -168,43 +168,43 @@ export function CategoryProfile ()
           <div className='w-100 mb-4 input-text'>
             <label>ชื่อเล่น</label>
             <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)}></input>
-            <VisibilityOption state={[nicknameVis, setNicknameVis]}/>
+            <VisOpt state={[nicknameVis, setNicknameVis]}/>
           </div>
           <div className='w-100 mb-1 input-text'>
             <label>ชื่อจริง</label>
             <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}></input>
-            <VisibilityOption state={[firstNameVis, setFirstNameVis]}/>
+            <VisOpt state={[firstNameVis, setFirstNameVis]}/>
           </div>
           <div className='w-100 mb-1 input-text'>
             <label>ชื่อกลาง</label>
             <input type="text" value={middleName} onChange={(e) => setMiddleName(e.target.value)}></input>
-            <VisibilityOption state={[middleNameVis, setMiddleNameVis]}/>
+            <VisOpt state={[middleNameVis, setMiddleNameVis]}/>
           </div>
           <div className='w-100 mb-4 input-text'>
             <label>นามสกุล</label>
             <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}></input>
-            <VisibilityOption state={[lastNameVis, setLastNameVis]}/>
+            <VisOpt state={[lastNameVis, setLastNameVis]}/>
           </div>
 
           <div className='w-100 mb-1 input-text'>
             <label>สถานะ</label>
             <input type="text" value={status} onChange={(e) => setStatus(e.target.value)}></input>
-            <VisibilityOption state={[statusVis, setStatusVis]}/>
+            <VisOpt state={[statusVis, setStatusVis]}/>
           </div>
           <div className='w-100 mb-1 input-text'>
             <label>แนะนำตัว</label>
             <input type="text" value={bio} onChange={(e) => setBio(e.target.value)}></input>
-            <VisibilityOption state={[bioVis, setBioVis]}/>
+            <VisOpt state={[bioVis, setBioVis]}/>
           </div>
           <div className='w-100 mb-1 input-text'>
             <label>ที่อยู่</label>
             <input type="text" value={location} onChange={(e) => setLocation(e.target.value)}></input>
-            <VisibilityOption state={[locationVis, setLocationVis]}/>
+            <VisOpt state={[locationVis, setLocationVis]}/>
           </div>
           <div className='w-100 mb-1 input-text'>
             <label>วันเกิด</label>
             <input type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)}></input>
-            <VisibilityOption state={[birthdayVis, setBirthdayVis]}/>
+            <VisOpt state={[birthdayVis, setBirthdayVis]}/>
           </div>
         </div>
         </> 
@@ -297,17 +297,17 @@ export function CategoryProfile ()
             <div className='w-100 mb-1 input-text'>
               <label>อีเมล</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
-              <VisibilityOption state={[emailVis, setEmailVis]}/>
+              <VisOpt state={[emailVis, setEmailVis]}/>
             </div>
             <div className='w-100 mb-1 input-text'>
               <label>เว็บไซต์</label>
               <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)}></input>
-              <VisibilityOption state={[websiteVis, setWebsiteVis]}/>
+              <VisOpt state={[websiteVis, setWebsiteVis]}/>
             </div>
             <div className='w-100 mb-1 input-text'>
               <label>เบอร์โทรศัพท์</label>
               <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)}></input>
-              <VisibilityOption state={[phoneVis, setPhoneVis]}/>
+              <VisOpt state={[phoneVis, setPhoneVis]}/>
             </div>
           </div>
         </>

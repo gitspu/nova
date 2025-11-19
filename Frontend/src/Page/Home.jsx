@@ -6,8 +6,6 @@ import React, { Activity, useEffect, useRef, useState } from "react";
 import api from "../Script/Api";
 import icon from '../Script/Icon'
 
-import { Input, Button, ButtonLabel } from "../Component/Common2"
-
 import Post from '../Component/ProfilePost'
 import Menu from '../Component/MeunBar'
 
@@ -205,7 +203,7 @@ const SectionMainFeed = () =>
       <>
         {/* ช่องสำหรับพิพม์ข้อความ และ ปุ่มกดสร้างโพสต์ */}
         <div className='new-text'>
-          <Input type='text' placeholder="เริ่มโพสต์" value={[newText, setNewText]} onKeydown={onNewKeydown}/>
+          <input type='text' placeholder="เริ่มโพสต์" value={newText} onChange={(e) => setNewText (e.target.value)} onKeyDown={onNewKeydown}/>
           <button className='button-primary button-outlined' onClick={onNewSubmit} disabled={newUploadDisabled || (newText.length == 0 && newUpload.length == 0)}>
             <img src={icon.arrowRight}/>
           </button>

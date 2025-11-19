@@ -6,10 +6,13 @@
 
 .app
 {
-    display: block;
+    display: flex;
     position: absolute;
     inset: 0;
     overflow: hidden;
+
+    flex-direction: column;
+    flex-wrap: nowrap;
 }
 .app > .header
 {
@@ -73,7 +76,7 @@
     --app-text-primary:         #06202B;
     --app-text-secondary:       #4c714a;
     --app-text-tertiary:        #001C30;
-    --app-text-warning:         #f3ec69;
+    --app-text-warning:         #a47d43;
     --app-text-caution:         #f74b4b;
 
     --app-text-button:         white;
@@ -135,6 +138,16 @@
     --app-input-radius:                8px;
     --app-input-text:                  var(--app-text-primary);
     --app-input-placeholder:           var(--app-text-secondary);
+
+    --app-table-head-bg:        rgba(0,0,0,0);
+    --app-table-head-border:    rgb(55, 113, 133);
+    --app-table-head-color:     #000000;
+    --app-table-odd-bg:         rgba(0,0,0,0);
+    --app-table-odd-border:     rgb(55, 113, 133);
+    --app-table-odd-color:      rgb(0,0,0);
+    --app-table-even-bg:        rgba(0,0,0,0);
+    --app-table-even-border:    rgb(55, 113, 133);
+    --app-table-even-color:     rgb(0,0,0);
 
     /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
 
@@ -731,4 +744,51 @@
     padding:            0px 8px;
     min-width:          96px;
     min-height:         40px;
+}
+
+.table
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+.table thead tr td
+{
+    margin: 0px; padding: 8px;
+    background-color: var(--app-table-head-bg);
+    border: 1px solid var(--app-table-head-border);
+    color: var(--app-table-head-color);
+    
+    font-weight: bold;
+}
+.table tbody tr td
+{
+    margin: 0px; padding: 8px;
+    border-style: solid;
+    box-sizing: border-box;
+}
+.table tbody tr:first-child td
+{
+    border-width: 1px 1px 0px 1px;
+}
+.table tbody tr:last-child td
+{
+    border-width: 0px 1px 1px 1px;
+}
+.table tbody tr:only-child td
+{
+   border-width: 1px 1px 1px 1px;
+}
+.table tbody tr:nth-child(odd) td
+{
+    background-color:   var(--app-table-odd-bg);
+    border-width:       1px;
+    border-color:       var(--app-table-odd-border);
+    color:              var(--app-table-odd-color);
+}
+.table tbody tr:nth-child(even) td
+{
+    background-color:   var(--app-table-even-bg);
+    border-width:       1px;
+    border-color:       var(--app-table-even-border);
+    color:              var(--app-table-even-color);
 }

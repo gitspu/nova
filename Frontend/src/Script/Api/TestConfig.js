@@ -3,4 +3,4 @@
 /**
  * ใช้ส่วนตัวเท่านั้น
 */
-export const remote = false;
+export const remote = true;

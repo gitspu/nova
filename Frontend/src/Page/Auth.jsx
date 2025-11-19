@@ -11,9 +11,6 @@ import background from '../Asset/Background/AuthBackground.webp'
 
 import './Style/Auth.css'
 
-import { Br, Button, ButtonLabel, H1, H2, Label, P } from "../Component/Common2";
-
-
 const VIEW_INTRO      = 1; /* หน้าแรก         */
 const VIEW_LOGIN      = 2; /* หน้าเข้าสู่ระบบ     */
 const VIEW_REGISTER   = 3; /* หน้าสมัครสมาชิก   */
@@ -27,20 +24,20 @@ const VIEW_SUSPEND    = 7; /* หน้าบัญชีระงับ     */
  * พื้นที่หลักการแสดงผลหน้าเข้าสู่ระบบ
  * 
 */
-const ViewRoot = ({inset = '0px 0px 0px 0px' /* พื้นที่แสดงผล */, children /* องค์ประกอบย่อย */}) =>
+const ViewRoot = ({children /* องค์ประกอบย่อย */}) =>
 {
     return (
-      <div className="page-auth " style={{ inset: inset }}>
+      <div className='page-auth'>
 
         {/* พื้นหลัง */}
-        <div className="background">
+        <div className='background'>
           {/* <img src={background}/> */}
         </div>
         
         {/* พื้นหลัง */}
-        <div className="foreground">
+        <div className='foreground'>
           {/* พื้นที่รอบใน */}
-          <div className="inner">            
+          <div className='inner'>            
             <img className='image' src={background}/>
             <div className='image-gradient'/>
             <div className='content'>
@@ -266,7 +263,16 @@ const ViewIntro = ({stateView, stateStatus, stateStatusAnim, stateCallback }) =>
         }
 
         // eslint-disable-next-line no-undef
-        FB.login (onLogin);
+        try { FB.login (onLogin); }
+        catch (ex)
+        {
+            console.error (ex);
+            
+            setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+            setStatusAnim (statusAnim + 1);
+            setDisabled (false);
+            return;
+        }
     }
     /**
      * คำสั่งที่ถูกเรียก เมื่อผู้ใช้เลือกเข้าสู่ระบบด้วย Google
@@ -697,20 +703,21 @@ const ViewSuspended = ({stateView}) =>
 
     return (
       <div className={view == VIEW_SUSPEND ? 'd-flex' : 'd-none'}>
-        <div className="mb-4">
-          <H1 value='บัญชีของคุณถูกระงับ'/>
-          <P value='ผู้ดูแลระบบของแพลตฟอร์มได้ทำการระงับการใช้งานบัญชีของคุณ ซึ่งอาจมีสาเหตุจากการที่คุณได้ละเมิดข้อตกลงระหว่างแพลตฟอร์ม'/>
-          <Br/>
-          <P value='หากนี้เป็นข้อผิดพลาดหรือมีข้อสงสัย โปรดติดต่อผู้ดูแลระบบ'/>
+        <div className='mb-4'>
+          <h1 className='text-h1 text-bold'>บัญชีของคุณถูกระงับ</h1>
+          <p className='text-p'>ผู้ดูแลระบบของแพลตฟอร์มได้ทำการระงับการใช้งานบัญชีของคุณ ซึ่งอาจมีสาเหตุจากการที่คุณได้ละเมิดข้อตกลงระหว่างแพลตฟอร์ม</p>
+          <br/>
+          <p className='text-p'>หากนี้เป็นข้อผิดพลาดหรือมีข้อสงสัย โปรดติดต่อผู้ดูแลระบบ</p>
+          <br/>
         </div>
         <div className="d-flex gap-2">
-          <Button text='ออกจากระบบ' onClick={onClickLogout}/>
+          <button onClick={onClickLogout}>ออกจากระบบ</button>
         </div>
       </div>
     )
 }
 
-const Root = ({inset = '0px 0px 0px 0px'}) =>
+const Root = () =>
 {
     //                                 //
     // ------------------------------- //
@@ -794,7 +801,7 @@ const Root = ({inset = '0px 0px 0px 0px'}) =>
     // ------------------------------- //
     //                                 //
     return (
-      <ViewRoot inset={inset}>
+      <ViewRoot>
         <ViewIntro 
           stateView={[view, setView]} 
           stateStatus={[status, setStatus]} 
