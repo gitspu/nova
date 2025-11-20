@@ -8,6 +8,7 @@ import { Activity, useEffect, useRef, useState } from "react";
 import api from "../Script/Api"
 import icon from '../Script/Icon'
 import background from '../assets/Background/AuthBackground.webp' 
+import NavbarTop from "../components/navbarTop";
 
 import './Style/Auth.css'
 
@@ -31,6 +32,7 @@ const ViewRoot = ({inset = '0px 0px 0px 0px' /* พื้นที่แสด�
 {
     return (
       <div className="page-auth " style={{ inset: inset }}>
+        <NavbarTop />
 
         {/* พื้นหลัง */}
         <div className="background">
