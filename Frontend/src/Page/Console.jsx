@@ -9,11 +9,15 @@ import Checkbox from '../Component/Checkbox';
 import NavBar   from '../Component/NavBar'
 import Modal    from '../Component/Modal';
 import Menu     from '../Component/MeunBar'
+import Settings from '../Component/Settings'
+import Error    from './Error'
 
 import api      from '../Script/Api'
+import nav      from '../Script/Navigator'
 import icon     from '../Script/Icon'
 
 import './Style/Console.css'
+import { ROLE_UNKNOWN } from "../Script/Api/Auth";
 
 
 
@@ -119,6 +123,8 @@ const ViewAccount = ({stateMenu}) =>
     const [editRender, setEditRender] = useState (<></>);
     const editData = useRef ({
         authBasic: new api.auth.DataBasic (),
+        authSecurity: new api.auth.DataSecurity (),
+        authRestricted: new api.auth.DataRestricted (),
 
         profileContact: new api.profile.DataContact (),
         profileEducation: new api.profile.DataEducation (),
@@ -240,26 +246,38 @@ const ViewAccount = ({stateMenu}) =>
     const refreshEdit = (access) =>
     {
         // ดูข้อมูล
-        let basic = new api.auth.DataBasic ();
+        let authBasic = new api.auth.DataBasic ();
+        let authSecurity = new api.auth.DataSecurity ();
+        let authRestricted = new api.auth.DataRestricted ();
+
         let profileContact = new api.profile.DataContact ();
         let profileEducation = new api.profile.DataEducation ();
         let profileInterest = new api.profile.DataInterest ();
+        let profilePersonal = new api.profile.DataPersonal ();
 
-        basic = api.auth.getBasic (access);
+        authBasic = api.auth.getBasic (access);
+        authSecurity = api.auth.getSecurity (access);
+        authRestricted = api.auth.getRestricted (access);
 
         try { profileContact = api.profile.getContact (access); } catch { profileContact = undefined; }
         try { profileEducation = api.profile.getEducation (access); } catch { profileEducation = undefined; }
         try { profileInterest = api.profile.getEducation (access); } catch { profileInterest = undefined; }
+        try { profilePersonal = api.profile.getPersonal (access); } catch { profileInterest = undefined; }
 
-        editData.current.authBasic = basic;
+        editData.current.authBasic = authBasic;
+        editData.current.authSecurity = authSecurity;
+        editData.current.authRestricted = authRestricted;
+
         editData.current.profileContact = profileContact;
         editData.current.profileEducation = profileEducation;
         editData.current.profileInterest = profileInterest;
+        editData.current.profilePersonal = profilePersonal;
     }
     const renderEdit = (currentMenu = editMenu) =>
     {
         const basic = editData.current.authBasic;
         const contact = editData.current.profileContact;
+        const personal = editData.current.profilePersonal;
         const interaction = (
           <>
             <Activity mode={currentMenu == EDIT_MENU_ACCOUNT ? 'visible' : 'hidden'}>
@@ -292,6 +310,7 @@ const ViewAccount = ({stateMenu}) =>
             </Activity>
             <Activity mode={currentMenu == EDIT_MENU_PROFILE ? 'visible' : 'hidden'}>
               {contact == undefined ? <p className="text-p text-italic">(บัญชีนี้ไม่มีข้อมูลโปรไฟล์)</p> : <></>}
+              <Settings.ProfilePersonal ref={personal}/>
             </Activity>
           </>
         );
@@ -412,6 +431,7 @@ const ViewAccount = ({stateMenu}) =>
 const ViewAdvertisement = ({stateMenu}) =>
 {
     const [menu] = stateMenu;
+    const [search, setSearch] = useState ('');
 
     return (
       <Activity mode={menu == MENU_ADVERTISEMENT ? 'visible' : 'hidden'}>
@@ -420,8 +440,14 @@ const ViewAdvertisement = ({stateMenu}) =>
             <h1 className='text-primary text-h1 text-bold'>โฆษณา</h1>
             <p className='text-secondary'>จัดการวิธีการแสดงผล เพิ่มและลบข้อมูลต่าง ๆ ที่เกี่ยวข้องการโฆษณา</p>
             <hr/>
+            <div className="mb-2">
+              <button className='button-primary me-1'>เพิ่มโฆษณา</button>
+              <button className='button-primary me-1'>โหลดข้อมูลใหม่</button>
+            </div>
+            <div className='mb-2'>
+              <input type='search' placeholder='ค้นหาโฆษณาโดย ชื่อ/คำอธิบาย หรือ รหัสเฉพาะ' className='w-100' value={search} onChange={(event) => { setSearch (event.target.value); }}/>
+            </div>
           </div>
-          
         </div>
       </Activity>
     );
@@ -432,25 +458,30 @@ const ViewDebugClientAPI = ({stateMenu}) =>
 
     const SectionAuth = () =>
     {
-        const init              = String (api.auth.state.init ? "กำลังทำงาน" : "ไม่ทำงาน");
-        const session           = String (api.auth.state.session);
-        const sessionExpired    = String (api.auth.state.sessionExpired == "null" ? "ไม่มีวันหมดอายุ" : api.auth.stateClient.sessionExpired);
-        const access            = String (api.auth.state.access);
+        const util = api.util;
+        const state = api.auth.state;
 
-        const name              = String (api.auth.state.name);
+        const init              = util.ignore (() => String (state.init ? 'กำลังทำงาน' : 'ไม่ทำงาน'), 'ไม่ทราบ');
+        const session           = util.ignore (() => String (state.session));
+        const sessionExpired    = util.ignore (() => String (state.sessionExpired != null ?
+                                                             isFinite (state.sessionExpired.getDate ()) ? state.sessionExpired.toLocaleString () :
+                                                             'ไม่มีวันหมดอายุ' : 'ไม่มีข้อมูล'), 'ไม่ทราบ');
+
+        const access            = util.ignore (() => String (state.access));
+        const name              = String (state.name);
         const role              = String (
-            api.auth.state.role == 0 ? "ROLE_UNKNOWN" :
-            api.auth.state.role == 1 ? "ROLE_USER" :
-            api.auth.state.role == 2 ? "ROLE_EMPLOYER" :
-            api.auth.state.role == 3 ? "ROLE_ADMIN" :
-            api.auth.state.role == 4 ? "ROLE_TESTER" :
-            api.auth.state.role == 5 ? "ROLE_DEVELOPER" : "<<Unknown>>"
+            state.role == 0 ? "ROLE_UNKNOWN" :
+            state.role == 1 ? "ROLE_USER" :
+            state.role == 2 ? "ROLE_EMPLOYER" :
+            state.role == 3 ? "ROLE_ADMIN" :
+            state.role == 4 ? "ROLE_TESTER" :
+            state.role == 5 ? "ROLE_DEVELOPER" : "<<Unknown>>"
         );
         const status            = String (
-            api.auth.state.status == 0 ? "STATUS_UNKNOWN" :
-            api.auth.state.status == 1 ? "STATUS_ACTIVE" :
-            api.auth.state.status == 2 ? "STATUS_INACTIVE" :
-            api.auth.state.status == 3 ? "STATUS_SUSPEND" : "<<Unknown>>"
+            state.status == 0 ? "STATUS_UNKNOWN" :
+            state.status == 1 ? "STATUS_ACTIVE" :
+            state.status == 2 ? "STATUS_INACTIVE" :
+            state.status == 3 ? "STATUS_SUSPEND" : "<<Unknown>>"
         );
       
         return (
@@ -471,38 +502,20 @@ const ViewDebugClientAPI = ({stateMenu}) =>
     }
     const SectionProfile = () =>
     {
-        const init = String (api.profile.state.init ? "กำลังทำงาน" : "ไม่ทำงาน");
-      
-        let contact     = "";
-        let education   = "";
-        let interest    = "";
-        let personal    = "";
-        let skill       = "";
-        let social      = "";
-        let job         = "";
-        let post        = "";
+        const state = api.profile.state;
+        const profile = api.profile;
+        const util = api.util;
 
-        try { contact = JSON.stringify (api.profile.getContact ()); }
-        catch (ex) { return String(ex); }
-
-        try { education = JSON.stringify (api.profile.getEducation ()); }
-        catch (ex) { return String(ex); }
-
-        try { interest = JSON.stringify (api.profile.getInterest ()); }
-        catch (ex) { return String(ex); }
-
-        try { job = JSON.stringify (api.profile.getJob ()); }
-        catch (ex) { return String(ex); }
-
-        try { personal = JSON.stringify (api.profile.getPersonal ()); }
-        catch (ex) { return String(ex); }
-
-        try { skill = JSON.stringify (api.profile.getSkill ()); }
-        catch (ex) { return String(ex); }
-
-        try { social = JSON.stringify (api.profile.getSocial ()); }
-        catch (ex) { return String(ex); }
-
+        const init = String (state.init ? "กำลังทำงาน" : "ไม่ทำงาน");
+    
+        const contact     = util.ignore (() => JSON.stringify (profile.getContact ()), 'ไม่ทราบ');
+        const education   = util.ignore (() => JSON.stringify (profile.getEducation ()), 'ไม่ทราบ');
+        const interest    = util.ignore (() => JSON.stringify (profile.getInterest ()), 'ไม่ทราบ');
+        const personal    = util.ignore (() => JSON.stringify (profile.getPersonal ()), 'ไม่ทราบ');
+        const skill       = util.ignore (() => JSON.stringify (profile.getSkill ()), 'ไม่ทราบ');
+        const social      = util.ignore (() => JSON.stringify (profile.getSocial ()), 'ไม่ทราบ');
+        const job         = util.ignore (() => JSON.stringify (profile.getJob ()), 'ไม่ทราบ');
+        const post        = util.ignore (() => JSON.stringify (profile.getPost ()), 'ไม่ทราบ');
 
         return (
           <div>
@@ -644,6 +657,34 @@ const ViewDebugClientStorage = ({stateMenu}) =>
     );
 }
 
+const RootNav = ({stateSelector, stateContext }) =>
+{
+    const [selector, setSelector] = stateSelector;
+    const [context, setContext] = stateContext;
+
+    const onLogout = () =>
+    {
+        try { api.auth.logout (); }
+        finally { nav.auth ('/', '/'); }
+    }
+
+    return (
+      <div className='navbar'>
+        <NavBar>
+          <NavBar.Flex grow={1} justify='start'>
+            <NavBar.Branding text="NOVA แผงควบคุมระบบ"/>
+          </NavBar.Flex>
+          <NavBar.Flex>
+            <NavBar.Menu onClick={() => setSelector (!selector)}/>
+            <NavBar.Profile onClick={() => setContext (!context)}/>
+            <NavBar.ContextMenu className={context ? 'd-block': 'd-none'}>
+              <button className='button-caution' onClick={onLogout}>ออกจากระบบ</button>
+            </NavBar.ContextMenu>
+          </NavBar.Flex>
+        </NavBar>
+      </div>
+    );
+}
 const Root = () =>
 {
     //                                 //
@@ -658,6 +699,8 @@ const Root = () =>
     ].indexOf (api.auth.getRole()) != -1;
 
     const [menu, setMenu] = useState (MENU_DASHBOARD);
+    const [selector, setSelector] = useState (true);
+    const [context, setContext] = useState (false);
 
     //                                 //
     // ------------------------------- //
@@ -680,21 +723,13 @@ const Root = () =>
     // ------------------------------- //
     //                                 //
     if (accessible == false) 
-        return (<></>);
+        return (<Error/>);
 
     return (
       <div className='page-console'>
-        <div className='navbar'>
-          <NavBar>
-            <NavBar.Flex grow={1} justify='start'>
-              <NavBar.Branding text="NOVA แผงควบคุมระบบ"/>
-            </NavBar.Flex>
-            <NavBar.Flex>
-              <NavBar.Menu/>
-              <NavBar.Profile/>
-            </NavBar.Flex>
-          </NavBar>
-        </div>
+        <RootNav 
+          stateSelector={[selector, setSelector]} 
+          stateContext={[context, setContext]}/>
         <div className='body'>
           <div className='content'>
             <ViewDashboard stateMenu={[menu, setMenu]}/>

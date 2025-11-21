@@ -4,10 +4,10 @@ import file from 'node:fs';
 const hostname = '100.100.1.1'; // localhost
 const port = 3000;
 
-const TEMPLATE_AUTH = "./../Frontend/src/Script/ApiMock/Authentication.json";
+const TEMPLATE_AUTH = "./../Frontend/src/Script/ApiMock/Auth.json";
 const TEMPLATE_PROFILE = "./../Frontend/src/Script/ApiMock/Profile.json";
 
-const SAVE_AUTH = "./../Database/Authentication.json";
+const SAVE_AUTH = "./../Database/Auth.json";
 const SAVE_PROFILE = "./../Database/Profile.json";
 
 if (file.existsSync ("./../Database") == false)

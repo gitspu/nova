@@ -46,7 +46,7 @@ export function init ()
                 state.generation.push ({
                     type: TYPE_NORMAL,
                     profile: profileKey,
-                    post: index
+                    profilePost: index
                 });
             }
         }
@@ -67,7 +67,7 @@ export function get ()
         result.item.push ({
             type: item.type,
             profile: item.profile,
-            post: item.post,
+            post: item.profilePost,
         });
     }
     return result;
@@ -96,7 +96,7 @@ export const state =
     generation: [{
         type: TYPE_UNKNOWN,
         profile: 0,
-        post: 0
+        profilePost: 0
     }]
 };
 const key = "DbProfile";

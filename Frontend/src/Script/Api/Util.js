@@ -1,5 +1,46 @@
+export function ignore (callback, def = null)
+{
+    try { return callback(); }
+    catch { return def; }
+}
 
-export function generateId (space)
+export function jsonRead (object, path, def = null)
+{
+    // if (object == null) throw new Error ('The object must not be null');
+    // if (path == null) throw new Error ('The path must not be null');
+    if (object == null) return def;
+    if (path == null) return def;
+
+    // if (typeof object != 'object') throw new Error ('The object must be an object type');
+    // if (typeof path != 'string') throw new Error ('The path must be a string value');
+    if (typeof object != 'object') return def;
+    if (typeof path != 'string' && typeof path != 'number') return def;
+
+    let last = object;
+    let item = String (path).split ('/');
+
+    for (let index = 0; index < item.length; index++)
+    {
+        last = last[item[index]];
+
+        if (index == (item.length - 1))
+        {
+            return last;
+        }
+        if (last == undefined || last == null)
+        {
+            return def;
+        }
+        if (typeof last != 'object')
+        {
+            return def;
+        }
+        continue;
+    }
+    return def;
+}
+
+export function uniqueID (space)
 {
     while (true)
     {
@@ -13,7 +54,7 @@ export function generateId (space)
         return id;
     }
 }
-export function generateUUID (space)
+export function uniqueUUID (space)
 {
     while (true)
     {

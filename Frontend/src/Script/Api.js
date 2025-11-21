@@ -1,13 +1,15 @@
-import * as toAuth from './Api/Authentication';
-import * as toProfile from './Api/Profile'
+import * as toAuth      from './Api/Auth';
+import * as toProfile   from './Api/Profile'
 import * as toProfileOf from './Api/ProfileOf'
-import * as toFeed from './Api/Feed'
-import * as toIcon from './Icon';
+import * as toFeed      from './Api/Feed'
+import * as toUtil      from './Api/Util'
+import * as toIcon      from './Icon';
 
 export const auth = toAuth;
 export const profile = toProfile;
 export const profileOf = toProfileOf;
 export const feed = toFeed;
+export const util = toUtil;
 
 export function init ()
 {
@@ -34,8 +36,12 @@ export function decodeContent (value)
 }
 export function encodeContent (value)
 {
+    if (value == null) return ``;
+
     const regex = /^data:([a-zA-Z0-9/+.-]+);base64,([a-zA-Z0-9+/=]+)$/;
     const group = String(value).match(regex);
+
+    if (group == null) return ``;
 
     const mime = group[1];
     const content = group[2];
@@ -48,7 +54,9 @@ export default
     profile,
     profileOf,
     feed,
+    util,
 
+    init,
     decodeContent,
     encodeContent,
 };

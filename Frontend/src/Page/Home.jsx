@@ -4,9 +4,10 @@
 import React, { Activity, useEffect, useRef, useState } from "react";
 
 import api from "../Script/Api";
+import nav from '../Script/Navigator'
 import icon from '../Script/Icon'
 
-import Post from '../Component/ProfilePost'
+import Profile from '../Component/Profile'
 import Menu from '../Component/MeunBar'
 
 import './Style/Home.css'
@@ -122,7 +123,7 @@ const SectionMainFeed = () =>
         setNewUploadDisabled (false);      
     };
 
-    function runPostGenerate (profileId = 0, postId = 0)
+    function runPostGenerate (profileId = 0, postId = 0, postType = 1)
     {
         const basic     = api.auth.getBasic (profileId);
         const personal  = api.profileOf.getPersonal (profileId);
@@ -141,29 +142,40 @@ const SectionMainFeed = () =>
 
         subtitle = postItem.created.toLocaleDateString ();
 
+        switch (postType)
+        {
+            case api.feed.TYPE_NORMAL: break;
+            case api.feed.TYPE_SPONSORED: subtitle += '- ได้รับการสนับสนุน';
+        }
+
+        const onClickProfile = () =>
+        {
+            nav.profile (profileId);
+        }
+
         return (
-          <Post key={`${profileId}-${postId}`}>
-          <Post.Head title={title} subtitle={subtitle} icon={api.decodeContent (icon)} access={profileId}/>
-          <Post.Body>
+          <Profile.Post key={`${profileId}-${postId}`}>
+          <Profile.Post.Head title={title} subtitle={subtitle} icon={api.decodeContent (icon)} onClick={onClickProfile}/>
+          <Profile.Post.Body>
             {postItem.media.map ((value, index) => 
             {
                 switch (value.type)
                 {
-                    case 1: return (<Post.Body.Text key={index} value={value.value}/>);
-                    case 2: return (<Post.Body.Image key={index} value={api.decodeContent (value.value)}/>);
-                    case 3: return (<Post.Body.Video key={index} value={api.decodeContent (value.value)}/>);
-                    case 4: return (<Post.Body.Audio key={index} value={api.decodeContent (value.value)}/>);
+                    case 1: return (<Profile.Post.Body.Text key={index} value={value.value}/>);
+                    case 2: return (<Profile.Post.Body.Image key={index} value={api.decodeContent (value.value)}/>);
+                    case 3: return (<Profile.Post.Body.Video key={index} value={api.decodeContent (value.value)}/>);
+                    case 4: return (<Profile.Post.Body.Audio key={index} value={api.decodeContent (value.value)}/>);
                     default: return <span key={index}></span>
                 }
             })}
-          </Post.Body>
-          <Post.Action>
-            <Post.Action.Like/>
-            <Post.Action.Comment/>
-            <Post.Action.Share/>
-            <Post.Action.Send/>
-          </Post.Action>
-        </Post>
+          </Profile.Post.Body>
+          <Profile.Post.Action>
+            <Profile.Post.Action.Like/>
+            <Profile.Post.Action.Comment/>
+            <Profile.Post.Action.Share/>
+            <Profile.Post.Action.Send/>
+          </Profile.Post.Action>
+        </Profile.Post>
         );
     }
     function runPostRefresh ()
@@ -177,12 +189,14 @@ const SectionMainFeed = () =>
             {
                 const item = newItem.item[index];
 
-                newPost.push (runPostGenerate (item.profile, item.post));
+                newPost.push (runPostGenerate (item.profile, item.post, item.type));
             }
             setPost (newPost);
         }
         catch (ex)
         {
+            console.error (ex);
+            
             setPost (<p>
               เกิดข้อผิดพลาดในขณะโหลดข้อมูล<br/>
               {String (ex)}

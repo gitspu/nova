@@ -1,6 +1,8 @@
 
 import { Activity, useState } from 'react';
+import Tag from '../Component/TagBar'
 import icon from '../Script/Icon'
+
 import './Style/Job.css'
 
 const VIEW_SELECTION = 1;
@@ -8,13 +10,33 @@ const VIEW_CONTENT   = 2;
 
 const Selection = ({stateView, statePost, stateSearch}) =>
 {
-    console.log (stateSearch);
-
-
     const [view, setView] = stateView;
     const [post, setPost] = statePost;
     const [search] = [null, null];
+    const [filter, setFilter] = useState ([]);
 
+    const FILTER_TYPE = 1;
+    const FILTER_INCOME = 2;
+    const FILTER_RECOMMEND = 3;
+
+    const isFiltered = (sample) =>
+    {
+        if (search == null || search == '') {
+            return false;
+        }
+        const keyword = String (search).toLowerCase ();
+        const title = String (sample.title).toLowerCase ();
+        const desc = String (sample.description).toLowerCase ();
+
+        if (title.startsWith (keyword) || title.includes (keyword)) {
+            return false;
+        }
+        if (desc.startsWith (keyword) || desc.includes (keyword)) {
+            return false;
+        }
+
+        return true;
+    }
 
     const renderRecommend = () =>
     {
@@ -49,31 +71,69 @@ const Selection = ({stateView, statePost, stateSearch}) =>
 
         sample.map ((value, index) =>
         {
-            if (search != null && search != '')
+            if (isFiltered (value))
             {
-                if (value.title.toLowerCase().startsWith (search.toLowerCase()) == false || value.title.toLowerCase().includes (search.toLowerCase()) == false) return <></>
+                return;
+            }
+            result.push (<ListItem key={index} icon={null} title={value.title} description={value.description}/>)
+        });
+        return result;
+    }
+    const renderHiring = () =>
+    {
+        const result = [];
+        const sample = [
+          {
+              icon: '',
+              title: 'Information',
+              description: 'Very Good Description'
+          },
+          {
+              icon: '',
+              title: 'Lorem ipsum dolor sit amet',
+              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et.'
+          },
+          {
+              icon: '',
+              title: 'Lorem ipsum dolor sit amet',
+              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et.'
+          },
+          {
+              icon: '',
+              title: 'Lorem ipsum dolor sit amet',
+              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et.'
+          },
+          {
+              icon: '',
+              title: 'Lorem ipsum dolor sit amet',
+              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et.'
+          }
+        ];
+
+        sample.map ((value, index) =>
+        {
+            if (isFiltered (value)) 
+            {
+                return;
             }
             result.push (<ListItem key={index} icon={null} title={value.title} description={value.description}/>)
         });
         return result;
     }
 
-
     return (
       <Container>
           <Title/>
-          <Filter>
-              <FilterItem text="ประเภทงาน"/>
-              <FilterItem text="รายได้"/>
-              <FilterItem text="แนะนำ"/>
-          </Filter>
+          <Tag state={[filter, setFilter]}>
+              <Tag.Child state={FILTER_TYPE} text="ประเภทงาน"/>
+              <Tag.Child state={FILTER_INCOME} text="รายได้"/>
+              <Tag.Child state={FILTER_RECOMMEND} text="แนะนำ"/>
+          </Tag>
           <List>
               <ListTitle text="งานที่เหมาะกับคุณ"/>
               {renderRecommend()}
               <ListTitle text="เปิดรับสมัครอยู่"/>
-              <ListItem icon={null} title="Lorem ipsum dolor sit amet" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et."/>
-              <ListItem icon={null} title="Lorem ipsum dolor sit amet" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et."/>
-              <ListItem icon={null} title="Lorem ipsum dolor sit amet" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi scelerisque risus est, sed lobortis velit scelerisque et."/>
+              {renderHiring()}
           </List>
       </Container>
     );
@@ -89,11 +149,11 @@ const Selection = ({stateView, statePost, stateSearch}) =>
 
     function Filter ({children})
     {
-        return <div className='filter mt-4 mb-4'>{children}</div>
+        return <Tag className='filter mt-4 mb-4'>{children}</Tag>
     }
     function FilterItem ({text})
     {
-        return <button className='filter-item'>{text}</button>
+        return <Tag.Child className='filter-item' text={text}></Tag.Child>
     }
 
     function List ({children})

@@ -3,7 +3,8 @@
  * โค็ดระบบสำหรับการดีงข้อมูล ปรับเปลี่ยนข้อมูล โฆษณา
  * 
 */
-'use strict';
+import auth     from './Auth'
+import sample   from '../ApiMock/Advertisement.json'
 
 const ERROR_INIT = 'The advertisement system must be initialized';
 const ERROR_DEINIT = 'The advertisement system must be deinitialized';
@@ -76,11 +77,6 @@ export function get (block = [].slice(0, 0))
     if (block == null || block.length == 0) 
         return;
 }
-export function getArray ()
-{
-
-}
-
 /**
  * เขียนบล็อกข้อมูลเข้าไปยังเซิร์ฟเวอร์
 */

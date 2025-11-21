@@ -3,8 +3,8 @@
 */
 import * as util from './Util'
 import * as test from './TestConfig'
-import * as auth from './Authentication'
-import      mock from './../ApiMock/Profile.json'
+import * as auth from './Auth'
+import      sample from './../ApiMock/Profile.json'
 
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลการติดต่อ
@@ -217,11 +217,20 @@ export class DataTheme
     /**
      * รหัสสี (ฐานสิหก)
     */
-    color = "";
+    profileColor = "";
     /**
      * รหัสรูปแบบธีม (เป็นตัวเลข)
     */
-    layout = 0;
+    profileLayout = 0;
+
+    /**
+     * รหัสสี (ฐานสิหก)
+    */
+    resumeColor = '';
+    /**
+     * รหัสรูปแบบธีม (เป็นตัวเลข)
+    */
+    resumeLayout = 0;
 };
 
 export class ErrorState extends Error {};
@@ -229,6 +238,16 @@ export class ErrorServer extends Error {};
 export class ErrorArgument extends Error {};
 export class ErrorAuth extends Error {};
 
+const MSG_ERROR_INIT = 'ระบบโปรไฟล์ได้ทำงานอยู่แล้วในตอนนี้';
+const MSG_ERROR_DEINIT = 'ระบบโปรไฟล์ต้องเริ่มทำงานก่อน';
+const MSG_ERROR_AUTH = 'ระบบโปรไฟล์ต้องการให้คุณเข้าสู่ระบบก่อน';
+const MSG_ERROR_AUTH_PERMISSION = 'สิทธิ์เข้าสู่ระบบของคุณไม่เพียงพอ';
+const MSG_ERROR_AUTH_INVALID = 'สถานะเข้าสู่ระบบของคุณไม่ถูกต้อง';
+const MSG_ERROR_SERVER      = 'เซิฟเวอร์ไม่สามารถประมวลข้อมูลได้'
+const MSG_ERROR_CREATED     = 'ข้อมูลโปรไฟล์มีอยู่ในระบบแล้ว';
+const MSG_ERROR_NOT_FOUND   = 'ไม่พบข้อมูลโปรไฟล์ดังกล่าว';
+const MSG_ERROR_NOT_FOUND_2 = 'ไม่พบข้อมูลบล็อกนั้น ๆ จากโปรไฟล์ดังกล่าว';
+const MSG_ERROR_DATATYPE    = 'ประเภทข้อมูลนั้นไม่ถูกต้อง';
 /**
  * เริ่มต้นการทำงานระบบโปรไฟล์
  * ข้อผิดพลาด
@@ -237,8 +256,7 @@ export class ErrorAuth extends Error {};
 */
 export function init ()
 {
-    if (state.init)
-        throw new ErrorState ("Profile system is already been initialized");
+    if (state.init) throw new ErrorState (MSG_ERROR_INIT);
 
     state.init = true;
 }
@@ -251,28 +269,32 @@ export function init ()
 */
 export function create (which = NaN)
 {
-    if (state.init == false)
-        throw new ErrorState ("Profile system must be initialized");
 
-    if (auth.isLogged () == false || auth.isActive () == false)
-        throw new ErrorAuth ("Authentication must be logged and active");
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    if (isFinite (which) && auth.getRole () < auth.ROLE_ADMIN)
-        throw new ErrorAuth ("Insufficient permission");
+    which = __seIndex (which); 
+            __seValidate (which);
 
-    if (isNaN (which)) {
-        which = auth.getAccess ();
+    const dbRoot        = __dbLoad ();
+    const dbCollection  = util.jsonRead (dbRoot, 'item');
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbCollection == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    if (Object.hasOwn (dbCollection, which)) 
+    {
+        throw new ErrorState (MSG_ERROR_CREATED);
     }
 
-    const json = loadJson ();
-    const itemList = json["item"];
+    Object.defineProperty (dbCollection, which, 
+    {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: {}
+    });
 
-    if (itemList == null) throw new ErrorServer ("Server contains inproper JSON data");
-    if (itemList[String(which)] != null) throw new ErrorState ("Profile is already been created");
-
-    itemList[String(which)] = {};
-
-    saveJson (json);
+    __dbSave (dbRoot);
 
     const newContact    = new DataContact ();
     const newEducation  = new DataEducation ();
@@ -306,7 +328,7 @@ export function create (which = NaN)
 */
 export function getContact (which = NaN)
 {
-    const result = new DataContact (); getBlock (result, which, "contact");
+    const result = new DataContact (); __getSection (result, which, "contact");
     return result;
 }
 /**
@@ -319,7 +341,7 @@ export function getContact (which = NaN)
 */
 export function getEducation (which = NaN)
 {
-    const result = new DataEducation (); getBlock (result, which, "education");
+    const result = new DataEducation (); __getSection (result, which, "education");
     return result;
 }
 /**
@@ -332,7 +354,7 @@ export function getEducation (which = NaN)
 */
 export function getInterest (which = NaN)
 {
-    const result = new DataInterest (); getBlock (result, which, "interest");
+    const result = new DataInterest (); __getSection (result, which, "interest");
     return result;
 }
 /**
@@ -345,7 +367,7 @@ export function getInterest (which = NaN)
 */
 export function getJob (which = NaN)
 {
-    const result = new DataJob (); getBlock (result, which, "job");
+    const result = new DataJob (); __getSection (result, which, "job");
     return result;
 }
 /**
@@ -358,7 +380,7 @@ export function getJob (which = NaN)
 */
 export function getPersonal (which = NaN)
 {
-    const result = new DataPersonal (); getBlock (result, which, "personal");
+    const result = new DataPersonal (); __getSection (result, which, "personal");
     return result;
 }
 /**
@@ -371,7 +393,7 @@ export function getPersonal (which = NaN)
 */
 export function getPost (index = NaN, which = NaN)
 {
-    const item = getBlockRaw (which, "post")["item"][index];
+    const item = __getSectionRaw (which, "post")["item"][index];
 
     if (item == null)
         throw new ErrorArgument ("Out of Bounds");
@@ -392,7 +414,7 @@ export function getPost (index = NaN, which = NaN)
 */
 export function getPostHead (which = NaN)
 {
-    const item = getBlockRaw (which, "post");
+    const item = __getSectionRaw (which, "post");
 
     const prototype = 
     {
@@ -410,7 +432,7 @@ export function getPostHead (which = NaN)
 */
 export function getSkill (which = NaN)
 {
-    const result = new DataSkill (); getBlock (result, which, "skill");
+    const result = new DataSkill (); __getSection (result, which, "skill");
     return result;
 }
 /**
@@ -423,7 +445,7 @@ export function getSkill (which = NaN)
 */
 export function getSocial (which = NaN)
 {
-    const result = new DataSocial (); getBlock (result, which, "social");
+    const result = new DataSocial (); __getSection (result, which, "social");
     return result;
 }
 /**
@@ -436,7 +458,7 @@ export function getSocial (which = NaN)
 */
 export function getTheme (which = NaN)
 {
-    const result = new DataTheme (); getBlock (result, which, "theme");
+    const result = new DataTheme (); __getSection (result, which, "theme");
     return result;
 }
 /**
@@ -449,9 +471,9 @@ export function getTheme (which = NaN)
 export function setContact (data, which = NaN)
 {
     if ((data instanceof DataContact) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "contact");
+    __setSection (data, which, "contact");
 }
 /**
  * อัพเดทข้อมูลการศึกษา ลงในข้อมลโปรไฟล์
@@ -463,9 +485,9 @@ export function setContact (data, which = NaN)
 export function setEducation (data, which = NaN)
 {
     if ((data instanceof DataEducation) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "education");
+    __setSection (data, which, "education");
 }
 /**
  * อัพเดทข้อมูลความสนใจ ลงในข้อมลโปรไฟล์
@@ -477,9 +499,9 @@ export function setEducation (data, which = NaN)
 export function setInterest (data, which = NaN)
 {
     if ((data instanceof DataInterest) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "interest");
+    __setSection (data, which, "interest");
 }
 /**
  * อัพเดทข้อมูลงาน ลงในข้อมลโปรไฟล์
@@ -491,9 +513,9 @@ export function setInterest (data, which = NaN)
 export function setJob (data, which = NaN)
 {
     if ((data instanceof DataJob) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "job");
+    __setSection (data, which, "job");
 }
 /**
  * อัพเดทข้อมูลส่วนตัว ลงในข้อมลโปรไฟล์
@@ -505,9 +527,9 @@ export function setJob (data, which = NaN)
 export function setPersonal (data, which = NaN)
 {
     if ((data instanceof DataPersonal) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "personal");
+    __setSection (data, which, "personal");
 }
 /**
  * อัพเดทข้อมูลทักษะ ลงในข้อมลโปรไฟล์
@@ -519,9 +541,9 @@ export function setPersonal (data, which = NaN)
 export function setSkill (data, which = NaN)
 {
     if ((data instanceof DataSkill) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "skill");
+    __setSection (data, which, "skill");
 }
 /**
  * อัพเดทข้อมูลสังคม ลงในข้อมลโปรไฟล์
@@ -533,9 +555,9 @@ export function setSkill (data, which = NaN)
 export function setSocial (data, which = NaN)
 {
     if ((data instanceof DataSocial) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "social");
+    __setSection (data, which, "social");
 }
 /**
  * อัพเดทข้อมูลธีม ลงในข้อมลโปรไฟล์
@@ -547,22 +569,22 @@ export function setSocial (data, which = NaN)
 export function setTheme (data, which = NaN)
 {
     if ((data instanceof DataTheme) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    setBlock (data, which, "theme");
+    __setSection (data, which, "theme");
 }
 export function createPost (data, which = NaN)
 {
     if ((data instanceof DataPost) == false)
-        throw new ErrorArgument ("Invalid data");
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    const block = getBlockRaw (which, "post");
+    const block = __getSectionRaw (which, "post");
     const blockItem = block["item"];
     const index = blockItem.length;
 
     blockItem.push (data);
 
-    setBlock (block, which, "post");
+    __setSection (block, which, "post");
 
     return index;
 }
@@ -617,7 +639,7 @@ export function getMap ()
 
     const result = [""]; result.splice (0, 1);
 
-    const json = loadJson ();
+    const json = __dbLoad ();
     const itemList = json["item"];
 
     for (const key of Object.keys (itemList)) {
@@ -639,66 +661,125 @@ export const state =
 {
     init: false,
 };
-const key = "DbProfile";
 
-function getBlock (structure, which, name)
+function __getSection (structure, which, name)
 {
-    util.objectDeserialize (structure, getBlockRaw (which, name));
+    util.objectDeserialize (structure, __getSectionRaw (which, name));
 }
-function getBlockRaw (which, name)
+function __getSectionRaw (which, name)
 {
-    if (state.init == false)
-        throw new ErrorState ("Profile system must be initialized");
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    if (auth.isLogged () == false || auth.isActive () == false)
-        throw new ErrorAuth ("Authentication must be logged and active");
-    
-    if (isFinite (which) && (auth.getRole() != auth.ROLE_ADMIN && auth.getRole() != auth.ROLE_DEVELOPER))
-        throw new ErrorAuth ("Insufficient permission");
+    which = __seIndex (which);
+            __seValidate (which);
 
-    if (isNaN (which)) {
-        which = auth.getAccess ();
+    const dbRoot        = __dbLoad ();
+    const dbCollection  = util.jsonRead (dbRoot, 'item');
+    const dbTarget      = util.jsonRead (dbCollection, which);
+    const dbTargetSec   = util.jsonRead (dbTarget, name);
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbCollection == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
+    if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
+
+    return dbTargetSec;
+}
+function __setSection (structure, which, name)
+{
+     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+
+    which = __seIndex (which);
+            __seValidate (which);
+
+    const dbRoot        = __dbLoad ();
+    const dbCollection  = util.jsonRead (dbRoot, 'item');
+    const dbTarget      = util.jsonRead (dbCollection, which);
+    const dbTargetSec   = util.jsonRead (dbTarget, name);
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbCollection == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
+    if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
+
+    util.objectSerialize (structure, dbTargetSec);
+
+    __dbSave (dbRoot);
+}
+function __setSectionRaw (structure, which, name)
+{
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+
+    which = __seIndex (which);
+            __seValidate (which);
+
+    const dbRoot        = __dbLoad ();
+    const dbCollection  = util.jsonRead (dbRoot, 'item');
+    const dbTarget      = util.jsonRead (dbCollection, which);
+    let dbTargetSec   = util.jsonRead (dbTarget, name);
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbCollection == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
+    if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
+
+    dbTargetSec = structure;
+
+    __dbSave (dbRoot);
+}
+
+function __seIndex (which)
+{
+    if (!auth.isLogged () || !auth.isActive ())
+        throw new ErrorState (MSG_ERROR_AUTH);
+
+    if (isNaN (which))
+        return auth.getAccess ();
+
+    return which;
+}
+function __seValidate (which)
+{
+    const dbRoot    = auth.__dbLoad ();
+    const dbSession = util.jsonRead (dbRoot, 'challenge/session');
+    const dbAccess  = util.jsonRead (dbRoot, 'access');
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbSession == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    const ixSession = util.jsonRead (dbSession, auth.getSession ());
+
+    if (ixSession == null) 
+        throw new ErrorState (MSG_ERROR_AUTH_INVALID)
+
+    if (ixSession.access != auth.getAccess ())
+        return new ErrorState (MSG_ERROR_AUTH_INVALID);
+
+    if (dbAccess[ixSession.access] == null)
+        return new ErrorState (MSG_ERROR_AUTH_INVALID);
+
+    if (which == auth.getAccess ()) 
+        return;
+
+    if (dbAccess[ixSession.access].role != auth.ROLE_ADMIN && 
+        dbAccess[ixSession.access].role != auth.ROLE_DEVELOPER)
+    {
+        return new ErrorState (MSG_ERROR_AUTH_PERMISSION);
     }
-
-    const json = loadJson ();
-    const itemList = json["item"];
-
-    if (itemList[String(which)] == null) 
-        throw new ErrorArgument ("No specified profile was found: ");
-
-    return itemList[String(which)][String(name)];
-}
-function setBlock (structure, which, name)
-{
-    if (state.init == false)
-        throw new ErrorState ("Profile system must be initialized");
-
-    if (auth.isLogged () == false || auth.isActive () == false)
-        throw new ErrorAuth ("Authentication must be logged and active");
-    
-    if (isFinite (which) && (auth.getRole() != auth.ROLE_ADMIN || auth.getRole() != auth.ROLE_DEVELOPER))
-        throw new ErrorAuth ("Insufficient permission");
-
-    if (isNaN (which)) {
-        which = auth.getAccess ();
-    }
-
-    const json = loadJson ();
-    const itemList = json["item"];
-    const itemBlock = itemList[String(which)][name] = {};
-
-    if (itemList[String(which)] == null) 
-        throw new ErrorArgument ("No specified profile was found");
-
-    util.objectSerialize (structure, itemBlock);
-    saveJson (json);
 }
 
-function loadJson ()
+function __dbLoad ()
 {
     if (test.remote)
     {
         const request = new XMLHttpRequest ();
+
+        // ใช้ติดตาม
+        // console.trace ();
 
         request.open ('GET', 'http://100.100.1.1:3000/api/profile', false);
         request.send ();
@@ -706,19 +787,26 @@ function loadJson ()
         if (request.status != 200)
         {
             console.error (request.statusText);
-            return mock;
+            return sample;
         }
         return JSON.parse (request.responseText);
     }
-    let raw = localStorage.getItem (key);
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return sample;
+    }
 
-    if (raw == null) 
-        return mock;
+    const readText = localStorage.getItem ("DbProfile");
+    const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
-    return JSON.parse (raw);
+    return readObject;
 }
-function saveJson (data)
+function __dbSave (data)
 {
+    if (data == null) throw new Error ('The content must not be null');
+    if (typeof data !== 'object') throw new Error ('The content must be an object');
+
     if (test.remote)
     {
         const request = new XMLHttpRequest ();
@@ -732,5 +820,10 @@ function saveJson (data)
         }
         return;
     }
-    localStorage.setItem (key, JSON.stringify (data));
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return;
+    }
+    localStorage.setItem ("DbProfile", JSON.stringify (data));
 }

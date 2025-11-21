@@ -67,7 +67,7 @@
             {
                 "email":
                 {
-                    "value": "contact@ikla.net",
+                    "value": "sample@mail.com",
                     "visibility": 2,
                     "modified": "2025-11-08T18:40:307Z"
                 },
@@ -96,7 +96,7 @@
             {
                 "website": 
                 {
-                    "value": "https://ikla.net",
+                    "value": "https://example.com",
                     "visibility": 2,
                     "modified": "2025-11-08T08:10:36.807Z"
                 },

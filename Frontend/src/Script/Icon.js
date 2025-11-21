@@ -12,6 +12,7 @@ import IconChatSquare       from './../Asset/Icon/ChatSquare.svg';
 import IconEmojiSmile       from './../Asset/Icon/EmojiSmile.svg';
 import IconFacebook         from './../Asset/Icon/Facebook.svg';
 import IconFileEarmarkPlay  from './../Asset/Icon/FileEarmarkPlay.svg';
+import IconGear             from './../Asset/Icon/Gear.svg';
 import IconGoogle           from './../Asset/Icon/Google.svg';
 import IconHouse            from './../Asset/Icon/House.svg';
 import IconImage            from './../Asset/Icon/Image.svg';
@@ -31,35 +32,36 @@ import IconXCircle          from './../Asset/Icon/XCircle.svg';
 
 
 
-export const arrowLeft          = IconArrowLeft;
-export const arrowLeftCircle    = IconArrowLeftCircle;
-export const arrowRight         = IconArrowRight;
-export const backquoteLeft      = IconBackquoteLeft;
-export const ban                = IconBan;
-export const bell               = IconBell;
-export const briefcase          = IconBriefcase;
-export const calendar           = IconCalendar;
-export const chat               = IconChat;
-export const chatSquare         = IconChatSquare;
-export const emojiSmile         = IconEmojiSmile;
-export const facebook           = IconFacebook;
-export const fileEarmarkPlay    = IconFileEarmarkPlay;
-export const google             = IconGoogle;
-export const house              = IconHouse;
-export const image              = IconImage;
-export const list               = IconList;
-export const newspaper          = IconNewspaper;
-export const people             = IconPeople;
-export const person             = IconPerson;
-export const plusCircle         = IconPlusCircle;
-export const transparent        = IconTransparent;
-export const send               = IconSend;
-export const share              = IconShare;
-export const sticky             = IconSticky;
-export const thumbUp            = IconThumbUp;
-export const unlock             = IconUnlock;
-export const x                  = IconX;
-export const xCircle            = IconXCircle;
+export const arrowLeft          = String (IconArrowLeft);
+export const arrowLeftCircle    = String (IconArrowLeftCircle);
+export const arrowRight         = String (IconArrowRight);
+export const backquoteLeft      = String (IconBackquoteLeft);
+export const ban                = String (IconBan);
+export const bell               = String (IconBell);
+export const briefcase          = String (IconBriefcase);
+export const calendar           = String (IconCalendar);
+export const chat               = String (IconChat);
+export const chatSquare         = String (IconChatSquare);
+export const emojiSmile         = String (IconEmojiSmile);
+export const facebook           = String (IconFacebook);
+export const fileEarmarkPlay    = String (IconFileEarmarkPlay);
+export const gear               = String (IconGear);
+export const google             = String (IconGoogle);
+export const house              = String (IconHouse);
+export const image              = String (IconImage);
+export const list               = String (IconList);
+export const newspaper          = String (IconNewspaper);
+export const people             = String (IconPeople);
+export const person             = String (IconPerson);
+export const plusCircle         = String (IconPlusCircle);
+export const transparent        = String (IconTransparent);
+export const send               = String (IconSend);
+export const share              = String (IconShare);
+export const sticky             = String (IconSticky);
+export const thumbUp            = String (IconThumbUp);
+export const unlock             = String (IconUnlock);
+export const x                  = String (IconX);
+export const xCircle            = String (IconXCircle);
 
 export default
 {
@@ -76,6 +78,7 @@ export default
     emojiSmile,
     facebook,
     fileEarmarkPlay,
+    gear,
     google,
     house,
     image,

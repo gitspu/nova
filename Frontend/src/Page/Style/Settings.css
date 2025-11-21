@@ -1,17 +1,34 @@
 
 .page-settings
 {
+    pointer-events: none;
     position: absolute; inset: 0px;
+    overflow: hidden;
+
+    background-color: var(--app-background-primary);
 }
 .page-settings > .menu
 {
     position: absolute; inset: 0px 70% 0px 0px;
 }
-.page-settings > .menu > .menu-inner
+.page-settings > .menu > *
 {
-    max-width: 75%;
+    max-width: 324px;
     margin: 0px auto;
+    padding: 0px 12px;
+    pointer-events: all;
 }
+.page-settings > .menu > *:first-child
+{
+    margin-top: var(--app-spacing-3);
+}
+.page-settings > .menu > *:last-child
+{
+    margin-bottom: var(--app-spacing-3);
+}
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+
 .page-settings > .content
 {
     position: absolute; inset: 0px 0px 0px 0px;
@@ -20,8 +37,13 @@
 .page-settings > .content > *
 {
     max-width: 148mm;
-    margin: 0px 0px 0px 30%;
+    margin: 0px 0px 0px 35%;
+    pointer-events: all;
+
+    margin-top: var(--app-spacing-3);
+    margin-bottom: var(--app-spacing-3);
 }
+
 .page-settings > .content .input-text { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center;}
 .page-settings > .content .input-text > label { flex: 1; }
 .page-settings > .content .input-text > input { flex: 3; margin: 0px 8px; }

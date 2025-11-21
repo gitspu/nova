@@ -172,6 +172,7 @@ const ViewIntro = ({stateView, stateStatus, stateStatusAnim, stateCallback }) =>
                 try
                 {
                     api.auth.createFacebook (userId);
+                    api.auth.loginFacebook (userId);
                     api.profile.create ();
                     api.profile.setContact (newContact);
                     api.profile.setPersonal (newPersonal);
@@ -377,6 +378,8 @@ const ViewLogin = ({stateView, stateUsername, statePassword, stateStatus, stateS
         }
         catch (ex)
         {
+            console.warn (ex);
+
             if (ex instanceof api.auth.ErrorCredential)
             {
                 setStatus ("ขออภัย รหัสประจำตัวหรือรหัสผ่านของคุณนั้นไม่ถูกต้อง");
@@ -395,7 +398,6 @@ const ViewLogin = ({stateView, stateUsername, statePassword, stateStatus, stateS
                 setStatusAnim (statusAnim + 1);
                 return;
             }
-            console.error (ex);
 
             setStatus ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
             setStatusAnim (statusAnim + 1);
@@ -520,6 +522,7 @@ const ViewRegister = ({stateView, stateUsername, statePassword, statePasswordCon
             newPersonal.nickname.value = username;
 
             api.auth.create (username, password);
+            api.auth.login (username, password);
             api.profile.create ();
             api.profile.setContact (newContact);
             api.profile.setPersonal (newPersonal);

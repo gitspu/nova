@@ -76,10 +76,10 @@ Root.Search = ({placeholder, value, onChange }) =>
  * ส่วนประกอบที่แสดงรายการย่อย
  * 
 */
-Root.Menu = ({onClick}) =>
+Root.Menu = ({className, onClick}) =>
 {
   return (
-      <button className='profile button-primary button-outlined' onClick={onClick}>
+      <button className={['profile button-primary button-outlined', className].join (' ')} onClick={onClick}>
         <img src={icon.list}/>
       </button>
     );
@@ -89,10 +89,10 @@ Root.Menu = ({onClick}) =>
  * ส่วนประกอบที่แสดงรูปโปรไฟล์ (สามารถกดได้)
  * 
 */
-Root.Profile = ({image, onClick }) =>
+Root.Profile = ({image = icon.emojiSmile, className, onClick }) =>
 {
     return (
-      <button className='profile button-primary button-outlined' onClick={onClick}>
+      <button className={['profile button-primary button-outlined', className].join (' ')} onClick={onClick}>
         <img src={image}/>
       </button>
     );
@@ -107,6 +107,19 @@ Root.Flex = ({justify, grow, children}) =>
     return (
       <div className='flex' style={{ justifyContent: justify, flexGrow: grow }}>
           {children}
+      </div>
+    );
+}
+/**
+ * 
+ * ส่วนประกอบสำหรับเมนูบริบท
+ * 
+*/
+Root.ContextMenu = ({className, children}) =>
+{
+    return (
+      <div className={['context-menu', className].join (' ')}>
+        {children}
       </div>
     );
 }
