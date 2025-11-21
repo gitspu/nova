@@ -1,7 +1,6 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-
 import { Link, NavLink } from 'react-router-dom'; 
 
 const NavbarTop = () => { // 💡 เปลี่ยนชื่อฟังก์ชันเป็น PascalCase ตามหลักการตั้งชื่อ Component
@@ -34,7 +33,7 @@ const NavbarTop = () => { // 💡 เปลี่ยนชื่อฟังก�
                         <Nav.Link as={NavLink} to=""> {/* ลิงก์ไปยัง SocialFeed */}
                             ค้นหางาน
                         </Nav.Link>
-                        <Nav.Link as={NavLink} to=""> {/* ลิงก์ไปยัง Profile */}
+                        <Nav.Link as={NavLink} to="/viewprofile"> {/* ลิงก์ไปยัง Profile */}
                             ค้นหาโปรไฟล์
                         </Nav.Link>
                     </Nav>
