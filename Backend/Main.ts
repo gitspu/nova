@@ -1,102 +1,173 @@
 import http from 'node:http';
-import file from 'node:fs';
+import fs   from 'node:fs';
 
-const hostname = '100.100.1.1'; // localhost
-const port = 3000;
+const NET_HOSTNAME      = '100.100.1.1';
+const NET_PORT          = 3000;
 
-const TEMPLATE_AUTH = "./../Frontend/src/Script/ApiMock/Auth.json";
-const TEMPLATE_PROFILE = "./../Frontend/src/Script/ApiMock/Profile.json";
+const SAMPLE_ADS    = './../Frontend/src/Script/ApiMock/Ads.json';
+const SAMPLE_AUTH       = './../Frontend/src/Script/ApiMock/Auth.json';
+const SAMPLE_PROFILE    = './../Frontend/src/Script/ApiMock/Profile.json';
 
-const SAVE_AUTH = "./../Database/Auth.json";
-const SAVE_PROFILE = "./../Database/Profile.json";
+const SAVE_DIR          = './../Database';
+const SAVE_ADS      = "./../Database/Ads.json";
+const SAVE_AUTH         = "./../Database/Auth.json";
+const SAVE_PROFILE      = "./../Database/Profile.json";
 
-if (file.existsSync ("./../Database") == false)
-    file.mkdirSync ("./../Database");
+const URL_ADS           = '/api/ads';
+const URL_AUTH          = '/api/auth';
+const URL_PROFILE       = '/api/profile';
 
-if (file.existsSync (SAVE_AUTH) == false) file.writeFileSync (SAVE_AUTH, file.readFileSync (TEMPLATE_AUTH));
-if (file.existsSync (SAVE_PROFILE) == false) file.writeFileSync (SAVE_PROFILE, file.readFileSync (TEMPLATE_PROFILE));
+const connection = http.createServer ();
 
-const server = http.createServer((request: http.IncomingMessage, response: http.ServerResponse) => 
+const mkdir = (path: string) =>
 {
-    let body = "";
+    if (fs.existsSync (path) == false)
+        fs.mkdirSync (path);
+}
+const callbackGet = (path: string, body: string, res: http.ServerResponse) =>
+{
+    if (path == URL_ADS) 
+    {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
 
-    request.on('data', (chunk: string) => 
+        mkdir (SAVE_DIR);
+
+        if (fs.existsSync (SAVE_ADS) == false)
+            fs.writeFileSync (SAVE_ADS, fs.readFileSync (SAMPLE_ADS));
+
+        res.end (fs.readFileSync (SAVE_ADS));
+        return;
+    }
+    if (path == URL_AUTH) 
     {
-        body += chunk;
-    })
-    request.on('end', () => 
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+
+        mkdir (SAVE_DIR);
+
+        if (fs.existsSync (SAVE_AUTH) == false)
+            fs.writeFileSync (SAVE_AUTH, fs.readFileSync (SAMPLE_AUTH));
+
+        res.end (fs.readFileSync (SAVE_AUTH));
+        return;
+    }
+    if (path == URL_PROFILE) 
     {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+
+        mkdir (SAVE_DIR);
+
+        if (fs.existsSync (SAVE_PROFILE) == false)
+            fs.writeFileSync (SAVE_PROFILE, fs.readFileSync (SAMPLE_PROFILE));
+
+        res.end (fs.readFileSync (SAVE_PROFILE));
+        return;
+    }
+}
+const callbackPut = (path: string, body: string, res: http.ServerResponse) =>
+{
+    if (path == URL_ADS)
+    {
+        fs.writeFileSync (SAVE_ADS, body);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end ();
+    }
+    if (path == URL_AUTH)
+    {
+        fs.writeFileSync (SAVE_AUTH, body);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end ();
+    }
+    if (path == URL_PROFILE)
+    {
+        fs.writeFileSync (SAVE_PROFILE, body);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end ();
+    }
+}
+const callbackDelete = (path: string, body: string, res: http.ServerResponse) =>
+{
+    if (path == URL_ADS)
+    {
+        fs.rmSync (SAVE_ADS);
+
+        res.statusCode = 200;
+        res.end ();
+        return;
+    }
+    if (path == URL_AUTH)
+    {
+        fs.rmSync (SAVE_AUTH);
+        
+        res.statusCode = 200;
+        res.end ();
+        return;
+    }
+    if (path == URL_PROFILE)
+    {
+        fs.rmSync (SAVE_PROFILE);
+        
+        res.statusCode = 200;
+        res.end ();
+        return;
+    }
+}
+const callbackOption = (path: string, body: string, res: http.ServerResponse) =>
+{
+    res.statusCode = 204;
+    res.setHeader('Allow', 'GET, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE');
+    res.end ();
+}
+
+connection.on ('request', (income: http.IncomingMessage, res: http.ServerResponse) => 
+{
+    let body = '';
+
+    income.on ('data', (chunk: string) => body += chunk);
+    income.on ('end', () =>
+    {
+        res.setHeader ("Access-Control-Allow-Origin", "*");
+
         try
         {
-            response.setHeader ("Access-Control-Allow-Origin", "*");
-
-            const method = request.method;
-            const path = request.url!;
-
-            if (path == "/api/auth")
+            switch (income.method!)
             {
-                switch (method)
-                {
-                    case "GET": 
-                        response.statusCode = 200;
-                        response.setHeader('Content-Type', 'application/json');
-                        response.end (file.readFileSync (SAVE_AUTH));
-                        return;
-                    case "PUT":
-                        file.writeFileSync (SAVE_AUTH, body);
-
-                        response.statusCode = 200;
-                        response.setHeader('Content-Type', 'application/json');
-                        response.end ();
-                        return;
-                    case "OPTIONS":
-                        
-                        response.statusCode = 204;
-                        response.setHeader('Allow', 'GET, PUT');
-                        response.setHeader('Access-Control-Allow-Methods', 'GET, PUT');
-                        response.end ();
-                        return;
-                }
+                case 'GET': return callbackGet (income.url!, body!, res!);
+                case 'PUT': return callbackPut (income.url!, body!, res!);
+                case 'DELETE': return callbackDelete (income.url!, body!, res!);
+                case 'OPTIONS': return callbackOption (income.url!, body!, res!);
+                default:
+                    console.error (`Invalid access: [${income.method!}] ${income.url!}`);
+                    res.statusCode = 400;
+                    res.end ();
+                    break;
             }
-            if (path == "/api/profile")
+            if (res.writable == false)
             {
-                switch (method)
-                {
-                    case "GET": 
-                        response.statusCode = 200;
-                        response.setHeader('Content-Type', 'application/json');
-                        response.end (file.readFileSync (SAVE_PROFILE));
-                        return;
-                    case "PUT":
-                        file.writeFileSync (SAVE_PROFILE, body);
-
-                        response.statusCode = 200;
-                        response.setHeader('Content-Type', 'application/json');
-                        response.end ();
-                        return;
-                    case "OPTIONS":
-                        
-                        response.statusCode = 204;
-                        response.setHeader('Allow', 'GET, PUT');
-                        response.setHeader('Access-Control-Allow-Methods', 'GET, PUT');
-                        response.end ();
-                        return;
-                }
+                return;
             }
-            console.error (`Invalid access: [${method}] ${path}`);
-            response.statusCode = 400;
-            response.end ();
+            res.statusCode = 400;
+            res.end ();
         }
         catch (ex)
         {
             console.error (ex);
 
-            response.statusCode = 500;
-            response.end ();
-        }
+            res.statusCode = 500;
+            res.end ();
+        }    
     });
 });
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+connection.listen(NET_PORT, NET_HOSTNAME, () => 
+{
+    console.log(`Server running at http://${NET_HOSTNAME}:${NET_PORT}/`);
 });

@@ -4,6 +4,7 @@
  * 
 */
 import auth     from './Auth'
+import test     from './TestConfig'
 import sample   from '../ApiMock/Advertisement.json'
 
 const ERROR_INIT = 'The advertisement system must be initialized';
@@ -52,12 +53,7 @@ export function addMedia () {}
 export function removeMedia () {}
 
 
-export class GetPersonalization
-{
-    /** รหัสปรับแต่งความชอบ */
-    id = 0;
-}
-export class GetMedia
+export class DataMedia
 {
     /** รายการโฆษณา */
     item = [{
@@ -94,6 +90,58 @@ export function set (block = [])
 // ################################################################ //
 //                                                                  //
 
-function __dbFetch (path) {}
-function __dbRead () {}
-function __dbWrite () {}
+function __dbLoad () 
+{
+    if (test.remote)
+    {
+        const request = new XMLHttpRequest ();
+
+        // ใช้ติดตาม
+        // console.trace ();
+
+        request.open ('GET', 'http://100.100.1.1:3000/api/ads', false);
+        request.send ();
+
+        if (request.status != 200)
+        {
+            console.error (request.statusText);
+            return sample;
+        }
+        return JSON.parse (request.responseText);
+    }
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return sample;
+    }
+
+    const readText = localStorage.getItem ("DbAds");
+    const readObject = (readText != null) ? JSON.parse (readText) : sample;
+
+    return readObject;
+}
+function __dbSave (data) 
+{
+    if (data == null) throw new Error ('The content must not be null');
+    if (typeof data !== 'object') throw new Error ('The content must be an object');
+
+    if (test.remote)
+    {
+        const request = new XMLHttpRequest ();
+
+        request.open ('PUT', 'http://100.100.1.1:3000/api/ads', false);
+        request.send (JSON.stringify(data));
+
+        if (request.status != 200)
+        {
+            console.error (request.statusText);
+        }
+        return;
+    }
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return;
+    }
+    localStorage.setItem ("DbAds", JSON.stringify (data));
+}

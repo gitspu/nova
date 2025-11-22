@@ -673,7 +673,7 @@ export function isInit ()
 /**
  * รับตั้งค่าการทำงานของระบบ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getConfigInfo ()
+export function getConfig ()
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);

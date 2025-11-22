@@ -728,7 +728,7 @@ const Root = () =>
     // ------------------------------- //
     //                                 //
 
-    const init = useRef (false);
+    const mounted = useRef (false);
     const [view, setView] = useState (api.auth.isLogged () ? (api.auth.getStatus () == api.auth.STATUS_ACTIVE ? VIEW_LOGGED : 
                                                               api.auth.getStatus () == api.auth.STATUS_INACTIVE ? VIEW_INACTIVE : VIEW_SUSPEND) : VIEW_INTRO);
     const [email, setEmail] = useState ('');
@@ -790,11 +790,11 @@ const Root = () =>
     //                                 //
     useEffect (() => 
     {
-        if (init.current)
+        if (mounted.current)
           return;
 
         document.title = "NOVA เข้าสู่ระบบ";
-        init.current = true;
+        mounted.current = true;
 
     }, []);
 

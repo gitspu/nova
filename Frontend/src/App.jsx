@@ -129,21 +129,23 @@ export function App ()
     }
 
     return (
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Overlay/>}>
-            <Route path='/'         element={<Home/>} index={true}/>
-            <Route path='/profile'  element={<Profile/>}/>
-            <Route path='/job'      element={<Job/>}/>
-            <Route path='/settings' element={<Settings/>}/>
-          </Route>
-          <Route element={null}>
-            <Route path='/console'  element={<Console/>}/>
-            <Route path='/auth'     element={<Auth/>}/>
-            <Route path='*' element={<Error/>}/>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <StrictMode>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Overlay/>}>
+              <Route path='/'         element={<Home/>} index={true}/>
+              <Route path='/profile'  element={<Profile/>}/>
+              <Route path='/job'      element={<Job/>}/>
+              <Route path='/settings' element={<Settings/>}/>
+            </Route>
+            <Route element={null}>
+              <Route path='/console'  element={<Console/>}/>
+              <Route path='/auth'     element={<Auth/>}/>
+              <Route path='*' element={<Error/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </StrictMode>
     );
 }
 /*
@@ -152,8 +154,4 @@ export function App ()
 const root = document.getElementById ("app");
 const react = createRoot (root);
 
-react.render (
-  <StrictMode>
-    <App/>
-  </StrictMode>
-);
+react.render (<App/>);
