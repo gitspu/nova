@@ -1,42 +1,76 @@
+/*                                                                             
+==============================================================================
+                                        LAYOUT
+==============================================================================
+*/                                                                              
 
+/*
+    พื้นที่หลัก
+*/
 .page-home
 {
-    position: absolute; inset: 0px 0px 0px 0px;
-    overflow: hidden hidden;
+    inset: 0;
+    position: absolute; 
+    pointer-events: none;
+    overflow: hidden;
+    display: block;
 
     background-color: var(--app-background-primary);
     color: var(--app-text-primary);
 }
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+/*
+    พื้นที่สำหรับ: เมนูนำทาง
+*/
 .page-home > .navigation
 {
-    position: absolute; inset: 0px 70% 0px 0px;
-    overflow: hidden hidden;
+    inset: 0% 70% 0% 0%;
+    position: absolute;
     pointer-events: none;
+    overflow: hidden;
 }
+/*
+    องค์ประกอบย่อย ๆ ในพื้นที่เมนูนำทาง
+*/
 .page-home > .navigation > *
 {
     margin: 12px 0px 0px auto;
     max-width: 224px;
     pointer-events: all;
 }
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+
 .page-home > .main
 {
-    display: block;
-    position: absolute; inset: 0px 0px 0px 0px;
-    overflow: hidden scroll;
+    position: absolute; inset: 0;
+    pointer-events: all;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 .page-home > .main > *
 {
-    margin: 12px 30% 0px 30%;
+
+    width: 100%;
     max-width: 40%;
+
+    pointer-events: all;
     padding: 0px 12px;
+    margin: 12px 30% 0px 30%;
 }
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+
 .page-home > .sidebar
 {
-    display: block;
-    position: absolute; inset: 0px 0px 0px 70%;
-    overflow: hidden hidden;
+    inset: 0px 0px 0px 70%;
     pointer-events: none;
+    position: absolute; 
+    overflow: hidden;
 }
 .page-home > .sidebar > *
 {
@@ -87,30 +121,42 @@
     }
 }
 
+/*                                                                             
+==============================================================================
+                                    COMPONENT
+==============================================================================
+*/                                                                             
+
 /* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
 
-.page-home > .main > .new-text
+.page-home > .main > .feed
+{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: var(--app-spacing-2);
+}
+
+.page-home > .main > .feed > .new-text
 {
     position: relative;
     width: 100%;
 }
-.page-home > .main > .new-text > *:nth-child(1)
+
+.page-home > .main > .feed .new-text > *:nth-child(1)
 {
     width: 100%;
     padding: 12px 48px 12px 12px;
 }
-.page-home > .main > .new-text > *:nth-child(2)
+.page-home > .main > .feed > .new-text > *:nth-child(2)
 {
     position: absolute;
     inset: 0px 0px 0px auto;
     margin: 0px 12px;
     padding: 4px;
 }
-.page-home > .main > .new-upload-list:empty
-{
-    display: none;
-}
-.page-home > .main > .new-upload-list
+
+.page-home > .main > .feed > .new-upload-list
 {
     width: 100%;
 
@@ -119,7 +165,12 @@
     flex-wrap: wrap;
     gap: 4px;
 }
-.page-home > .main > .new-upload-list > *
+
+.page-home > .main > .feed > .new-upload-list:empty
+{
+    display: none;
+}
+.page-home > .main > .feed > .new-upload-list > *
 {
     padding: 8px;
     border: var(--app-border-primary);
@@ -131,31 +182,31 @@
     align-items: center;
     gap: 12px;
 }
-.page-home > .main > .new-upload-list > * > img
+.page-home > .main > .feed > .new-upload-list > * > img
 {
     width: 28px;
 }
-.page-home > .main > .new-upload-list > * > label
+.page-home > .main > .feed > .new-upload-list > * > label
 {
     word-break: break-all;
 }
-.page-home > .main > .new-upload-logic
+.page-home > .main > .feed > .new-upload-logic
 {
     display: none;
 }
-.page-home > .main > .new-upload
+
+.page-home > .main > .feed > .new-upload
 {
     display: flex; 
     flex-direction: row;
     flex-wrap: wrap;
-    width: 100%; margin-bottom: 12px;
     gap: 4px;
 }
-.page-home > .main > .new-upload > *
+.page-home > .main > .feed > .new-upload > *
 {
     flex-grow: 1;
 }
-.page-home > .main > .post > *
+.page-home > .main > .feed > .post > *
 {
     margin-bottom: 12px;
 }

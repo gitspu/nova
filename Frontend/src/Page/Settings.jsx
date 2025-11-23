@@ -1,4 +1,4 @@
-import { Activity, useEffect, useRef, useState } from 'react'
+import { Activity, useEffect, useReducer, useRef, useState } from 'react'
 
 import Menu         from '../Component/MeunBar'
 import SettingsCom from '../Component/Settings'
@@ -17,6 +17,7 @@ const MenuAccount = ({stateMenu}) =>
     const util = api.util;
 
     const mounted = useRef (false);
+    const [, forceUpdate] = useReducer (x => x + 1, 0);
     const basic = useRef (new auth.DataBasic ());
 
     const onLoad = () =>
@@ -24,6 +25,8 @@ const MenuAccount = ({stateMenu}) =>
         const newBasic = util.ignore (() => auth.getBasic ());
         
         if (newBasic != null) basic.current = newBasic;
+
+        forceUpdate ();
     }
     const onSave = () =>
     {
@@ -55,22 +58,27 @@ const MenuProfile = ({stateMenu}) =>
     const util = api.util;
 
     const mounted = useRef (false);
-    const contact = useRef (new profile.DataContact ());
-    const education = useRef (new profile.DataEducation ());
-    const personal = useRef (new profile.DataPersonal ());
-    const theme = useRef (new profile.DataTheme ());
+    const [forceUpdateIdx, forceUpdate] = useReducer (x => x + 1, 0);
+
+    const contact   = useRef (null);
+    const education = useRef (null);
+    const interest  = useRef (null);
+    const job       = useRef (null);
+    const personal  = useRef (null);
+    const theme     = useRef (null);
+    const skill     = useRef (null);
 
     const onLoad = () =>
     {
-        const newContact = util.ignore (() => profile.getContact ());
-        const newEducation = util.ignore (() => profile.getEducation ());
-        const newPersonal = util.ignore (() => profile.getPersonal ());
-        const newTheme = util.ignore (() => profile.getTheme ());
+        contact.current   = util.ignore (() => profile.getContact ());
+        education.current = util.ignore (() => profile.getEducation ());
+        interest.current  = util.ignore (() => profile.getInterest ());
+        job.current       = util.ignore (() => profile.getJob ());
+        personal.current  = util.ignore (() => profile.getPersonal ());
+        theme.current     = util.ignore (() => profile.getTheme ());
+        skill.current     = util.ignore (() => profile.getSkill ());
 
-        if (newContact != null)   contact.current = newContact;
-        if (newEducation != null) education.current = newEducation;
-        if (newPersonal != null)  personal.current = newPersonal;
-        if (newTheme != null)  theme.current = newTheme;
+        forceUpdate ();
     }
     const onSave = () =>
     {
@@ -96,9 +104,13 @@ const MenuProfile = ({stateMenu}) =>
       <div className={stateMenu == MENU_PROFILE ? 'd-block' : 'd-none'}>
         <button className='button-primary' onClick={onSave}>บันทึก</button>
         
-        <SettingsCom.ProfileTheme ref={theme}/>
-        <SettingsCom.ProfilePersonal ref={personal}/>
-        <SettingsCom.ProfileContact ref={contact}/>
+        <SettingsCom.ProfileTheme key={`${forceUpdateIdx}-theme`} ref={theme}/>
+        <SettingsCom.ProfilePersonal key={`${forceUpdateIdx}-personal`} ref={personal}/>
+        <SettingsCom.ProfileContact key={`${forceUpdateIdx}-contact`} ref={contact}/>
+        <SettingsCom.ProfileJob key={`${forceUpdateIdx}-job`} ref={job}/>
+        <SettingsCom.ProfileEducation key={`${forceUpdateIdx}-education`} ref={job}/>
+        <SettingsCom.ProfileInterest key={`${forceUpdateIdx}-interest`} ref={interest}/>
+        <SettingsCom.ProfileSkill key={`${forceUpdateIdx}-skill`} ref={skill}/>
       </div>
     );
 }
@@ -113,7 +125,7 @@ const Root = () =>
     useEffect (() =>
     {
         if (mounted.current)
-          return;
+            return;
 
         mounted.current = true;
 
@@ -129,8 +141,8 @@ const Root = () =>
         <div className="menu">
           <div>
             <Menu direction='vertical' state={[menu, setMenu]}>
-              <Menu.Child state={1} icon={icon.person} text='บัญชี'/>
-              <Menu.Child state={2} icon={icon.briefcase} text='โปรไฟล์'/>
+              <Menu.Child state={MENU_ACCOUNT} icon={icon.person} text='บัญชี'/>
+              <Menu.Child state={MENU_PROFILE} icon={icon.briefcase} text='โปรไฟล์'/>
             </Menu>
           </div>
         </div>

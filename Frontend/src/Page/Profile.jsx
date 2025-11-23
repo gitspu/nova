@@ -414,7 +414,7 @@ const Root = () =>
         return (<NotAvailable message={exception}/>);
     }
 
-    switch (state.theme.layout)
+    switch (state.theme.profileLayout)
     {
         case 0:
         case 1:

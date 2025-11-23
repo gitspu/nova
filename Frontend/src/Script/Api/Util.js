@@ -1,18 +1,54 @@
-export function ignore (callback, def = null)
+/**
+ * เรียกคำสั่งตามที่กำหนดไว้ แต่ไม่สนใจข้อผิดพลาดที่อาจจะเกิดขึ้น
+ * 
+ * @param callback คำสั่งที่ต้องการเรียก
+ * @param fallback ค่าข้อมูล ในกรณีที่เกิดข้อผิดพลาด
+*/
+export function ignore (callback, fallback = null)
 {
-    try { return callback(); }
-    catch { return def; }
+    try { return callback (); }
+    catch (ex) 
+    { 
+        console.warn ('Ignored exception:', ex); 
+        return fallback; 
+    }
+}
+/**
+ * สลับตำแหน่งการวางข้อมูลที่มีอยู่ใน Array
+*/
+export function shuffle (array)
+{
+    if (array == null)
+    {
+        return null;
+    }
+    let currentIndex = array.length;
+    let randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex !== 0) 
+    {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+    return array;
 }
 
+/**
+ * อ่านบล็อกข้อมูลดังกล่าวที่อยู่ใน JSON ถ้าไม่สำเร็จจะคืนค่าเป็น null
+*/
 export function jsonRead (object, path, def = null)
 {
-    // if (object == null) throw new Error ('The object must not be null');
-    // if (path == null) throw new Error ('The path must not be null');
-    if (object == null) return def;
-    if (path == null) return def;
+    if (object == null || object == undefined) return def;
+    if (path == null || path == undefined) return def;
 
-    // if (typeof object != 'object') throw new Error ('The object must be an object type');
-    // if (typeof path != 'string') throw new Error ('The path must be a string value');
     if (typeof object != 'object') return def;
     if (typeof path != 'string' && typeof path != 'number') return def;
 
@@ -39,7 +75,9 @@ export function jsonRead (object, path, def = null)
     }
     return def;
 }
-
+/**
+ * สร้างค่ารหัส (ตัวเลข) ที่ไม่ซ้ำกันกับพื้นที่ของข้อมูล
+*/
 export function uniqueID (space)
 {
     while (true)
@@ -54,6 +92,9 @@ export function uniqueID (space)
         return id;
     }
 }
+/**
+ * สร้างค่ารหัส (UUID) ที่ไม่ซ้ำกันกับพื้นที่ของข้อมูล
+*/
 export function uniqueUUID (space)
 {
     while (true)

@@ -133,15 +133,16 @@
             },
             "job": 
             {
+                "visibility": 2,
                 "item": 
                 [
                     {
-                        "name": "Freelance",
-                        "entity": "",
+                        "entity": "Independent",
+                        "position": "Freelance",
                         "description": "I'm doing for myself",
                         "visibility": 2,
                         "start": "2025-11-08T08:10:36.807Z",
-                        "end": "2025-11-08T08:10:36.807Z"
+                        "end": null
                     }
                 ],
                 "modified": "2025-11-08T08:10:36.807Z"
@@ -174,8 +175,10 @@
             },
             "theme":
             {
-                "color": "e471ff",
-                "layout": 2
+                "profileColor": "e471ff",
+                "profileLayout": 2,
+                "resumeColor": "",
+                "resumeLayout": 2
             }
         },
         "49905": 
@@ -309,6 +312,7 @@
             },
             "job": 
             {
+                "visibility": 2,
                 "item": [],
                 "modified": "1970-01-01T00:00:00.000Z"
             },
@@ -319,8 +323,10 @@
             },
             "theme":
             {
-                "color": "FFFFFF",
-                "layout": 1
+                "profileColor": "FFFFFF",
+                "profileLayout": 1,
+                "resumeColor": "FFFFFF",
+                "resumeLayout": 1
             }
         }
     }

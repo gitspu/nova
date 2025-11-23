@@ -1,8 +1,12 @@
 /**
  * ไฟล์โค็ดสำหรับ: ระบบโปรไฟล์ (เวอร์ชั่นมุมมองของ)
 */
+import * as auth from './Auth'
 import * as profile from './Profile'
+import * as util from './Util'
+
 import * as test from './TestConfig'
+import      sample from './../ApiMock/Profile.json'
 
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลการติดต่อ
@@ -41,10 +45,10 @@ export class DataJob
     /** รายการงาน */
     item = 
     [{
-        /** ชื่องาน */
-        name: "",
         /** ชื่อองค์กร/บริษัท */
         entity: "",
+        /** ชื่องาน */
+        position: "",
         /** วันแรกที่เริ่มงาน */
         start: new Date(undefined),
         /** วันสุดท้ายที่ทำงาน */
@@ -135,17 +139,31 @@ export class DataTheme
     /**
      * รหัสสี (ฐานสิหก)
     */
-    color = "";
+    profileColor = '';
     /**
      * รหัสรูปแบบธีม (เป็นตัวเลข)
     */
-    layout = 0;
+    profileLayout = 0;
+    /**
+     * รหัสสี (ฐานสิหก)
+    */
+    resumeColor = '';
+    /**
+     * รหัสรูปแบบธีม (เป็นตัวเลข)
+    */
+    resumeLayout = 0;
 };
 
 export class ErrorState extends Error {};
 export class ErrorServer extends Error {};
 export class ErrorArgument extends Error {};
 export class ErrorAuth extends Error {};
+
+const MSG_ERROR_INIT = 'ระบบโปรไฟล์มุมมองได้เริ่มทำงานแล้ว';
+const MSG_ERROR_DEINIT = 'ระบบโปรไฟล์มุมมองยังไม่ได้เริ่มทำงาน';
+const MSG_ERROR_ID = 'รหัสดัชนีโปรไฟล์ที่ระบุไม่ถูกต้อง';
+const MSG_ERROR_EMPTY = 'ไม่พบข้อมูลโปรไฟล์ดังกล่าว';
+const MSG_ERROR_SERVER = 'เซิฟเวอร์ไม่สามารถประมวลข้อมูลได้'
 
 /**
  * เริ่มต้นการทำงานระบบโปรไฟล์ (มุมมอง)
@@ -155,8 +173,7 @@ export class ErrorAuth extends Error {};
 */
 export function init ()
 {
-    if (state.init)
-        throw new ErrorState ("Profile Viewer system is already been initialized");
+    if (state.init) throw new ErrorState (MSG_ERROR_INIT);
 
     state.init = true;
 }
@@ -165,65 +182,72 @@ export function init ()
 */
 export function getPersonal (which = NaN)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
-
     const result = new DataPersonal ();
-    const block = getBlock (which, "personal");
-  
-    result.background = block.background;
+    const block = __getSection (which, 'personal');
+
+    result.background = block.background;  
     result.icon = block.icon;
-    result.firstName = block.firstName.visibility == profile.VISIBILITY_PUBLIC ? block.firstName.value : "";
-    result.middleName = block.middleName.visibility == profile.VISIBILITY_PUBLIC ? block.middleName.value : "";
-    result.lastName = block.lastName.visibility == profile.VISIBILITY_PUBLIC ? block.lastName.value : "";
-    result.nickname = block.nickname.visibility == profile.VISIBILITY_PUBLIC ? block.nickname.value : "";
-    result.pronoun = block.pronoun.visibility == profile.VISIBILITY_PUBLIC ? block.nickname.value : "";
-    result.bio = block.bio.visibility == profile.VISIBILITY_PUBLIC ? block.bio.value : "";
-    result.birthday = block.birthday.visibility == profile.VISIBILITY_PUBLIC ? new Date(block.birthday.value) : "";
-    result.location = block.location.visibility == profile.VISIBILITY_PUBLIC ? block.location.value : "";
+
+    result.firstName    = String (__dbReadVisValue (block, 'firstName', ''));
+    result.middleName   = String (__dbReadVisValue (block, 'middleName', ''));
+    result.lastName     = String (__dbReadVisValue (block, 'lastName', ''));
+    result.nickname     = String (__dbReadVisValue (block, 'nickname', ''));
+    result.pronoun      = String (__dbReadVisValue (block, 'pronoun', profile.PRONOUN_UNKNOWN));
+    result.bio          = String (__dbReadVisValue (block, 'bio', ''));
+    result.birthday     = new Date (__dbReadVisValue (block, 'birthday', undefined));
+    result.location     = String (__dbReadVisValue (block, 'location', ''));
 
     return result;
 }
 export function getContact (which = NaN)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
-
     const result = new DataContact ();
-    const block = getBlock (which, "contact");
+    const block = __getSection (which, "contact");
 
-    if (block.website != null) result.website = block.website.visibility == profile.VISIBILITY_PUBLIC ? block.website.value : "";
-    if (block.email != null) result.email = block.email.visibility == profile.VISIBILITY_PUBLIC ? block.email.value : "";
-    if (block.phone != null) result.phone = block.phone.visibility == profile.VISIBILITY_PUBLIC ? block.phone.value : "";
+    result.website = String (__dbReadVisValue (block, 'website', ''));
+    result.email   = String (__dbReadVisValue (block, 'email', ''));
+    result.phone   = String (__dbReadVisValue (block, 'phone', ''));
 
     return result;
 }
 export function getInterest (which = NaN)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
-
     const result = new DataInterest ();
-    const block = getBlock (which, "interest");
+    const block = __getSection (which, 'interest');
 
-    if (block.visibility == profile.VISIBILITY_PUBLIC)
+    const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
+    const item = new Array (... block.item);
+
+    if (visibility != profile.VISIBILITY_PUBLIC) 
     {
-        result.item = block.item;
+        result.item = [];
+        return result;
     }
+
+    result.item = item.map ((value) =>
+    {
+        return String (value);
+    });
     return result;
 }
 export function getSkill (which = NaN)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
+    const result = new DataInterest ();
+    const block = __getSection (which, 'skill');
 
-    const result = new DataSkill ();
-    const block = getBlock (which, "skill");
+    const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
+    const item = new Array (... block.item);
 
-    if (block.visibility == profile.VISIBILITY_PUBLIC)
+    if (visibility != profile.VISIBILITY_PUBLIC) 
     {
-        result.item = block.item;
+        result.item = [];
+        return result;
     }
+    
+    result.item = item.map ((value) =>
+    {
+        return String (value);
+    });
     return result;
 }
 export function getEducation (which = NaN)
@@ -235,17 +259,51 @@ export function getEducation (which = NaN)
 }
 export function getSocial (which = NaN)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
+    const result = new DataSocial ();
+    const block = __getSection (which, 'social');
 
-    return new DataSocial ();
+    result.website      = String (__dbReadVisValue (block, 'website', ''));
+    result.facebook     = String (__dbReadVisValue (block, 'facebook', ''));
+    result.youtube      = String (__dbReadVisValue (block, 'youtube', ''));
+    result.twitter      = String (__dbReadVisValue (block, 'twitter', ''));
+    result.reddit       = String (__dbReadVisValue (block, 'reddit', ''));
+    result.discord      = String (__dbReadVisValue (block, 'discord', ''));
+
+    return result;
 }
 export function getJob (which)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
+    const result = new DataJob ();
+    const block = __getSection (which, 'job');
 
-    return new DataJob ();
+    const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
+    const item = new Array (... block.item);
+
+    if (visibility != profile.VISIBILITY_PUBLIC) 
+    {
+        result.item = [];
+        return result;
+    }
+
+    result.item = item.map ((value) =>
+    {
+        const entity    = String (util.jsonRead (value, 'entity', ''));
+        const position  = String (util.jsonRead (value, 'position', ''));
+        const visible   = Number (util.jsonRead (value, 'visibility', profile.VISIBILITY_UNKNOWN));
+        const start     = new Date (util.jsonRead (value, 'start', undefined));
+        const end       = new Date (util.jsonRead (value, 'end', undefined));
+
+        if (visible != profile.VISIBILITY_PUBLIC)
+            return;
+
+        return {
+            entity: entity,
+            position: position,
+            start: start,
+            end: end
+        };
+    });
+    return result;
 }
 export function getPost (which = NaN, index = NaN)
 {
@@ -255,8 +313,8 @@ export function getPost (which = NaN, index = NaN)
         throw new ErrorArgument ("Post index isn't specified or valid");
 
     const result = new DataPost ();
-    const block = getBlock (which, "post");
-    const blockItem = block["item"];
+    const block = __getSection (which, 'post');
+    const blockItem = util.jsonRead (block, 'item');
 
     if (blockItem.length > index || index < 0)
     {
@@ -274,14 +332,14 @@ export function getPost (which = NaN, index = NaN)
 }
 export function getTheme (which)
 {
-    if (isNaN (which))
-        throw new ErrorArgument ("Profile identifier isn't specified or valid");
-
     const result = new DataTheme ();
-    const block = getBlock (which, "theme");
+    const block = __getSection (which, 'theme');
 
-    result.color = block.color;
-    result.layout = block.layout;
+    result.profileColor = util.jsonRead (block, 'profileColor', '');
+    result.profileLayout = util.jsonRead (block, 'profileLayout', 0);
+
+    result.resumeColor = util.jsonRead (block, 'resumeColor');
+    result.resumeLayout = util.jsonRead (block, 'resumeLayout', 0);
 
     return result;
 }
@@ -303,27 +361,35 @@ export const state =
 {
     init: false,
 };
-const key = "DbProfile";
 
-
-function getBlock (which, name)
+function __getSection (which, name)
 {
-    if (state.init == false)
-        throw new ErrorState ("Profile Viewer system must be initialized");
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+    if (isNaN (which)) {
+        which = auth.getAccess ();
+    }
 
-    const json = loadJson ();
-    const itemList = json["item"];
+    const dbRoot = __dbLoad ();
+    const dbItem = util.jsonRead (dbRoot, 'item');
+    const ixItem = util.jsonRead (dbItem, which);
+    const ixBlock = util.jsonRead (ixItem, name);
 
-    if (itemList[String(which)] == null) 
-        throw new ErrorArgument ("No specified profile was found: " + which);
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbItem == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (ixItem == null) throw new ErrorArgument (MSG_ERROR_ID);
+    if (ixBlock == null) throw new ErrorArgument (MSG_ERROR_EMPTY);
 
-    return itemList[String(which)][String(name)];
+    return ixBlock;
 }
-function loadJson ()
+
+function __dbLoad ()
 {
-    if (test.remote)
+        if (test.remote)
     {
         const request = new XMLHttpRequest ();
+
+        // ใช้ติดตาม
+        // console.trace ();
 
         request.open ('GET', 'http://100.100.1.1:3000/api/profile', false);
         request.send ();
@@ -331,14 +397,31 @@ function loadJson ()
         if (request.status != 200)
         {
             console.error (request.statusText);
-            return {};
+            return sample;
         }
         return JSON.parse (request.responseText);
     }
-    let raw = localStorage.getItem (key);
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return sample;
+    }
 
-    if (raw == null) 
-        return {};
+    const readText = localStorage.getItem ("DbProfile");
+    const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
-    return JSON.parse (raw);
+    return readObject;
+}
+function __dbReadVisValue (object, key, fallback = null)
+{
+    const value = util.jsonRead (object, `${key}/value`);
+    const visibility = util.jsonRead (object, `${key}/visibility`);
+
+    if (value == null || visibility == null)
+        return fallback;
+
+    if (visibility != profile.VISIBILITY_PUBLIC)
+        return fallback;
+
+    return value;
 }

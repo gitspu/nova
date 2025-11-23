@@ -8,6 +8,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import VisOpt       from '../Component/VisOpt'
 
 import api from '../Script/Api'
+import icon from '../Script/Icon'
 import nav from '../Script/Navigator'
 
 import './Style/Settings.css'
@@ -111,6 +112,8 @@ const MenuAccount = ({ref}) =>
 const ProfileContact = ({ref}) =>
 {
     const mounted = useRef (false);
+
+    const [ready,      setReady]      = useState (false);
     const [email,      setEmail]      = useState ("");
     const [emailVis,   setEmailVis]   = useState (0);
     const [website,    setWebsite]    = useState ("");        
@@ -131,12 +134,15 @@ const ProfileContact = ({ref}) =>
         setWebsiteVis (block.website.visibility);
         setPhone (block.phone.value);
         setPhoneVis (block.phone.visibility);
+        setReady (true);
     }
     const onSave = () =>
     {
         const block = ref == null ? null : ref.current;
 
         if (block == null)
+            return;
+        if (ready == false)
             return;
 
         block.email.value = email;
@@ -162,9 +168,17 @@ const ProfileContact = ({ref}) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
 
+    useEffect (() =>
+    {
+        if (mounted.current == false)
+            return;
+
+        onSave ();
+    });
+
     return <>
       <div>
-        <h2 className='mt-4 mb-4'>ข้อมูลติดต่อ</h2>
+        <h2 className='text-h2 text-bold mt-4 mb-4'>ข้อมูลติดต่อ</h2>
         <div className='w-100 mb-1 input-text'>
           <label>อีเมล</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
@@ -183,10 +197,84 @@ const ProfileContact = ({ref}) =>
       </div>
     </>
 }
+const ProfileEducation = ({ref}) =>
+{
+    return (
+      <div>
+        <div className='d-flex justify-content-center'>
+          <h2 className='flex-grow-1 text-h2 text-bold mt-2 mb-2'>ข้อมูลการศึกษา</h2>
+          <button className='button-primary button-outlined'>
+            <label>
+              <img src={icon.plusCircle}></img>
+            </label>
+          </button>
+        </div>
+      </div>
+    );
+}
+const ProfileInterest = ({ref}) =>
+{
+    return (
+      <div>
+        <div className='d-flex justify-content-center'>
+          <h2 className='flex-grow-1 text-h2 text-bold mt-2 mb-2'>ข้อมูลความสนใจ</h2>
+          <button className='button-primary button-outlined'>
+            <label>
+              <img src={icon.plusCircle}></img>
+            </label>
+          </button>
+        </div>
+      </div>
+    )
+}
+const ProfileJob = ({ref}) =>
+{
+    const render = () =>
+    {
+        if (ref == null || ref.current == null)
+            return;
+
+        return ref.current.item.map ((value, index) =>
+        {
+            const entity = String (value.entity);
+            const position = String (value.position);
+            const start = new Date (value.start);
+            const end = new Date (value.end);
+
+            return (
+              <div key={index} className='bg-secondary br-2 p-2'>
+                <p className='m-0 text-h3 text-bold'>{entity}</p>
+                <p className='m-0 text-h4'>
+                  <span>{position}</span>
+                  <span> • </span>
+                  <span>{start.toLocaleDateString ()}</span>
+                  <span>{isFinite (end.getTime()) ? ` - ${end.toLocaleDateString()}` : ``}</span>
+                </p>
+              </div>
+            );
+        });
+    }
+    return (
+      <div>
+        <div className='d-flex justify-content-center'>
+          <h2 className='flex-grow-1 text-h2 text-bold mt-2 mb-2'>ข้อมูลการทำงาน</h2>
+          <button className='button-primary button-outlined'>
+            <label>
+              <img src={icon.plusCircle}></img>
+            </label>
+          </button>
+        </div>
+        <div>
+          {render()}
+        </div>
+      </div>
+    );
+}
 const ProfilePersonal = ({ref}) =>
 {
     const mounted = useRef (false);
 
+    const [ready,       setReady]       = useState (false);
     const [icon,        setIcon]        = useState (null); 
     const [background,  setBackground]  = useState (null);
 
@@ -218,11 +306,9 @@ const ProfilePersonal = ({ref}) =>
     {
         const block = ref != null ? ref.current : null;
 
-        if (mounted.current == false)
-            return;
         if (block == null)
             return;
-          
+
         setIcon (api.decodeContent (block.icon));
         setBackground (api.decodeContent (block.background));
 
@@ -249,16 +335,17 @@ const ProfilePersonal = ({ref}) =>
 
         setBirthday (`${block.birthday.value.getFullYear()}-${String(block.birthday.value.getMonth()).padStart(2, '0')}-${String(block.birthday.value.getDate()).padStart(2, '0')}`);
         setBirthdayVis (block.birthday.visibility);
+
+        setReady (true);
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const onSave = (() =>
     {
         const block = ref != null ? ref.current : null;
 
-        if (mounted.current == false)
-            return;
         if (block == null)
+            return;
+        if (ready == false)
             return;
 
         block.icon = api.encodeContent (icon);
@@ -330,10 +417,7 @@ const ProfilePersonal = ({ref}) =>
         mounted.current = true;
         onLoad ();
 
-        return () =>
-        {
-            mounted.current = false;
-        }
+        return () => { mounted.current = false; }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
@@ -344,24 +428,12 @@ const ProfilePersonal = ({ref}) =>
             return;
 
         onSave ();
-
-    }, 
-    [
-      nickname, nicknameVis,
-      firstName, firstNameVis,
-      middleName, middleNameVis,
-      lastName, lastNameVis,
-      status, statusVis,
-      bio, bioVis,
-      location, locationVis,
-      birthday, birthdayVis,
-      onSave
-    ]);
+    });
 
     return (
       <>
         <div>
-          <h2 className='mt-4 mb-4'>ข้อมูลส่วนตัว</h2>
+          <h2 className='text-h2 text-bold mt-4 mb-4'>ข้อมูลส่วนตัว</h2>
           <div className='w-100 mb-4 input-image-profile'>
             <img src={background} alt="" width='100%' height='100%'/>
             <img src={icon} alt="" width='128px' height='128px'/>
@@ -450,6 +522,8 @@ const ProfilePersonal = ({ref}) =>
 const ProfileTheme = ({ref}) =>
 {
     const mounted = useRef (false);
+
+    const [ready, setReady] = useState (false);
     const [profileColor, setProfileColor] = useState ('#000000');
     const [profileLayout, setProfileLayout] = useState (0);
 
@@ -468,12 +542,17 @@ const ProfileTheme = ({ref}) =>
 
         setResumeColor ('#' + block.resumeColor);
         setResumeLayout (block.resumeLayout);
+
+        setReady (true);
     }
     const onSave = () =>
     {
         const block = ref != null ? ref.current : null;
 
         if (block == null)
+            return;
+
+        if (ready == false)
             return;
 
         block.profileColor = profileColor.substring (1);
@@ -485,15 +564,13 @@ const ProfileTheme = ({ref}) =>
     useEffect (() =>
     {
         if (mounted.current) 
-          return;
+            return;
 
         mounted.current = true;
+
         onLoad ();
 
-        return () =>
-        {
-            mounted.current = false;
-        }
+        return () => { mounted.current = false; }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
@@ -509,7 +586,7 @@ const ProfileTheme = ({ref}) =>
     return (
       <>
         <div>
-          <h2 className='mt-4 mb-4'>ธีม</h2>
+          <h2 className='text-h2 text-bold mt-4 mb-4'>ธีม</h2>
         </div>
         <div>
             <label>สี</label>
@@ -521,13 +598,21 @@ const ProfileTheme = ({ref}) =>
       </>
     );
 }
+const ProfileSkill = () =>
+{
+  return (<></>);
+}
 
 const Root = ({children}) => { return (<>{children}</>); }
 
 Root.MenuAccount = MenuAccount;
 Root.ProfileContact = ProfileContact;
+Root.ProfileEducation = ProfileEducation;
+Root.ProfileInterest = ProfileInterest;
+Root.ProfileJob = ProfileJob;
 Root.ProfilePersonal = ProfilePersonal;
 Root.ProfileTheme = ProfileTheme;
+Root.ProfileSkill = ProfileSkill;
 
 export default Root;
 

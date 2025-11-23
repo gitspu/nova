@@ -38,7 +38,7 @@ export class DataContact
 */
 export class DataEducation
 {
-
+    
 };
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลความสนใจ
@@ -60,10 +60,10 @@ export class DataJob
     /** รายการงาน */
     item = 
     [{
-        /** ชื่องาน */
-        name: "",
         /** ชื่อองค์กร/บริษัท */
         entity: "",
+        /** ชื่องาน */
+        position: "",
         /** การมองเห็น */
         visibility: VISIBILITY_PUBLIC,
         /** วันแรกที่เริ่มงาน */
@@ -586,7 +586,7 @@ export function createPost (data, which = NaN)
 
     __setSection (block, which, "post");
 
-    return index;
+    return Number (index);
 }
 
 export function isInit ()
@@ -599,6 +599,11 @@ export const VISIBILITY_DEFAULT     = 1;
 export const VISIBILITY_PUBLIC      = 2;
 export const VISIBILITY_PRIVATE     = 3;
 export const VISIBILITY_FRIEND      = 4;
+
+export const MEDIA_TEXT             = 1;
+export const MEDIA_IMAGE            = 2;
+export const MEDIA_VIDEO            = 3;
+export const MEDIA_AUDIO            = 4;
 
 export const GENDER_UNKNOWN         = 0;
 export const GENDER_UNSPECIFIED     = 1;

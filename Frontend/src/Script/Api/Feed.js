@@ -1,86 +1,135 @@
 import * as test from './TestConfig'
+import * as util from './Util'
 
-export class DataHead
+/**
+ * โครงสร้างที่เก็บข้อมูลส่วนหัว สำหรับเตรียมพร้อมในการเรียกข้อมูล
+*/
+export class DataHeader
 {
-    division = 10;
+    /** จำนวนข้อมูลที่ถูกแบ่งไว้ในทุกเรียกข้อมูลส่วนเนื้อหา (ยังไม่ใช้ตอนนี้) */
+    chunk = 10;
 };
-export class DataChunk
+/**
+ * โครงสร้างที่เก็บข้อมูลรายการโพสต์ ที่ได้จากการเรียกคำสั่ง
+*/
+export class DataBody
 {
-    item = [{
+    /** รายการโพสต์ */
+    item = 
+    [{
         type: TYPE_UNKNOWN,
-        profile: 0,
-        post: 0
+        owner: 0,
+        index: 0
     }]
 };
 
+/**
+ * เป็นประเภทโพสต์ที่ระบบไม่รู้จัก
+*/
+export const TYPE_UNKNOWN = 0;
+/**
+ * เป็นประเภทโพสต์ทั่วไปที่เกิดจากผู้ใช้
+*/
+export const TYPE_NORMAL = 1;
+/**
+ * เป็นประเภทโพสต์แบบโฆษณา
+*/
+export const TYPE_SPONSORED = 2;
+
 export class ErrorState extends Error {};
+export class ErrorServer extends Error {};
 export class ErrorArgument extends Error {};
 
+const MSG_ERROR_INIT = 'ระบบฟีดได้เริ่มต้นทำงานแล้ว';
+const MSG_ERROR_DEINIT = 'ระบบฟีดยังไม่ได้เริ่มต้นทำงาน';
+const MSG_ERROR_SERVER = 'เซิฟเวอร์ไม่สามารถประมวลข้อมูลได้'
+
+/**
+ * เริ่มต้นการทำงานระบบฟีด
+*/
 export function init ()
 {
-    if (state.init)
-        throw new ErrorState ("Feed System is already been initialized");
+    if (state.init) throw new ErrorState (MSG_ERROR_INIT);
 
+    state.init = false;
     state.generation.splice (0, 1);
 
-    const json = loadJson ();
-    const profileBlock = json["item"];
+    const dbRoot = __dbLoad ();
+    const dbProfile = util.jsonRead (dbRoot, 'item');
 
-    if (profileBlock != null)
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbProfile == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    try
     {
-        for (const profileKey of shuffle (Object.keys (profileBlock)))
+        //
+        // ดึงโพสต์จากโปรไฟล์ของผู้ใช้เข้ามา
+        //
+        for (const key of util.shuffle (Object.keys (dbProfile)))
         {
-            const profile = profileBlock[profileKey];
-            const post = profile["post"];
+            const ixRoot = dbProfile[key];
+            const ixPost = util.jsonRead (ixRoot, 'post/item');
 
-            if (post == null)
-                continue;
+            // ไม่น่าจะเกิดขึ้น แต่ก็ ...
+            if (ixRoot == null) continue;
+            if (ixPost == null) continue;
 
-            const postItem = shuffle (post["item"]);
+            // สลับข้อมูล
+            util.shuffle (ixPost);
 
-            if (postItem == null)
-                continue;
-
-            for (let index = 0; index < postItem.length; index ++)
+            for (let index = 0; index < ixPost.length; index ++)
             {
-                state.generation.push ({
+                state.generation.push (
+                {
                     type: TYPE_NORMAL,
-                    profile: profileKey,
-                    profilePost: index
+                    owner: Number (key),
+                    index: Number (index),
                 });
             }
         }
-        shuffle (state.generation);
-    }
-    state.init = true;
-    return;
-}
+        //
+        // ดึงข้อมูลโฆษณา (เร็ว ๆ นี้)
+        //
 
-export function get ()
+
+        //
+        // สลับอีกครั้ง
+        //
+        util.shuffle (state.generation);
+    }
+    finally
+    {
+        state.init = true;
+    }
+}
+/**
+ * รับข้อมูลรายการโพสต์
+*/
+export function getBody ()
 {
-    const result = new DataChunk ();
+    const result = new DataBody ();
+    const collection = state.generation;
 
     result.item.splice (0, 1);
-
-    for (const item of state.generation)
+    result.item.push (... collection.map ((item) =>
     {
-        result.item.push ({
-            type: item.type,
-            profile: item.profile,
-            post: item.profilePost,
-        });
-    }
+        return {
+            type:  item.type,
+            owner: item.owner,
+            index: item.index,
+        };
+    }));
     return result;
 }
 
+/**
+ * รับค่าสถานะการทำงานของระบบ
+*/
 export function isInit ()
 {
     return state.init;
 }
 
-export const TYPE_UNKNOWN = 0;
-export const TYPE_NORMAL = 1;
-export const TYPE_SPONSORED = 2;
 
 //                                                                  //
 // ################################################################ //
@@ -95,38 +144,13 @@ export const state =
     init: false,
     generation: [{
         type: TYPE_UNKNOWN,
-        profile: 0,
-        profilePost: 0
+        owner: 0,
+        index: 0
     }]
 };
 const key = "DbProfile";
 
-function shuffle (array)
-{
-    if (array == null)
-    {
-        return null;
-    }
-    let currentIndex = array.length;
-    let randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex !== 0) 
-    {
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
-      ];
-    }
-    return array;
-}
-
-function loadJson ()
+function __dbLoad ()
 {
     if (test.remote)
     {
