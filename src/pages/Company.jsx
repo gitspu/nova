@@ -57,15 +57,40 @@ const initialJobs = [
   },
 ];
 
+// กำหนด CSS Custom Properties สำหรับ Mint Green Theme
+const mintThemeStyles = `
+  /* Mint Green Theme Custom Properties */
+  :root {
+    --bs-primary: #50C878; /* Mint Green */
+    --bs-primary-rgb: 80, 200, 120;
+    --bs-info: #66CDAA; /* Medium Aqua Marine */
+    --bs-info-rgb: 102, 205, 170;
+    --bs-success: #008080; /* Teal for Success/Open status */
+    --bs-success-rgb: 0, 128, 128;
+  }
+  .bg-primary { background-color: var(--bs-primary) !important; }
+  .text-primary { color: var(--bs-primary) !important; }
+  .border-primary { border-color: var(--bs-primary) !important; }
+`;
+
 const Company = () => {
-  // Styles: นำเข้า Bootstrap CSS
+  // Styles: นำเข้า Bootstrap CSS + Mint Theme Styles
   useEffect(() => {
     const link = document.createElement("link");
     link.href =
       "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
     link.rel = "stylesheet";
     document.head.appendChild(link);
-    return () => document.head.removeChild(link);
+    
+    // Inject Custom Mint Theme Styles
+    const style = document.createElement("style");
+    style.textContent = mintThemeStyles;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(link);
+      document.head.removeChild(style);
+    };
   }, []);
 
   // State
@@ -129,6 +154,7 @@ const Company = () => {
             {jobStatuses.map((status, idx) => (
               <Button
                 key={idx}
+                // primary คือ Mint Green
                 variant={
                   activeCategory === status ? "primary" : "outline-primary"
                 }
@@ -138,6 +164,7 @@ const Company = () => {
               >
                 {status === "เปิดรับ" ? "กำลังเปิดรับ" : "ปิดรับแล้ว"}{" "}
                 <Badge
+                  // primary คือ Mint Green
                   bg={activeCategory === status ? "white" : "primary"}
                   text={activeCategory === status ? "primary" : "white"}
                   pill
@@ -204,7 +231,8 @@ const Company = () => {
           show={toast.show}
           delay={3000}
           autohide
-          bg="success"
+          // bg="success" คือ Teal
+          bg="success" 
         >
           <Toast.Body className="text-white fw-bold">{toast.msg}</Toast.Body>
         </Toast>

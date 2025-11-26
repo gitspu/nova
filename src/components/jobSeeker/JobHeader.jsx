@@ -27,7 +27,7 @@ const JobHeader = ({
   };
 
   return (
-    // ใช้ bg-primary เป็นสีน้ำเงินเข้ม และเพิ่ม padding ด้านล่าง
+    // ใช้ bg-primary (Mint Green)
     <div className="bg-primary text-white py-5 shadow-lg ">
       <Container className="position-relative px-lg-5">
         {/* Search Bar (แถบค้นหา) - ทำเป็น Card สีขาวขนาดใหญ่ */}
@@ -42,6 +42,7 @@ const JobHeader = ({
             <Col xs={10} md={5} className="border-end border-light ">
               <InputGroup className="h-100 align-items-center ">
                 <InputGroup.Text className="bg-transparent border-0 ps-3 ">
+                  {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                   <Search className="text-primary opacity-75" size={20} />{" "}
                   {/* เปลี่ยนสีไอคอนให้เด่นขึ้น */}
                 </InputGroup.Text>
@@ -62,6 +63,7 @@ const JobHeader = ({
               className="d-none d-md-block border-end border-light"
             >
               <div className="d-flex align-items-center h-100 px-3 text-muted">
+                {/* เปลี่ยนเป็น text-info (Aqua Marine) */}
                 <MapPin size={18} className="me-2 text-info" />
                 <span>กรุงเทพมหานคร</span>
               </div>
@@ -69,6 +71,7 @@ const JobHeader = ({
             {/* Search Button */}
             <Col xs={2} md={2} className="p-1 ms-auto">
               <Button
+                // เปลี่ยน variant เป็น danger (Teal)
                 variant="danger"
                 className="w-100 h-100 fw-bold border-0 rounded-3 shadow-sm"
                 style={{ height: "48px", fontSize: "1rem" }}
@@ -92,13 +95,15 @@ const JobHeader = ({
                 size="sm"
                 className={`rounded-pill px-4 py-2 fw-medium shadow-sm gap-3${
                   activeCategory === cat
-                    ? "fw-bold text-primary shadow-sm"
+                    ? // ใช้ text-primary (Mint Green)
+                      "fw-bold text-primary shadow-sm"
                     : "text-white opacity-90 "
                 }`}
                 onClick={() => setActiveCategory(cat)}
               >
                 {cat}{" "}
                 <Badge
+                  // ใช้ bg-primary (Mint Green)
                   bg={activeCategory === cat ? "primary" : "white"}
                   text={activeCategory === cat ? "white" : "dark"}
                   pill

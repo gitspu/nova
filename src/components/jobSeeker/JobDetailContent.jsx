@@ -1,13 +1,6 @@
 import React from "react";
 import { Card, Button } from "react-bootstrap";
-import {
-  MapPin,
-  Briefcase,
-  Clock,
-  Banknote,
-  Share2,
-  Heart,
-} from "lucide-react";
+import { MapPin, Briefcase, Clock, Banknote, Share2, Heart, User, Mail, Phone } from "lucide-react";
 
 // JobDetailContent
 const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
@@ -49,6 +42,7 @@ const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
               <Button
                 variant="light"
                 className={`rounded-circle border shadow-sm  ${
+                  // เปลี่ยน bg-danger (Teal) และ text-danger (Teal)
                   isSaved ? "bg-danger text-white border-danger" : "text-danger"
                 }`}
                 // เมื่อคลิกปุ่มนี้ จะเรียก onToggleSave โดยส่ง id ของงาน
@@ -58,7 +52,8 @@ const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
               </Button>
               <Button
                 variant="light"
-                className="rounded-circle border shadow-sm text-primary " 
+                // เปลี่ยน text-primary (Mint Green)
+                className="rounded-circle border shadow-sm text-primary "
               >
                 <Share2 size={20} />
               </Button>
@@ -74,7 +69,7 @@ const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
           <div className="text-primary fw-bold mb-3 d-flex align-items-center gap-2">
             <span>{job.company}</span>
             <span
-              className="text-decoration-underline small text-muted" 
+              className="text-decoration-underline small text-muted"
               style={{ cursor: "pointer" }}
             >
               ดูโปรไฟล์บริษัท
@@ -84,19 +79,23 @@ const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
           {/* Job Info Grid (ข้อมูลงาน) */}
           <div className="row g-3 mb-4 text-secondary small border-top pt-3">
             <div className="col-6 d-flex align-items-center gap-2">
+              {/* เปลี่ยนเป็น text-info (Aqua Marine) */}
               <MapPin className="text-info" size={18} />{" "}
               <span className="fw-medium">{job.location}</span>
             </div>
             <div className="col-6 d-flex align-items-center gap-2">
+              {/* เปลี่ยนเป็น text-info (Aqua Marine) */}
               <Briefcase className="text-info" size={18} />{" "}
               <span className="fw-medium">{job.type}</span>
             </div>
             <div className="col-6 d-flex align-items-center gap-2">
+              {/* เปลี่ยนเป็น text-success (Teal) */}
               <Banknote className="text-success" size={18} />{" "}
               <span className="fw-bold text-dark">{job.salary}</span>{" "}
               {/* เน้นค่า salary */}
             </div>
             <div className="col-6 d-flex align-items-center gap-2">
+              {/* เปลี่ยนเป็น text-info (Aqua Marine) */}
               <Clock className="text-info" size={18} />{" "}
               <span className="fw-medium">{job.posted}</span>
             </div>
@@ -115,14 +114,17 @@ const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
             {/* ใช้ list-unstyled และเพิ่ม margin/padding แทนการสร้าง Bullet ใหม่ */}
             <ul className="list-unstyled ps-3">
               <li className="mb-2">
+                {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                 <span className="text-primary me-2">•</span>Develop and
                 implement operational strategies.
               </li>
               <li className="mb-2">
+                {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                 <span className="text-primary me-2">•</span>Lead
                 cross-functional teams to achieve business goals.
               </li>
               <li className="mb-2">
+                {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                 <span className="text-primary me-2">•</span>Analyze data to
                 improve performance matching KPIs.
               </li>
@@ -130,18 +132,60 @@ const JobDetailContent = ({ job, isSaved, onToggleSave }) => {
             <h6 className="fw-bold mt-4 text-dark">คุณสมบัติ</h6>
             <ul className="list-unstyled ps-3">
               <li className="mb-2">
+                {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                 <span className="text-primary me-2">•</span>Bachelor's degree in
                 related field.
               </li>
               <li className="mb-2">
+                {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                 <span className="text-primary me-2">•</span>Minimum 3-5 years of
                 experience.
               </li>
               <li className="mb-2">
+                {/* เปลี่ยนเป็น text-primary (Mint Green) */}
                 <span className="text-primary me-2">•</span>Strong communication
                 skills in English and Thai.
               </li>
             </ul>
+          </div>
+          {/* Contact Section (ช่องทางการติดต่อ) - ส่วนที่เพิ่มใหม่ */}
+          <h5 className="fw-bold text-dark border-bottom pb-2 mb-3 mt-4">
+            ช่องทางการติดต่อ
+          </h5>
+          <div className="contact-details text-muted small">
+            <div className="d-flex align-items-center gap-2 mb-2">
+              {/* เปลี่ยนเป็น text-primary (Mint Green) */}
+              <User className="text-primary" size={18} />
+              <span>
+                ผู้ติดต่อ:{" "}
+                <span className="text-dark fw-medium">
+                  {job.contactPerson || "-"}
+                </span>
+              </span>
+            </div>
+            <div className="d-flex align-items-center gap-2 mb-2">
+              {/* เปลี่ยนเป็น text-primary (Mint Green) */}
+              <Mail className="text-primary" size={18} />
+              <span>
+                อีเมล:{" "}
+                <a
+                  href={`mailto:${job.contactEmail}`}
+                  className="text-decoration-none text-info fw-medium"
+                >
+                  {job.contactEmail || "-"}
+                </a>
+              </span>
+            </div>
+            <div className="d-flex align-items-center gap-2 mb-2">
+              {/* เปลี่ยนเป็น text-primary (Mint Green) */}
+              <Phone className="text-primary" size={18} />
+              <span>
+                โทรศัพท์:{" "}
+                <span className="text-dark fw-medium">
+                  {job.contactPhone || "-"}
+                </span>
+              </span>
+            </div>
           </div>
         </Card.Body>
       </>

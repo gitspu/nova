@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
 import { UploadCloud, ArrowLeft } from "lucide-react";
 
 // PostForm (แบบฟอร์มโพสต์งาน)
-const companyPost = ({ onPostSuccess, onCancel }) => {
+const CompanyPost = ({ onPostSuccess, onCancel }) => {
   const [jobData, setJobData] = useState({
     title: "", company: "Bangchak Corporation PLC", logoUrl: "https://placehold.co/80x80/ea580c/ffffff?text=BCP", location: "กรุงเทพฯ",
     type: "Full-time", category: "Management", salary: "฿50k - ฿80k /เดือน", description: "* กำหนดกลยุทธ์ด้านการดำเนินงาน\n* บริหารจัดการทีม", qualifications: "* ปริญญาตรี\n* ประสบการณ์ 5 ปี"
@@ -44,6 +44,7 @@ const companyPost = ({ onPostSuccess, onCancel }) => {
             </div>
           <Card className="border-0 shadow-lg rounded-4 p-4">
              <div className="text-center mb-4">
+                {/* text-primary คือ Mint Green */}
                 <UploadCloud size={48} className="text-primary mb-2" />
                 <h3 className="fw-bold">ลงประกาศงานใหม่</h3>
              </div>
@@ -84,6 +85,7 @@ const companyPost = ({ onPostSuccess, onCancel }) => {
                 </Form.Group>
               </Row>
               <div className="d-grid mt-3">
+                {/* variant="primary" คือ Mint Green */}
                 <Button type="submit" variant="primary" size="lg">โพสต์งานทันที</Button>
               </div>
             </Form>
@@ -94,4 +96,4 @@ const companyPost = ({ onPostSuccess, onCancel }) => {
   );
 };
 
-export default companyPost;
+export default CompanyPost;

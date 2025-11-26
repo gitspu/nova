@@ -17,6 +17,7 @@ import JobDetailContent from "../components/jobSeeker/JobDetailContent.jsx";
 // --- MOCK DATA ---
 // ข้อมูลงานจำลอง
 const mockJobs = [
+// ... (Mock Data คงเดิม)
   {
     id: 1,
     title: "Chief Operating Officer (COO)",
@@ -30,6 +31,10 @@ const mockJobs = [
     logoUrl: "https://placehold.co/50x50/1e40af/ffffff?text=BCP",
     snippet:
       "Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+    // ข้อมูลติดต่อ
+    contactPerson: "Mr. Somchai Khiewngam",
+    contactEmail: "somchai.k@bangchak.co.th",
+    contactPhone: "02-123-4567 (Ext. 101)",
   },
   {
     id: 2,
@@ -44,6 +49,10 @@ const mockJobs = [
     logoUrl: "https://placehold.co/50x50/065f46/ffffff?text=SCG",
     snippet:
       "Manage logistics projects, ensuring timely delivery and cost efficiency using agile methodologies.",
+    // ข้อมูลติดต่อ
+    contactPerson: "Ms. Jane Jiraporn",
+    contactEmail: "jane.j@scg.co.th",
+    contactPhone: "02-987-6543",
   },
   {
     id: 3,
@@ -58,6 +67,10 @@ const mockJobs = [
     logoUrl: "https://placehold.co/50x50/be123c/ffffff?text=CG",
     snippet:
       "Oversee marketing campaigns, brand positioning, and digital transformation strategies.",
+    // ข้อมูลติดต่อ
+    contactPerson: "Human Resources Department",
+    contactEmail: "hr.recruit@central.co.th",
+    contactPhone: "02-555-9999",
   },
   {
     id: 4,
@@ -72,6 +85,10 @@ const mockJobs = [
     logoUrl: "https://placehold.co/50x50/059669/ffffff?text=KBTG",
     snippet:
       "Design intuitive user experiences for mobile banking applications reaching millions of users.",
+    // ข้อมูลติดต่อ
+    contactPerson: "Mr. Anuwat Tech",
+    contactEmail: "anuwat.t@kbtg.tech",
+    contactPhone: "02-000-1111",
   },
   {
     id: 6,
@@ -85,21 +102,59 @@ const mockJobs = [
     category: "IT & Digital",
     logoUrl: "https://placehold.co/50x50/3b82f6/ffffff?text=LMW",
     snippet: "Develop UI/UX features using React, Next.js, and TailwindCSS.",
+    // ข้อมูลติดต่อ
+    contactPerson: "Recruitment Team",
+    contactEmail: "recruit@lmwn.com",
+    contactPhone: "02-345-6789 (Ext. 200)",
   },
 ];
 
+// กำหนด CSS Custom Properties สำหรับ Mint Green Theme
+const mintThemeStyles = `
+  /* Mint Green Theme Custom Properties */
+  :root {
+    --bs-primary: #50C878; /* Mint Green */
+    --bs-primary-rgb: 80, 200, 120;
+    --bs-info: #66CDAA; /* Medium Aqua Marine */
+    --bs-info-rgb: 102, 205, 170;
+    --bs-danger: #008080; /* Teal for Accent/Saved */
+    --bs-danger-rgb: 0, 128, 128;
+    --bs-success: #008080; /* Teal for New/Success */
+    --bs-success-rgb: 0, 128, 128;
+  }
+  .bg-primary { background-color: var(--bs-primary) !important; }
+  .text-primary { color: var(--bs-primary) !important; }
+  .border-primary { border-color: var(--bs-primary) !important; }
+
+  /* ปรับสีปุ่มค้นหา (เดิมคือ danger) และปุ่ม Save/Saved */
+  .btn-danger, .bg-danger { 
+    --bs-btn-bg: var(--bs-danger);
+    --bs-btn-border-color: var(--bs-danger);
+    --bs-btn-hover-bg: #00A693; /* Darker Teal */
+    --bs-btn-hover-border-color: #00A693;
+  }
+`;
+
 const Jobs = () => {
-  // Inject Bootstrap CSS
+  // Inject Bootstrap CSS + Mint Theme Styles
   useEffect(() => {
+    // Inject Bootstrap CSS
     const link = document.createElement("link");
     link.href =
       "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
     link.rel = "stylesheet";
     document.head.appendChild(link);
+    
+    // Inject Custom Mint Theme Styles
+    const style = document.createElement("style");
+    style.textContent = mintThemeStyles;
+    document.head.appendChild(style);
+
     document.body.style.backgroundColor = "#f8f9fa";
 
     return () => {
       document.head.removeChild(link);
+      document.head.removeChild(style); // Cleanup custom style
       document.body.style.backgroundColor = ""; // Cleanup
     };
   }, []);
@@ -110,7 +165,7 @@ const Jobs = () => {
   const [activeCategory, setActiveCategory] = useState("ทั้งหมด");
   const [savedJobIds, setSavedJobIds] = useState([]);
   const [viewMode, setViewMode] = useState("all");
-  const [toast, setToast] = useState({ show: false, msg: "", type: "success" });
+  const [toast, setToast] = useState({ show: false, msg: "", type: "success" }); // type success = Mint
 
   // ตั้งค่างานแรกให้เป็น active เมื่อโหลดครั้งแรก
   useEffect(() => {
@@ -127,6 +182,7 @@ const Jobs = () => {
 
     if (savedJobIds.includes(id)) {
       setSavedJobIds(savedJobIds.filter((savedId) => savedId !== id));
+      // type secondary เหมาะสมกับโทนสีที่สว่างขึ้น
       setToast({
         show: true,
         msg: "ลบออกจากรายการบันทึกแล้ว",
@@ -134,6 +190,7 @@ const Jobs = () => {
       });
     } else {
       setSavedJobIds([...savedJobIds, id]);
+      // type success (Mint Green)
       setToast({ show: true, msg: "บันทึกงานเรียบร้อยแล้ว!", type: "success" });
     }
   };
@@ -186,8 +243,10 @@ const Jobs = () => {
             {/* View Toggle Tabs (สลับดูงานทั้งหมด/งานที่บันทึก) */}
             <div className="bg-white p-1 rounded-3 shadow-sm mb-3 d-flex">
               <Button
+                // เปลี่ยน variant เป็น primary (Mint)
                 variant={viewMode === "all" ? "primary" : "light"}
                 className={`flex-grow-1 border-0 rounded-2 fw-bold ${
+                  // ใช้ bg-primary (Mint)
                   viewMode === "all" ? "bg-primary text-white" : "text-muted"
                 }`}
                 onClick={() => {
@@ -201,8 +260,10 @@ const Jobs = () => {
                 งานทั้งหมด ({mockJobs.length})
               </Button>
               <Button
+                // เปลี่ยน variant เป็น primary (Mint)
                 variant={viewMode === "saved" ? "primary" : "light"}
                 className={`flex-grow-1 border-0 rounded-2 fw-bold ${
+                  // ใช้ bg-primary (Mint)
                   viewMode === "saved" ? "bg-primary text-white" : "text-muted"
                 }`}
                 onClick={() => setViewMode("saved")}
@@ -295,6 +356,7 @@ const Jobs = () => {
         <Toast
           onClose={() => setToast({ ...toast, show: false })}
           show={toast.show}
+          // bg success (Mint) หรือ secondary
           bg={toast.type === "success" ? "success" : "secondary"}
           delay={2500}
           autohide

@@ -27,6 +27,7 @@ const companyDetailContent = ({ job, isHistoryView }) => {
     if (!text) return null;
     return text.split('\n').map((line, i) => {
         if(line.trim().startsWith('*')) {
+             // text-primary คือ Mint Green
              return <li key={i} className="mb-2"><span className="text-primary me-2">•</span>{line.substring(1).trim()}</li>
         }
         return <p key={i}>{line}</p>
@@ -56,7 +57,11 @@ const companyDetailContent = ({ job, isHistoryView }) => {
             <div className="d-flex gap-2 mb-2">
               {/* ปุ่มที่แสดงในโหมด Job History (ดูผู้สมัคร) */}
               {isHistoryView && (
-                 <Button variant="outline-primary" className="fw-medium px-3 rounded-pill">
+                 <Button 
+                    // variant="outline-primary" คือ outline Mint Green
+                    variant="outline-primary" 
+                    className="fw-medium px-3 rounded-pill"
+                >
                      <ClipboardList size={18} className="me-2"/> ดูผู้สมัคร
                  </Button>
               )}
@@ -71,8 +76,10 @@ const companyDetailContent = ({ job, isHistoryView }) => {
           </div>
 
           <div className="row g-3 mb-4 text-secondary small border-top pt-3">
+            {/* text-info คือ Medium Aqua Marine */}
             <div className="col-6 d-flex align-items-center gap-2"><MapPin className="text-info" size={18} /> <span className="fw-medium">{job.location}</span></div>
             <div className="col-6 d-flex align-items-center gap-2"><Briefcase className="text-info" size={18} /> <span className="fw-medium">{job.type}</span></div>
+            {/* text-success คือ Teal */}
             <div className="col-6 d-flex align-items-center gap-2"><Banknote className="text-success" size={18} /> <span className="fw-bold text-dark">{job.salary}</span></div>
             <div className="col-6 d-flex align-items-center gap-2"><Clock className="text-info" size={18} /> <span className="fw-medium">{job.posted}</span></div>
           </div>

@@ -6,6 +6,7 @@ import { MapPin } from "lucide-react";
 const JobCard = ({ data, isActive, onClick, isSaved }) => {
   return (
     <Card
+      // ใช้ border-primary (Mint Green)
       className={`mb-3 shadow-sm transition-all ${
         isActive ? "border-primary border-4 border-start bg-light" : ""
       }`}
@@ -18,6 +19,7 @@ const JobCard = ({ data, isActive, onClick, isSaved }) => {
             <div className="d-flex align-items-start justify-content-between">
               <h6
                 className={`fw-bold mb-1 ${
+                  // ใช้ text-primary (Mint Green)
                   isActive ? "text-primary" : "text-dark"
                 }`}
                 style={{ fontSize: "1.1rem" }}
@@ -32,14 +34,20 @@ const JobCard = ({ data, isActive, onClick, isSaved }) => {
               {data.isNew && (
                 <Badge
                   bg="light"
+                  // ใช้ text-success (Teal)
                   text="success"
+                  // ใช้ border-success (Teal)
                   className="border border-success rounded-pill fw-normal px-2"
                 >
                   ใหม่
                 </Badge>
               )}
               {isSaved && (
-                <Badge bg="danger" className="rounded-pill">
+                <Badge
+                  // ใช้ bg-danger (Teal)
+                  bg="danger"
+                  className="rounded-pill"
+                >
                   บันทึกแล้ว
                 </Badge>
               )}

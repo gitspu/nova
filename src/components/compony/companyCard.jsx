@@ -7,6 +7,7 @@ const companyCard = ({ data, isActive, onClick, isHistoryView }) => {
   // isSaved และ isNew ถูกซ่อนในโหมด History แต่ยังคงอยู่ใน prop signature เดิม
   return (
     <Card
+      // border-primary คือ Mint Green
       className={`mb-3 shadow-sm transition-all ${
         isActive ? "border-primary border-4 border-start bg-light" : ""
       }`}
@@ -18,6 +19,7 @@ const companyCard = ({ data, isActive, onClick, isHistoryView }) => {
           <Col xs={9}>
             <div className="d-flex align-items-start justify-content-between">
               <h6
+                // text-primary คือ Mint Green
                 className={`fw-bold mb-1 ${
                   isActive ? "text-primary" : "text-dark"
                 }`}
@@ -33,6 +35,7 @@ const companyCard = ({ data, isActive, onClick, isHistoryView }) => {
               {/* แสดงป้ายสถานะสำหรับ Job History */}
               {isHistoryView && (
                   <Badge 
+                    // bg="success" คือ Teal, bg="secondary" คือ Grey มาตรฐาน
                     bg={data.status === "เปิดรับ" ? "success" : "secondary"} 
                     className="rounded-pill fw-medium px-2"
                   >
