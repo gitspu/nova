@@ -1,10 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./components/Login";
-import Profile from "./components/profile/Profile";
-import SocialFeed from "./pages/SocialFeed";
 import Auth from './pages/Auth'
-import Resume2 from "./components/resume/Resume2"
 import ViewProfile from "./pages/ViewProfile";
+import Profile from "./components/comProfile/Profile";
+
 // ** Dashboard **
 import DashboardPage from "./pages/DashboardPage";
 import Dashboard from "./components/comDashboard/Dashboard";
@@ -17,13 +15,11 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-       {/* <Route path="/" element={<Login/>}/> */}
-       <Route path="/" element={<Auth/>}/> 
-       <Route path="/profile" element ={<Profile/>}/>
-       <Route path="/resume" element ={<Resume2/>}/>
-       <Route path="/socialfeed" element ={<SocialFeed/>}/>
+       <Route path="/" element={<Auth/>}/>
        <Route path="/viewprofile" element ={<ViewProfile/>}/>
-       <Route path="/dashboardpage" element={<DashboardPage />}>
+       <Route path="/profile" element ={<Profile/>}/>
+
+       <Route path="/dashboardpage" element={<DashboardPage />} >
           {/* Path ที่เป็น 'index' คือหน้า default */}
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
