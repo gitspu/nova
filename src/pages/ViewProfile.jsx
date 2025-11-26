@@ -3,30 +3,25 @@ import ProfileInfo from "../components/comViewProfile/ProfileInfo";
 import { useState } from "react";
 import NavbarTop from "../components/navbarTop";
 
+import defaultResumePic from "../assets/resumepicture/resume_1.jpg";
 
-// CHANGE TO FEEDPROFILE
 const ViewProfile = () => {
-  const [pic,setPic] = useState(null)
+  // ตั้ง useState ของ resume
+  const [pic, setPic] = useState(defaultResumePic);
+
   return (
     <div>
-        <NavbarTop/>
-        {/* ปรับให้อยู่ตรงกลาง */}
+      <NavbarTop />
       <div
         className="d-flex m-5 justify-content-center align-items-start gap-3"
         style={{ minHeight: "100vh" }}
       >
-        {/* LEFT */}
         <div>
-          <ProfileInfo setPic={setPic}/>
+          <ProfileInfo setPic={setPic} />
         </div>
 
-        {/* RIGHT */}
-        <div
-          className=""
-          style={{ position: "sticky", top: "20px" }}
-        >
-          <Portfolio portfolioPicture={pic}/>
-
+        <div className="" style={{ position: "sticky", top: "6.5rem" }}>
+          <Portfolio portfolioPicture={pic} />
         </div>
       </div>
     </div>

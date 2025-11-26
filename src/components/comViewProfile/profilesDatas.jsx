@@ -1,5 +1,3 @@
-// src/data/profilesData.js
-
 const profilesDatas = [
   {
     id: 1,
@@ -7,6 +5,8 @@ const profilesDatas = [
     surname: "วัฒนกูล",
     job: "Programmer",
     experience: 3,
+    resumeFileName: "resume_1.jpg",
+    profilePicFileName: "",
   },
   {
     id: 2,
@@ -14,6 +14,8 @@ const profilesDatas = [
     surname: "บุญเรือง",
     job: "Programmer",
     experience: 5,
+    resumeFileName: "resume_2.jpg",
+    profilePicFileName: "",
   },
   {
     id: 3,
@@ -21,6 +23,8 @@ const profilesDatas = [
     surname: "ศรีสวัสดิ์",
     job: "Programmer",
     experience: 2,
+    resumeFileName: "resume_3.jpg",
+    profilePicFileName: "",
   },
   {
     id: 4,
@@ -28,6 +32,8 @@ const profilesDatas = [
     surname: "จิตภักดี",
     job: "Programmer",
     experience: 4,
+    resumeFileName: "resume_4.jpg",
+    profilePicFileName: "",
   },
   {
     id: 5,
@@ -35,6 +41,8 @@ const profilesDatas = [
     surname: "มีทรัพย์",
     job: "Programmer",
     experience: 4,
+    resumeFileName: "resume_5.jpg",
+    profilePicFileName: "",
   },
 
   {
@@ -43,6 +51,8 @@ const profilesDatas = [
     surname: "เกษมสันต์",
     job: "Graphic Designer",
     experience: 1,
+    resumeFileName: "resume_6.jpg",
+    profilePicFileName: "",
   },
   {
     id: 7,
@@ -50,6 +60,8 @@ const profilesDatas = [
     surname: "คงเดช",
     job: "Graphic Designer",
     experience: 5,
+    resumeFileName: "resume_7.jpg",
+    profilePicFileName: "",
   },
   {
     id: 8,
@@ -57,6 +69,8 @@ const profilesDatas = [
     surname: "อรุณศิลป์",
     job: "Graphic Designer",
     experience: 3,
+    resumeFileName: "resume_8.jpg",
+    profilePicFileName: "",
   },
   {
     id: 9,
@@ -64,6 +78,8 @@ const profilesDatas = [
     surname: "โสภา",
     job: "Graphic Designer",
     experience: 5,
+    resumeFileName: "resume_9.jpg",
+    profilePicFileName: "",
   },
   {
     id: 10,
@@ -71,6 +87,8 @@ const profilesDatas = [
     surname: "สุวรรณดี",
     job: "Graphic Designer",
     experience: 2,
+    resumeFileName: "resume_10.jpg",
+    profilePicFileName: "",
   },
 
   {
@@ -79,6 +97,8 @@ const profilesDatas = [
     surname: "ทองมาก",
     job: "Digital Marketer",
     experience: 4,
+    resumeFileName: "resume_11.jpg",
+    profilePicFileName: "",
   },
   {
     id: 12,
@@ -86,6 +106,8 @@ const profilesDatas = [
     surname: "ศรีเพ็ง",
     job: "Digital Marketer",
     experience: 3,
+    resumeFileName: "resume_12.jpg",
+    profilePicFileName: "",
   },
   {
     id: 13,
@@ -93,6 +115,8 @@ const profilesDatas = [
     surname: "วัฒนะชัย",
     job: "Digital Marketer",
     experience: 3,
+    resumeFileName: "resume_13.jpg",
+    profilePicFileName: "",
   },
   {
     id: 14,
@@ -100,6 +124,8 @@ const profilesDatas = [
     surname: "มงคลชัย",
     job: "Digital Marketer",
     experience: 1,
+    resumeFileName: "resume_14.jpg",
+    profilePicFileName: "",
   },
   {
     id: 15,
@@ -107,6 +133,8 @@ const profilesDatas = [
     surname: "อุดมเดช",
     job: "Digital Marketer",
     experience: 5,
+    resumeFileName: "resume_15.jpg",
+    profilePicFileName: "",
   },
 
   {
@@ -115,6 +143,8 @@ const profilesDatas = [
     surname: "ธนบดี",
     job: "Accountant",
     experience: 2,
+    resumeFileName: "resume_16.jpg",
+    profilePicFileName: "",
   },
   {
     id: 17,
@@ -122,6 +152,8 @@ const profilesDatas = [
     surname: "จงรักษ์",
     job: "Accountant",
     experience: 5,
+    resumeFileName: "resume_17.jpg",
+    profilePicFileName: "",
   },
   {
     id: 18,
@@ -129,8 +161,18 @@ const profilesDatas = [
     surname: "กิตติวงศ์",
     job: "Accountant",
     experience: 5,
+    resumeFileName: "resume_18.jpg",
+    profilePicFileName: "",
   },
-  { id: 19, name: "รัตนา", surname: "คำดี", job: "Accountant", experience: 3 },
+  {
+    id: 19,
+    name: "รัตนา",
+    surname: "คำดี",
+    job: "Accountant",
+    experience: 3,
+    resumeFileName: "resume_19.jpg",
+    profilePicFileName: "",
+  },
 
   {
     id: 20,
@@ -138,6 +180,8 @@ const profilesDatas = [
     surname: "บุญธรรม",
     job: "HR Officer",
     experience: 1,
+    resumeFileName: "resume_20.jpg",
+    profilePicFileName: "",
   },
   {
     id: 21,
@@ -145,6 +189,8 @@ const profilesDatas = [
     surname: "สังข์ทอง",
     job: "HR Officer",
     experience: 2,
+    resumeFileName: "resume_21.jpg",
+    profilePicFileName: "",
   },
   {
     id: 22,
@@ -152,6 +198,8 @@ const profilesDatas = [
     surname: "สุขเกษม",
     job: "HR Officer",
     experience: 4,
+    resumeFileName: "resume_22.jpg",
+    profilePicFileName: "",
   },
   {
     id: 23,
@@ -159,6 +207,8 @@ const profilesDatas = [
     surname: "งามสง่า",
     job: "HR Officer",
     experience: 2,
+    resumeFileName: "resume_23.jpg",
+    profilePicFileName: "",
   },
   {
     id: 24,
@@ -166,6 +216,8 @@ const profilesDatas = [
     surname: "วงศ์คำ",
     job: "HR Officer",
     experience: 4,
+    resumeFileName: "resume_24.jpg",
+    profilePicFileName: "",
   },
 
   {
@@ -174,6 +226,8 @@ const profilesDatas = [
     surname: "ทรัพย์ประเสริฐ",
     job: "Sales Executive",
     experience: 3,
+    resumeFileName: "resume_25.jpg",
+    profilePicFileName: "",
   },
   {
     id: 26,
@@ -181,6 +235,8 @@ const profilesDatas = [
     surname: "ยอดเพชร",
     job: "Sales Executive",
     experience: 5,
+    resumeFileName: "resume_26.jpg",
+    profilePicFileName: "",
   },
   {
     id: 27,
@@ -188,6 +244,8 @@ const profilesDatas = [
     surname: "วิจิตร",
     job: "Sales Executive",
     experience: 4,
+    resumeFileName: "resume_27.jpg",
+    profilePicFileName: "",
   },
   {
     id: 28,
@@ -195,6 +253,8 @@ const profilesDatas = [
     surname: "กำเนิดดี",
     job: "Sales Executive",
     experience: 4,
+    resumeFileName: "resume_28.jpg",
+    profilePicFileName: "",
   },
   {
     id: 29,
@@ -202,6 +262,8 @@ const profilesDatas = [
     surname: "แสงทอง",
     job: "Sales Executive",
     experience: 1,
+    resumeFileName: "resume_29.jpg",
+    profilePicFileName: "",
   },
   {
     id: 30,
@@ -209,6 +271,8 @@ const profilesDatas = [
     surname: "บุญญาวงศ์",
     job: "Sales Executive",
     experience: 5,
+    resumeFileName: "resume_30.jpg",
+    profilePicFileName: "",
   },
 ];
 
