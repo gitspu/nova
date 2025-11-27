@@ -1,0 +1,117 @@
+
+.profile-post
+{
+    width: 100%;
+
+    background-color: var(--app-background-secondary);
+    border-radius: 12px;
+    outline: 1px solid grey;
+    padding: 12px;
+}
+.profile-post > .head
+{
+    display: flex; flex-direction: row;
+    height: 40px; margin: 0px 0px 16px 0px;
+}
+.profile-post > .head > .image
+{
+    width: 40px; height: 40px;
+    border-radius: 100%;
+    margin-right: 12px;
+    object-fit: cover;
+}
+.profile-post > .head > .image:hover
+{
+    border: 2px solid var(--app-background-tertiary);
+}
+.profile-post > .head > .text
+{
+    display: block;
+}
+.profile-post > .head > .text > .title
+{
+    display: block;
+
+    color: var(--app-text-primary);
+    font-weight: bold;
+    font-size: 1rem;
+}
+.profile-post > .head > .text > .title:hover
+{
+    text-decoration: underline;
+}
+.profile-post > .head > .text > .subtitle
+{
+    display: block;
+
+    color: var(--app-text-secondary);
+    font-weight: normal;
+    font-size: 0.75rem;
+}
+.profile-post > .body
+{
+    width: 100%;
+}
+.profile-post > .body > *
+{
+    width: 100%; height: auto;
+    display: block;
+}
+.profile-post > .body > .text
+{
+    margin: 0px 0px 12px 0px;
+}
+.profile-post > .body > .image
+{
+    width: 100%; height: 420px;
+    margin: 0px 0px 12px 0px;
+
+    border-radius: 24px;
+    background-color: var(--app-background-tertiary);
+    object-fit: cover;
+}
+.profile-post > .body > .audio
+{
+    width: 100%; height: 40px;
+    margin: 0px 0px 12px 0px;
+}
+.profile-post > .body > .video
+{
+    width: 100%; height: 420px;
+    margin: 0px 0px 12px 0px;
+    border-radius: 24px;
+    object-fit: cover;
+}
+.profile-post > .body > .video:fullscreen,
+.profile-post > .body > .video:-ms-fullscreen,
+.profile-post > .body > .video:-moz-full-screen,
+.profile-post > .body > .video:-webkit-full-screen
+{
+    margin: 0px;
+    border-radius: 0px !important;
+}
+.profile-post > .body > .action
+{
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.profile-post > .action 
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.profile-post > .action > *
+{
+    flex: 1;
+}
+
+@media (max-width: 512px)
+{
+    .profile-post > .action > * > label > span
+    {
+        display: none;
+    }
+}

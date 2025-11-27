@@ -1,0 +1,21 @@
+{
+    "format": 1,
+    "post":
+    [
+        {
+            "entity": "",
+            "description": "",
+            "requirement":
+            {
+                "age": 18,
+                "experience": 0
+            },
+            "contact":
+            {
+                "website": "https://sample.web/contact",
+                "email": "sample@email.com",
+                "phone": "+12 345 678 9012"
+            }
+        }
+    ]
+}

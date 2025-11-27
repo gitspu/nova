@@ -1,0 +1,115 @@
+
+.menu-bar > .vertical
+{
+
+}
+.menu-bar > .vertical > button
+{
+    width: 100%;
+    height: 40px;
+
+    margin: 0px;
+    padding: 8px;
+
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--app-spacing-2);
+
+    align-items: center;
+    justify-content: start;
+
+    background-color: transparent;
+    border: none;
+    border-radius: var(--app-button-primary-radius);
+    color: var(--app-text-primary);
+}
+.menu-bar > .vertical > button:enabled:hover
+{
+    background-color: var(--app-button-primary-background-hover);
+    color: var(--app-text-button);
+}
+.menu-bar > .vertical > button:enabled:active
+{
+    background-color: var(--app-button-primary-background-active);
+    color: var(--app-text-button);
+}
+.menu-bar > .vertical > button > img
+{
+    height: 24px;
+}
+.menu-bar > .vertical > button:hover > img,
+.menu-bar > .vertical > button:active > img
+{
+    filter: invert();
+}
+
+.menu-bar > .vertical > .active
+{
+    background-color: rgb(66, 116, 99);
+    color: white;
+}
+.menu-bar > .vertical > .active > img
+{
+    filter: invert();
+}
+
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.menu-bar .horizontal
+{
+    display: flex;
+    flex-direction: row;
+}
+.menu-bar .horizontal > button
+{
+    width: auto;
+    height: 40px;
+
+    margin: 0px;
+    padding: 8px;
+
+    display: inline-flex; 
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--app-spacing-2);
+
+    align-items: center;
+    justify-content: start;
+
+    background-color: transparent;
+    border: none;
+    border-radius: var(--app-button-primary-radius);
+    color: var(--app-text-primary);
+}
+.menu-bar > .horizontal > button:enabled:hover
+{
+    background-color: var(--app-button-primary-background-hover);
+    color: var(--app-text-button);
+}
+.menu-bar > .horizontal > button:enabled:active
+{
+    background-color: var(--app-button-primary-background-active);
+    color: var(--app-text-button);
+}
+.menu-bar > .horizontal > button > img
+{
+    height: 24px;
+}
+.menu-bar > .horizontal > button:hover > img,
+.menu-bar > .horizontal > button:active > img
+{
+    filter: invert();
+}
+
+.menu-bar > .horizontal > .active
+{
+    background-color: rgb(66, 116, 99);
+    color: white;
+}
+.menu-bar > .horizontal > .active > img
+{
+    filter: invert();
+}

@@ -6,7 +6,7 @@ import * as profile from './Profile'
 import * as util from './Util'
 
 import * as test from './TestConfig'
-import      sample from './../ApiMock/Profile.json'
+import      sample from './../Sample/Profile.json'
 
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลการติดต่อ
@@ -232,7 +232,7 @@ export function getInterest (which = NaN)
 }
 export function getSkill (which = NaN)
 {
-    const result = new DataInterest ();
+    const result = new DataSkill ();
     const block = __getSection (which, 'skill');
 
     const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
@@ -384,14 +384,14 @@ function __getSection (which, name)
 
 function __dbLoad ()
 {
-        if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
 
         // ใช้ติดตาม
         // console.trace ();
 
-        request.open ('GET', 'http://100.100.1.1:3000/api/profile', false);
+        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
         request.send ();
 
         if (request.status != 200)

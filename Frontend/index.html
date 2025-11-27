@@ -7,26 +7,21 @@
     <title>NOVA</title>
 
     <link rel="icon" type="image/svg+xml" href="/Favicon.svg" />
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init(
+        {
+            appId            : '1161917442122315',
+            xfbml            : false,
+            version          : 'v24.0'
+        });
+      };
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script type="module" src="/src/App.jsx"></script>
   </head>
-  <body>
-    <span id="app" class="app app-theme-light">
-      <!-- 
-          React will be rendered here 
-       -->
-    </span>
-    <span>
-      <script>
-        window.fbAsyncInit = function() {
-          FB.init(
-          {
-              appId            : '1161917442122315',
-              xfbml            : false,
-              version          : 'v24.0'
-          });
-        };
-      </script>
-      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-      <script type="module" src="/src/App.jsx"></script>
-    </span>
+  <body id='app' class='theme-light'>
+    
   </body>
+  
 </html>

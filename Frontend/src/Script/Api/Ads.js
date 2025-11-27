@@ -7,8 +7,8 @@
 
 import * as auth from './Auth'
 import * as util from './Util'
-import test     from './TestConfig'
-import sample   from '../ApiMock/Advertisement.json'
+import * as test from './TestConfig'
+import sample   from '../Sample/Advertisement.json'
 
 /**
  * โครงสร้างข้อมูลที่เก็บการตั้งค่าระบบโฆษณา
@@ -242,14 +242,14 @@ function __seValidate (restricted = false)
 */
 function __dbLoad () 
 {
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
 
         // ใช้ติดตาม
         // console.trace ();
 
-        request.open ('GET', 'http://100.100.1.1:3000/api/ads', false);
+        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/ads`, false);
         request.send ();
 
         if (request.status != 200)
@@ -278,11 +278,11 @@ function __dbSave (data)
     if (data == null) throw new Error ('The content must not be null');
     if (typeof data !== 'object') throw new Error ('The content must be an object');
 
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
 
-        request.open ('PUT', 'http://100.100.1.1:3000/api/ads', false);
+        request.open ('PUT', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/ads`, false);
         request.send (JSON.stringify(data));
 
         if (request.status != 200)

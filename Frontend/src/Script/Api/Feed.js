@@ -152,11 +152,11 @@ const key = "DbProfile";
 
 function __dbLoad ()
 {
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
 
-        request.open ('GET', 'http://100.100.1.1:3000/api/profile', false);
+        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
         request.send ();
 
         if (request.status != 200)

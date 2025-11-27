@@ -6,8 +6,8 @@
 export const LINK_HOME = '/';
 export const LINK_AUTH = '/auth';
 export const LINK_CONSOLE = '/console';
-export const LINK_PROFILE = '/profile';
-export const LINK_SETTINGS = '/settings';
+export const LINK_USER_PROFILE = '/user-profile';
+export const LINK_USER_SETTINGS = '/user-settings';
 
 /**
  * ตรวจสอบเส้นทาง
@@ -21,14 +21,18 @@ export function is (value)
  * 
  * @param redirect หลังจากเข้าสู่ระบบ ให้นำผู้ใช้ไปยังหน้าอะไร (เริ่มต้นคือหน้าปัจจุบัน)
 */
-export function auth (redirectLogin = window.location.pathname, redirectRegister = window.location.pathname)
+export function auth (redirectLogin, redirectRegister)
 {
     if (is (LINK_AUTH)) 
         return;
 
+    if (redirectLogin == undefined) redirectLogin = '/';
+    if (redirectRegister == undefined) redirectRegister = '/';
+
     if (redirectLogin == null || !redirectLogin.startsWith ('/')) throw new Error ('Login Redirect link is invalid: ' + redirectLogin);
     if (redirectRegister == null || !redirectRegister.startsWith ('/')) throw new Error ('Register redirect link is invalid: ' + redirectRegister);
 
+    
     window.location.href = `${LINK_AUTH}?context=${btoa(JSON.stringify({
         redirectLogin: redirectLogin,
         redirectRegister: redirectRegister,
@@ -57,22 +61,22 @@ export function home ()
 /**
  * นำทางไปสู่หน้าโปรไฟล์
 */
-export function profile (which = NaN)
+export function userProfile (which = NaN)
 {
-    if (is (LINK_PROFILE)) 
+    if (is (LINK_USER_PROFILE)) 
         return;
 
-    window.location.href = (`${LINK_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
+    window.location.href = (`${LINK_USER_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
 }
 /**
  * นำทางไปสู่หน้าตั้งค่า
 */
-export function settings (to = undefined)
+export function userSettings (to = undefined)
 {
-    if (is (LINK_SETTINGS)) 
+    if (is (LINK_USER_SETTINGS)) 
         return;
 
-    window.location.href = `${LINK_SETTINGS}` + (to != undefined ? `?to=${to}` : ``);
+    window.location.href = `${LINK_USER_SETTINGS}` + (to != undefined ? `?to=${to}` : ``);
 }
 
 export default
@@ -80,13 +84,13 @@ export default
     LINK_AUTH,
     LINK_CONSOLE,
     LINK_HOME,
-    LINK_PROFILE,
-    LINK_SETTINGS,
+    LINK_PROFILE: LINK_USER_PROFILE,
+    LINK_SETTINGS: LINK_USER_SETTINGS,
 
     is,
     auth,
     console,
     home,
-    profile,
-    settings,
+    userProfile,
+    userSettings,
 }

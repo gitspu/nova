@@ -4,15 +4,18 @@ import fs   from 'node:fs';
 const NET_HOSTNAME      = '100.100.1.1';
 const NET_PORT          = 3000;
 
-const SAMPLE_ADS    = './../Frontend/src/Script/ApiMock/Ads.json';
-const SAMPLE_AUTH       = './../Frontend/src/Script/ApiMock/Auth.json';
-const SAMPLE_PROFILE    = './../Frontend/src/Script/ApiMock/Profile.json';
+const SAMPLE_ANALYTICS  = './../Frontend/src/Script/Sample/Analytics.json';
+const SAMPLE_ADS        = './../Frontend/src/Script/Sample/Ads.json';
+const SAMPLE_AUTH       = './../Frontend/src/Script/Sample/Auth.json';
+const SAMPLE_PROFILE    = './../Frontend/src/Script/Sample/Profile.json';
 
 const SAVE_DIR          = './../Database';
-const SAVE_ADS      = "./../Database/Ads.json";
+const SAVE_ANALYTICS    = "./../Database/Analytics.json";
+const SAVE_ADS          = "./../Database/Ads.json";
 const SAVE_AUTH         = "./../Database/Auth.json";
 const SAVE_PROFILE      = "./../Database/Profile.json";
 
+const URL_ANALYTICS     = '/api/analytics';
 const URL_ADS           = '/api/ads';
 const URL_AUTH          = '/api/auth';
 const URL_PROFILE       = '/api/profile';
@@ -65,6 +68,19 @@ const callbackGet = (path: string, body: string, res: http.ServerResponse) =>
         res.end (fs.readFileSync (SAVE_PROFILE));
         return;
     }
+    if (path == URL_ANALYTICS) 
+    {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+
+        mkdir (SAVE_DIR);
+
+        if (fs.existsSync (SAVE_ANALYTICS) == false)
+            fs.writeFileSync (SAVE_ANALYTICS, fs.readFileSync (SAMPLE_ANALYTICS));
+
+        res.end (fs.readFileSync (SAVE_ANALYTICS));
+        return;
+    }
 }
 const callbackPut = (path: string, body: string, res: http.ServerResponse) =>
 {
@@ -92,6 +108,14 @@ const callbackPut = (path: string, body: string, res: http.ServerResponse) =>
         res.setHeader('Content-Type', 'application/json');
         res.end ();
     }
+    if (path == URL_ANALYTICS)
+    {
+        fs.writeFileSync (SAVE_ANALYTICS, body);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end ();
+    }
 }
 const callbackDelete = (path: string, body: string, res: http.ServerResponse) =>
 {
@@ -114,6 +138,14 @@ const callbackDelete = (path: string, body: string, res: http.ServerResponse) =>
     if (path == URL_PROFILE)
     {
         fs.rmSync (SAVE_PROFILE);
+        
+        res.statusCode = 200;
+        res.end ();
+        return;
+    }
+    if (path == URL_ANALYTICS)
+    {
+        fs.rmSync (SAVE_ANALYTICS);
         
         res.statusCode = 200;
         res.end ();

@@ -4,7 +4,7 @@
 import * as util from './Util'
 import * as test from './TestConfig'
 import * as auth from './Auth'
-import      sample from './../ApiMock/Profile.json'
+import      sample from './../Sample/Profile.json'
 
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลการติดต่อ
@@ -294,8 +294,6 @@ export function create (which = NaN)
         value: {}
     });
 
-    __dbSave (dbRoot);
-
     const newContact    = new DataContact ();
     const newEducation  = new DataEducation ();
     const newInterest   = new DataInterest ();
@@ -303,6 +301,7 @@ export function create (which = NaN)
     const newPersonal   = new DataPersonal ();
     const newSkill      = new DataSkill ();
     const newSocial     = new DataSocial ();
+    const newTheme      = new DataTheme ();
 
     //
     // ล้างข้อมูล prototype ออก
@@ -310,13 +309,17 @@ export function create (which = NaN)
     newInterest.item = [];
     newSkill.item = [];
 
-    setContact (newContact);
-    setEducation (newEducation);
-    setInterest (newInterest);
-    setJob (newJob);
-    setPersonal (newPersonal);
-    setSkill (newSkill);
-    setSocial (newSocial);
+    dbCollection[which]['contact'] = { ... newContact };
+    dbCollection[which]['education'] = { ... newEducation };
+    dbCollection[which]['interest'] = { ... newInterest };
+    dbCollection[which]['job'] = { ... newJob };
+    dbCollection[which]['personal'] = { ... newPersonal };
+    dbCollection[which]['post'] = { item: [] };
+    dbCollection[which]['skill'] = { ... newSkill };
+    dbCollection[which]['social'] = { ... newSocial };
+    dbCollection[which]['theme'] = { ... newTheme };
+
+    __dbSave (dbRoot);
 }
 /**
  * ขอข้อมูลติดต่อ จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
@@ -779,14 +782,14 @@ function __seValidate (which)
 
 function __dbLoad ()
 {
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
 
         // ใช้ติดตาม
         // console.trace ();
 
-        request.open ('GET', 'http://100.100.1.1:3000/api/profile', false);
+        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
         request.send ();
 
         if (request.status != 200)
@@ -812,11 +815,11 @@ function __dbSave (data)
     if (data == null) throw new Error ('The content must not be null');
     if (typeof data !== 'object') throw new Error ('The content must be an object');
 
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
 
-        request.open ('PUT', 'http://100.100.1.1:3000/api/profile', false);
+        request.open ('PUT', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
         request.send (JSON.stringify(data));
 
         if (request.status != 200)

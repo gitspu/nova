@@ -1,3 +1,4 @@
+import * as toAnalytics from './Api/Analytics'
 import * as toAuth      from './Api/Auth';
 import * as toProfile   from './Api/Profile'
 import * as toProfileOf from './Api/ProfileOf'
@@ -5,6 +6,7 @@ import * as toFeed      from './Api/Feed'
 import * as toUtil      from './Api/Util'
 import * as toIcon      from './Icon';
 
+export const analytics = toAnalytics;
 export const auth = toAuth;
 export const profile = toProfile;
 export const profileOf = toProfileOf;
@@ -13,6 +15,7 @@ export const util = toUtil;
 
 export function init ()
 {
+    if (!analytics.isInit ()) analytics.init ();
     if (!auth.isInit()) auth.init ();
     if (!profile.isInit()) profile.init ();
     if (!profileOf.isInit()) profileOf.init ();
@@ -38,18 +41,28 @@ export function encodeContent (value)
 {
     if (value == null) return ``;
 
-    const regex = /^data:([a-zA-Z0-9/+.-]+);base64,([a-zA-Z0-9+/=]+)$/;
-    const group = String(value).match(regex);
+    try 
+    {
+        const regex = /^data:([a-zA-Z0-9/+.-]+);base64,([a-zA-Z0-9+/=]+)$/;
+        const group = String(value).match(regex);
 
-    if (group == null) return ``;
+        if (group == null) return ``;
 
-    const mime = group[1];
-    const content = group[2];
+        const mime = group[1];
+        const content = group[2];
 
-    return `${mime} ${content}`;
+        return `${mime} ${content}`;
+    }
+    catch (ex)
+    {
+        console.error (ex);
+
+        return '';
+    }
 }
 export default
 {
+    analytics,
     auth,
     profile,
     profileOf,

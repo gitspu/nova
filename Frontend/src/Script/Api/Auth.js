@@ -2,8 +2,9 @@
  * ไฟล์โค็ดสำหรับ: ระบบยืนยันตัวตน
 */
 import * as util from './Util'
+import * as diag from './Analytics'
 import * as test from './TestConfig'
-import      sample from '../ApiMock/Auth.json'
+import      sample from '../Sample/Auth.json'
 
 /**
  * โครงสร้างข้อมูลพื้นฐานที่ทุกคนในระบบสามารถเข้าถึงได้
@@ -78,6 +79,23 @@ export class DataConfig
     */
     enableDeletion = true;
 }
+export class DataMap
+{
+    item = [''];
+
+    init ()
+    {
+        this.item.splice (0, 1);
+
+        return this;
+    }
+}
+export class DataMapInfo
+{
+    name = '';
+    role = ROLE_UNKNOWN;
+    status = STATUS_UNKNOWN;
+}
 
 export class ErrorState         extends Error {};
 export class ErrorServer        extends Error {};
@@ -94,9 +112,12 @@ const MSG_ERROR_EXPIRED     = 'รหัสเซสชั่นหมดอา�
 const MSG_ERROR_SERVER      = 'เซิฟเวอร์ไม่สามารถประมวลข้อมูลได้'
 const MSG_ERROR_INPUT_ID    = 'รหัสระบุตัวตนมีข้อมูลที่ไม่ถูกต้อง';
 const MSG_ERROR_INPUT_PWD   = 'รหัสผ่านมีข้อมูลที่ไม่ถูกต้อง';
+const MSG_ERROR_INPUT_ROLE   = 'บทบาทไม่ถูกต้อง';
 const MSG_ERROR_INPUT_CRED  = 'รหัสระบุตัวตน หรือ รหัสผ่าน ไม่ถูกต้อง';
 const MSG_ERROR_INPUT_CRED_USED  = 'รหัสระบุตัวตนนี้ถูกใช้งานไปแล้ว';
 const MSG_ERROR_PERMISSION  = 'สิทธิ์เข้าสู่ระบบของคุณไม่เพียงพอ';
+const MSG_ERROR_DATATYPE    = 'ประเภทข้อมูลนั้นไม่ถูกต้อง';
+
 /**
  * เริ่มต้นระบบยืนยันตัวตน
  * 
@@ -136,10 +157,11 @@ export function init ()
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสประจำตัวซ้ำกัน
 */
-export function create (identifier, password)
+export function create (identifier, password, role)
 {
     if (identifier == null || typeof identifier != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_ID);
     if (password == null || typeof password != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_PWD);
+    if (role == null || typeof role != 'number') throw new ErrorArgument (MSG_ERROR_INPUT_ROLE);
 
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
@@ -178,10 +200,15 @@ export function create (identifier, password)
     {
         name: identifier,
         status: STATUS_ACTIVE,
-        role: ROLE_USER,
+        role: role,
     };
 
     __dbSave (dbRoot);
+
+    //
+    // วิเคราะห์ข้อมูล
+    //
+    util.ignore (() => diag.increment ('authRegister'));
 }
 /**
  * ทำการสร้างรหัสยืนยันตัวตน จากรหัสที่ได้รับจาก Facebook
@@ -236,6 +263,11 @@ export function createFacebook (identifier)
     };
 
     __dbSave (dbRoot);
+
+    //
+    // วิเคราะห์ข้อมูล
+    //
+    util.ignore (() => diag.increment ('authRegisterFacebook'));
 }
 /**
  * ทำการเข้าสู่ระบบ จากรหัสประจำตัวที่อยู่มี
@@ -301,6 +333,11 @@ export function login (identifier, password)
     };
 
     __dbSave (dbRoot);
+
+    //
+    // วิเคราะห์ข้อมูล
+    //
+    util.ignore (() => diag.increment ('authLogin'));
 
     //
     // บันทึกรหัสประจำตัว
@@ -378,6 +415,10 @@ export function loginFacebook (identifier)
     };
 
     __dbSave (dbRoot);
+    //
+    // วิเคราะห์ข้อมูล
+    //
+    util.ignore (() => diag.increment ('authLoginFacebook'));
 
     //
     // บันทึกรหัสประจำตัว
@@ -430,8 +471,9 @@ export function loginSession ()
         const access = Number (sChallenge[id].access);
         const accessInfo = sAccess[access];
 
+        
         if ((Boolean (sConfig["enableLogin"]) == false) && 
-            (Number (accessInfo.role) != ROLE_ADMIN || Number (accessInfo.role != ROLE_DEVELOPER)))
+            (Number (accessInfo.role) != ROLE_ADMIN && Number (accessInfo.role != ROLE_DEVELOPER)))
         {
             // บางที่บัญชีสิทธิ์ขั้นสูงอาจสามารถข้ามตั้งค่านี้ได้
             throw new ErrorConfig (MSG_ERROR_CONFIG);
@@ -449,6 +491,11 @@ export function loginSession ()
                 throw new ErrorCredential (MSG_ERROR_EXPIRED);
             }
         }
+
+        //
+        // วิเคราะห์ข้อมูล
+        //
+        util.ignore (() => diag.increment ('authLoginSession'));
 
         state.name = String (accessInfo.name);
         state.role = Number (accessInfo.role);
@@ -522,7 +569,7 @@ export function logout ()
 export function getBasic (which = NaN)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
-    if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
+    // if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
 
     if (isNaN (which))
     {
@@ -739,48 +786,81 @@ export function getConfig ()
 /**
  * รับดัชนีตำแหน่งของข้อมูลโปรไฟล์ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getAccessKeyList ()
+export function getMap ()
 {
-    if (state.init == false)
-        throw new ErrorState ("Authentication system must be initialized");
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+    if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
 
-    if (isLogged () == false || isActive () == false)
-        throw new ErrorState ("Authentication must be logged and active");
-    
-    if (getRole () < ROLE_ADMIN)
-        throw new ErrorState ("Insufficient permission");
-
-    const result = [""]; result.splice (0, 1);
-
-    const json = __dbLoad ();
-    const itemList = json["access"];
-
-    for (const key of Object.keys (itemList)) {
-        result.push (String (key));
+    if (!(isRole (ROLE_ADMIN) || isRole (ROLE_DEVELOPER)))
+    {
+        throw new ErrorState (MSG_ERROR_PERMISSION);
     }
+    const result = new DataMap ().init ();
 
+    const dbRoot = __dbLoad ();
+    const dbAccess = util.jsonRead (dbRoot, 'access');
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    for (const key of Object.keys (dbAccess)) 
+    {
+        result.item.push (String (key));
+    }
     return result;
 }
 /**
  * รับข้อมูลการเข้าถึง จากตำแหน่งดัชนีที่ระบุ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getAccessKeyInfo (key)
+export function getMapInfo (key)
 {
-    if (state.init == false)
-        throw new ErrorState ("Authentication system must be initialized");
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+    if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
 
-    if (isLogged () == false || isActive () == false)
-        throw new ErrorState ("Authentication must be logged and active");
-    
-    if (getRole () < ROLE_ADMIN)
-        throw new ErrorState ("Insufficient authentication permission");
+    if (!(isRole (ROLE_ADMIN) || isRole (ROLE_DEVELOPER)))
+    {
+        throw new ErrorState (MSG_ERROR_PERMISSION);
+    }
+    const result = new DataMapInfo ();
 
-    const json = __dbLoad ();
-    const itemList = json["access"];
+    const dbRoot = __dbLoad ();
+    const dbAccess = util.jsonRead (dbRoot, 'access');
+    const ixAccess = util.jsonRead (dbAccess, key);
 
-    return itemList[key];
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (ixAccess == null) throw new ErrorServer (MSG_ERROR_INPUT_CRED);
+
+    result.name     = String (ixAccess['name']);
+    result.role     = Number (ixAccess['role']);
+    result.status   = Number (ixAccess['status']);
+    result.access   = Number (key);
+
+    return result;
 }
 
+export function setConfig (value)
+{
+    if (!(value instanceof DataConfig))
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
+
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+    if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
+
+    if (!(isRole (ROLE_ADMIN) || isRole (ROLE_DEVELOPER)))
+    {
+        throw new ErrorState (MSG_ERROR_PERMISSION);
+    }
+    const dbRoot = __dbLoad ();
+
+    dbRoot["config"] = {
+        enableCreation: Boolean (value.enableCreation),
+        enableLogin: Boolean (value.enableLogin),
+        enableDeletion: Boolean (value.enableDeletion),
+    };
+
+    __dbSave (dbRoot);
+}
 
 //                                                                  //
 // ################################################################ //
@@ -804,12 +884,11 @@ export const state =
 
 export function __dbLoad ()
 {
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const request = new XMLHttpRequest ();
-        const address = '100.100.1.1:3000';
 
-        request.open ('GET', `http://${address}/api/auth`, false);
+        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/auth`, false);
         request.send ();
 
         if (request.status != 200)
@@ -836,13 +915,12 @@ export function __dbSave (data)
     if (data == null) throw new Error ('The content must not be null');
     if (typeof data !== 'object') throw new Error ('The content must be an object');
 
-    if (test.remote)
+    if (test.REMOTE_ENABLED)
     {
         const json    = JSON.stringify (data);
         const request = new XMLHttpRequest ();
-        const address = '100.100.1.1:3000';
 
-        request.open ('PUT', `http://${address}/api/auth`, false);
+        request.open ('PUT', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/auth`, false);
         request.send (json);
 
         if (request.status !== 200)

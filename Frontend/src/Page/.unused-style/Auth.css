@@ -1,0 +1,183 @@
+
+
+/* พื้นที่หลักของ หน้าเข้าสู่ระบบ */
+.page-auth
+{
+    position: absolute; inset: 0;
+    overflow: hidden;
+}
+
+/* พื้นหลังของ หน้าเข้าสู่ระบบ */
+.page-auth > .background
+{
+    position: absolute; inset: 0;
+    overflow: hidden;
+
+    background-color: var(--app-background-primary);
+}
+.page-auth > .background > .content
+{
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+/* พื้นหน้าของ หน้าเข้าสู่ระบบ */
+.page-auth > .foreground
+{
+    position: absolute; inset: 0;
+    overflow: hidden;
+    padding: var(--app-spacing-3);
+
+    display: flex;
+    align-items: center; justify-content: center;
+}
+.page-auth > .foreground > .inner
+{
+    position: relative;
+
+    width: 100%; max-width: 1024px;
+    height: 100%; max-height: 680px;
+
+    background-color: var(--app-background-secondary);
+    border: var(--app-border-primary);
+    border-radius: var(--app-radius-2);
+
+    animation-name: show-foreground;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+}
+
+.page-auth > .foreground > .inner > .image
+{
+    position: absolute; inset: 0px 40% 0px 0px;
+    padding: 0px 40% 0px 0px;
+    width: 100%; height: 100%;
+
+    border-radius: var(--app-radius-2);
+    object-fit: cover;
+}
+.page-auth > .foreground > .inner > .image-gradient
+{
+    position: absolute; inset: 0px 40% 0px 0px;
+
+    background: linear-gradient(to right, #00000000, var(--app-background-secondary));
+}
+.page-auth > .foreground > .inner > .content
+{
+    position: absolute; inset: 0px auto 0px 60%;
+    width: 40%;
+    height: 100%;
+
+    overflow-y: auto;
+
+    display: flex; flex-direction: column;
+}
+.page-auth > .foreground > .inner > .content > .head
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--app-spacing-2);
+    padding: var(--app-spacing-3);
+}
+.page-auth > .foreground > .inner > .content > .body
+{
+    padding: 0px var(--app-spacing-3) var(--app-spacing-3) var(--app-spacing-3);
+
+    display: flex;
+    flex-direction: column;
+}
+.page-auth > .foreground > .inner > .content > .body > *
+{
+    animation-name: show-foreground;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+}
+.page-auth > .foreground > .inner > .content > .body .status
+{
+    animation-name: show-foreground-status;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+}
+
+@media (max-width: 768px)
+{
+    .page-auth > .foreground > .inner > .image
+    {
+        inset: 0px 60% 0px 0px;
+        padding: 0px 60% 0px 0px;
+    }
+    .page-auth > .foreground > .inner > .image-gradient
+    {
+        position: absolute; inset: 0px 60% 0px 0px;
+    }
+    .page-auth > .foreground > .inner > .content
+    {
+        inset: 0px auto 0px 40%;
+        width: 60%;
+        height: 100%;
+    }
+}
+@media (max-width: 512px)
+{
+    .page-auth > .foreground
+    {
+        padding: 0;
+    }
+    .page-auth > .foreground > .inner
+    {
+        border: none;
+        background-color: transparent;
+        padding: 0;
+    }
+    .page-auth > .foreground > .inner > .image
+    {
+        display: none;
+    }
+    .page-auth > .foreground > .inner > .image-gradient
+    {
+        display: none;
+    }
+    .page-auth > .foreground > .inner > .content
+    {
+        inset: 0;
+        width: 100%;
+
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@keyframes show-foreground 
+{
+    from { 
+        opacity: 0; 
+        transform: scale(0.75)
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1.0)
+    }
+}
+@keyframes show-foreground-content
+{
+    from { 
+        opacity: 0; 
+        transform: scale(0.75)
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1.0)
+    }
+}
+@keyframes show-foreground-status 
+{
+    20% { transform: translateX(-12px); }
+    40% { transform: translateX(+12px); }
+    60% { transform: translateX(-12px); }
+    80% { transform: translateX(+12px); }
+    100% { transform: translateX(0px);  } 
+}

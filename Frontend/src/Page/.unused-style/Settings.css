@@ -1,0 +1,57 @@
+
+.page-settings
+{
+    pointer-events: none;
+    position: absolute; inset: 0px;
+    overflow: hidden;
+
+    background-color: var(--app-background-primary);
+}
+.page-settings .main-menu
+{
+    pointer-events: none;
+    position: absolute; 
+    inset: 0px 70% 0px 0px;
+    overflow: hidden;
+}
+.page-settings > .main-menu > *
+{
+    max-width: 324px;
+    margin: 0px auto;
+    padding: 0px 12px;
+    pointer-events: all;
+}
+.page-settings > .main-content > *:first-child
+{
+    margin-top: var(--app-spacing-3);
+}
+.page-settings > .main-content > *:last-child
+{
+    margin-bottom: var(--app-spacing-3);
+}
+.page-settings .main-content
+{
+    inset: 0;
+    pointer-events: none;
+    position: absolute; 
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.page-settings > .main-content > *
+{
+    max-width: 148mm;
+    margin: 0px 0px 0px 35%;
+    pointer-events: all;
+
+    margin-top: var(--app-spacing-3);
+    margin-bottom: var(--app-spacing-3);
+}
+
+
+
+/* *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* */
+
+.page-settings .input-text { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center;}
+.page-settings .input-text > label { flex: 1; }
+.page-settings .input-text > input { flex: 3; margin: 0px 8px; }
+
