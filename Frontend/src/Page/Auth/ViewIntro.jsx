@@ -1,5 +1,17 @@
-import icon from '../../Script/Icon'
+/**
+ * 
+ * องค์ประกอบย่อยของหน้าต่าง เข้าสู่ระบบ
+ * ใช้สำหรับแสดงการต้อนรับผู้ใช้งาน
+ * 
+*/
+"use strict";
+"use client";
 
+/**
+ * 
+ * ส่วนประกอบทั้วไป
+ * 
+*/
 import 
 { 
     Div,
@@ -13,17 +25,17 @@ import
     A,
 } 
 from "../../Component/Common";
-import { loginFacebook, RESOLVE_CREATED, RESOLVE_LOGGED } from '../../Script/Auth';
-
-// ==================================================================================================== //
-//                                                                                                      //
-// ENTRY POINT                                                                                          //
-//                                                                                                      //
-// ==================================================================================================== //
+/**
+ * 
+ * เชื่อมต่อกับ Logic
+ * 
+*/
+import auth from "../../Script/Auth"
+import icon from "../../Script/Icon"
 
 /**
  * 
- * พื้นที่สำหรับการแสดงหน้าหลัก
+ * พื้นที่สำหรับการแสดงองค์ประกอบ
  * 
 */
 export default function Start ({view, status, blocking, callback})
@@ -34,6 +46,9 @@ export default function Start ({view, status, blocking, callback})
 
     const visible = getView == 1;
 
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: เข้าสู่ระบบ
+    */
     function onClickLogin (event)
     {
         if (event != null)
@@ -41,9 +56,15 @@ export default function Start ({view, status, blocking, callback})
             event.preventDefault ();
             event.stopPropagation ();
         }
+        //
+        // พาไปหน้าของเข้าสู่ระบบ
+        //
         setStatus ("");
         setView (2);
     }
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: เข้าสู่ระบบด้วย Facebook
+    */
     function onClickLoginFb (event)
     {
         if (event != null)
@@ -51,24 +72,31 @@ export default function Start ({view, status, blocking, callback})
             event.preventDefault ();
             event.stopPropagation ();
         }
+        //
+        // กระบวณนี้ใช้เวลานานจึงต้องมีการบล็อกไว้ก่อน
+        //
         setBlocking (true);
         setStatus ("");
-        loginFacebook ().then ((type) =>
+        //
+        // พยายามเรียก API ของ Facebook
+        //
+        auth.loginFacebook ().then ((type) =>
         {
-            if (callback == null)
-                return;
-
+            console.log ("UI/Auth: Logged in (facebook)", type);
+            
             switch (type)
             {
-                case RESOLVE_LOGGED: callback.onLogged (); break;
-                case RESOLVE_CREATED: callback.onRegistered(); break;
+                case auth.RESOLVE_LOGGED: callback.onLogged (); break;
+                case auth.RESOLVE_CREATED: callback.onRegistered (); break;
             }
-        }).catch ((message) =>
+        })
+        .catch ((message) =>
         {
             setBlocking (false);
             setStatus (message);
         });
     }
+
     return <>
       <Div style={{
           display: visible ? 'flex' : 'none',
@@ -90,19 +118,14 @@ export default function Start ({view, status, blocking, callback})
             <Img src={icon.facebook}/>
             <Span>เข้าสู่ระบบด้วย Facebook</Span>
           </Button>
-          {/* <Button $variant='secondary' $align='left' className='w-100 mb-1' disabled={getBlocking}
-                  onClick={onClickLoginFb}>
-            <Img src={icon.google}/>
-            <Span>เข้าสู่ระบบด้วย Google</Span>
-          </Button> */}
         </Main>
-        <Div className='mt-4 mb-4'>
-            <P $variant='caution'>{status}</P>
-        </Div>
+
+        <P className="mt-4 mb-4" $variant='caution'>{status}</P>
         <Div className='flex-grow-1'/>
+        
         <Footer>
           <P $align='center'><A>เงื่อนไขการให้บริการ</A> | <A>นโยบายความเป็นส่วนตัว</A></P>
         </Footer>
       </Div>
-    </>
+    </>;
 }

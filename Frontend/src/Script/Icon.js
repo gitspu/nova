@@ -1,4 +1,8 @@
-
+/**
+ * 
+ * ไฟล์รวบรวมไอคอมต่าง ๆ เอาไว้ที่เดียวกัน
+ * 
+*/
 import IconArrowClockwise   from './../Asset/Icon/ArrowClockwise.svg';
 import IconArrowLeft        from './../Asset/Icon/ArrowLeft.svg';
 import IconArrowLeftCircle  from './../Asset/Icon/ArrowLeftCircle.svg';
@@ -13,6 +17,7 @@ import IconChatSquare       from './../Asset/Icon/ChatSquare.svg';
 import IconCheckCircle      from './../Asset/Icon/CheckCircle.svg';
 import IconDownload         from './../Asset/Icon/Download.svg';
 import IconEmojiSmile       from './../Asset/Icon/EmojiSmile.svg';
+import IconExclamation      from './../Asset/Icon/Exclamation.svg';
 import IconFacebook         from './../Asset/Icon/Facebook.svg';
 import IconFileEarmarkPlay  from './../Asset/Icon/FileEarmarkPlay.svg';
 import IconGear             from './../Asset/Icon/Gear.svg';
@@ -40,47 +45,57 @@ import IconUnlock           from './../Asset/Icon/Unlock.svg';
 import IconX                from './../Asset/Icon/X.svg';
 import IconXCircle          from './../Asset/Icon/XCircle.svg';
 
+import IconPencil           from './../Asset/Icon/Pencil.svg';
+import IconProfile          from './../Asset/Icon/Profile.png';
+import IconLocation         from './../Asset/Icon/Location.svg';
+import IconSearch           from './../Asset/Icon/Search.svg';
 
-export const arrowClockwise     = String (IconArrowClockwise);
-export const arrowLeft          = String (IconArrowLeft);
-export const arrowLeftCircle    = String (IconArrowLeftCircle);
-export const arrowRight         = String (IconArrowRight);
-export const backquoteLeft      = String (IconBackquoteLeft);
-export const ban                = String (IconBan);
-export const bell               = String (IconBell);
-export const briefcase          = String (IconBriefcase);
-export const calendar           = String (IconCalendar);
-export const chat               = String (IconChat);
-export const chatSquare         = String (IconChatSquare);
-export const checkCircle        = String (IconCheckCircle);
-export const download           = String (IconDownload);
-export const emojiSmile         = String (IconEmojiSmile);
-export const facebook           = String (IconFacebook);
-export const fileEarmarkPlay    = String (IconFileEarmarkPlay);
-export const gear               = String (IconGear);
-export const geoAlt             = String (IconGeoAlt);
-export const google             = String (IconGoogle);
-export const heart              = String (IconHeart);
-export const house              = String (IconHouse);
-export const image              = String (IconImage);
-export const inbox              = String (IconInbox);
-export const infoCircle         = String (IconInfoCircle);
-export const list               = String (IconList);
-export const listTask           = String (IconListTask);
-export const newspaper          = String (IconNewspaper);
-export const people             = String (IconPeople);
-export const person             = String (IconPerson);
-export const personGear         = String (IconPersonGear);
-export const personFillGear     = String (IconPersonFillGear);
-export const plusCircle         = String (IconPlusCircle);
-export const transparent        = String (IconTransparent);
-export const send               = String (IconSend);
-export const share              = String (IconShare);
-export const sticky             = String (IconSticky);
-export const thumbUp            = String (IconThumbUp);
-export const unlock             = String (IconUnlock);
-export const x                  = String (IconX);
-export const xCircle            = String (IconXCircle);
+const arrowClockwise        = String (IconArrowClockwise);
+const arrowLeft             = String (IconArrowLeft);
+const arrowLeftCircle       = String (IconArrowLeftCircle);
+const arrowRight            = String (IconArrowRight);
+const backquoteLeft         = String (IconBackquoteLeft);
+const ban                   = String (IconBan);
+const bell                  = String (IconBell);
+const briefcase             = String (IconBriefcase);
+const calendar              = String (IconCalendar);
+const chat                  = String (IconChat);
+const chatSquare            = String (IconChatSquare);
+const checkCircle           = String (IconCheckCircle);
+const download              = String (IconDownload);
+const emojiSmile            = String (IconEmojiSmile);
+const exclamation           = String (IconExclamation);
+const facebook              = String (IconFacebook);
+const fileEarmarkPlay       = String (IconFileEarmarkPlay);
+const gear                  = String (IconGear);
+const geoAlt                = String (IconGeoAlt);
+const google                = String (IconGoogle);
+const heart                 = String (IconHeart);
+const house                 = String (IconHouse);
+const image                 = String (IconImage);
+const inbox                 = String (IconInbox);
+const infoCircle            = String (IconInfoCircle);
+const list                  = String (IconList);
+const listTask              = String (IconListTask);
+const newspaper             = String (IconNewspaper);
+const people                = String (IconPeople);
+const person                = String (IconPerson);
+const personGear            = String (IconPersonGear);
+const personFillGear        = String (IconPersonFillGear);
+const plusCircle            = String (IconPlusCircle);
+const transparent           = String (IconTransparent);
+const send                  = String (IconSend);
+const share                 = String (IconShare);
+const sticky                = String (IconSticky);
+const thumbUp               = String (IconThumbUp);
+const unlock                = String (IconUnlock);
+const x                     = String (IconX);
+const xCircle               = String (IconXCircle);
+
+const pencil                = String (IconPencil);
+const profile               = String (IconProfile);
+const location              = String (IconLocation);
+const search                = String (IconSearch);
 
 export default
 {
@@ -98,6 +113,7 @@ export default
     checkCircle,
     download,
     emojiSmile,
+    exclamation,
     facebook,
     fileEarmarkPlay,
     gear,
@@ -123,5 +139,10 @@ export default
     thumbUp,
     unlock,
     x,
-    xCircle
+    xCircle,
+
+    pencil,
+    profile,
+    location,
+    search,
 };

@@ -2,8 +2,8 @@
  * ไฟล์โค็ดสำหรับ: ระบบยืนยันตัวตน
 */
 import * as util from './Util'
-import * as diag from './Analytics'
 import * as test from './TestConfig'
+import * as tracker from './Analytics'
 import      sample from '../Sample/Auth.json'
 
 /**
@@ -43,28 +43,11 @@ export class DataSecurity
     */
     setPasswordNew = '';
 }
-export class DataRestricted
-{
-    /** 
-     * บทบาทบัญชี ซึ่งค่าที่เป็นไปได้คือ:
-     * 
-     * @see ROLE_USER ผู้ใช้ทั่วไป
-     * @see ROLE_EMPLOYER ผู้จ้าง (องค์กร)
-     * @see ROLE_ADMIN ผู้ดูแลระบบ
-     * @see ROLE_TESTER ผู้ทดสอบระบบ
-     * @see ROLE_DEVELOPER ผู้พัฒนาระบบ 
-    */
-    role = 0;
-    /** 
-     * สถานะของบัญชี ซึ่งค่าที่เป็นไปได้คือ:
-     * 
-     * @see STATUS_ACTIVE เปิดใช้งาน (สถานะปกติ)
-     * @see STATUS_INACTIVE ปิดใช้งาน (โดยผู้ใช้เอง)
-     * @see STATUS_SUSPENDED ถูกระงับการใช้งาน (โดยผู้ดูแลระบบ) 
-    */
-    status = 0;
-}
-export class DataConfig
+
+/**
+ * โครงสร้างรวมการตั้งค่าของเซิฟเวอร์
+*/
+export class ServerConfig
 {
     /** 
      * เปิดการใช้งานคุณสมบัติ: การสมัครสมาชิก 
@@ -79,7 +62,7 @@ export class DataConfig
     */
     enableDeletion = true;
 }
-export class DataMap
+export class ServerMap
 {
     item = [''];
 
@@ -90,9 +73,10 @@ export class DataMap
         return this;
     }
 }
-export class DataMapInfo
+export class ServerMapInfo
 {
-    name = '';
+    name = "";
+    email = "";
     role = ROLE_UNKNOWN;
     status = STATUS_UNKNOWN;
 }
@@ -126,7 +110,7 @@ const MSG_ERROR_DATATYPE    = 'ประเภทข้อมูลนั้น�
  *  @see ErrorState เรียกคำสั่งนี้ในขณะระบบทำงานแล้ว
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
 */
-export function init ()
+export async function init ()
 {
     if (state.init)
         throw new ErrorState (MSG_ERROR_INIT);
@@ -140,7 +124,11 @@ export function init ()
     state.role = null;
     state.access = null;
 
-    try { loginSession (); }
+    try 
+    {
+        // พยายามล็อคอิน 
+        await loginSession (); 
+    }
     catch (ex)
     {
         console.warn (ex);
@@ -157,7 +145,7 @@ export function init ()
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสประจำตัวซ้ำกัน
 */
-export function create (identifier, password, role)
+export async function create (identifier, password, email, role, status)
 {
     if (identifier == null || typeof identifier != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_ID);
     if (password == null || typeof password != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_PWD);
@@ -165,7 +153,7 @@ export function create (identifier, password, role)
 
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    const dbRoot    = __dbLoad ();
+    const dbRoot    = await __dbLoadAsync ();
     const dbConfig  = util.jsonRead (dbRoot, 'config');
     const dbAccess  = util.jsonRead (dbRoot, 'access');
     const dbDirect  = util.jsonRead (dbRoot, 'challenge/direct');
@@ -199,16 +187,16 @@ export function create (identifier, password, role)
     dbAccess[newAccess] =
     {
         name: identifier,
-        status: STATUS_ACTIVE,
+        email: email,
+        status: status,
         role: role,
     };
-
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 
     //
     // วิเคราะห์ข้อมูล
     //
-    util.ignore (() => diag.increment ('authRegister'));
+    util.ignore (() => tracker.increment ('authRegister'));
 }
 /**
  * ทำการสร้างรหัสยืนยันตัวตน จากรหัสที่ได้รับจาก Facebook
@@ -220,12 +208,12 @@ export function create (identifier, password, role)
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสประจำตัวซ้ำกัน
 */
-export function createFacebook (identifier)
+export async function createFacebook (identifier)
 {
     if (identifier == null || typeof identifier != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_ID);
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    const dbRoot        = __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbConfig      = util.jsonRead (dbRoot, 'config');
     const dbAccess      = util.jsonRead (dbRoot, 'access');
     const dbFacebook    = util.jsonRead (dbRoot, 'challenge/facebook');
@@ -260,14 +248,15 @@ export function createFacebook (identifier)
         name: identifier,
         status: STATUS_ACTIVE,
         role: ROLE_USER,
+        email: "",
     };
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 
     //
     // วิเคราะห์ข้อมูล
     //
-    util.ignore (() => diag.increment ('authRegisterFacebook'));
+    util.ignore (() => tracker.increment ('authRegisterFacebook'));
 }
 /**
  * ทำการเข้าสู่ระบบ จากรหัสประจำตัวที่อยู่มี
@@ -278,7 +267,7 @@ export function createFacebook (identifier)
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสประจำตัวไม่ถูกต้อง
 */
-export function login (identifier, password)
+export async function login (identifier, password)
 {
     if (identifier == null || typeof identifier != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_ID);
     if (password == null || typeof password != 'string') throw new ErrorArgument (MSG_ERROR_INPUT_PWD);
@@ -292,7 +281,7 @@ export function login (identifier, password)
     //
     // ข้อมูลจัดเก็บ
     //
-    const dbRoot    = __dbLoad ();
+    const dbRoot    = await __dbLoadAsync ();
     const dbConfig  = util.jsonRead (dbRoot, 'config');
     const dbDirect  = util.jsonRead (dbRoot, 'challenge/direct');
     const dbSession = util.jsonRead (dbRoot, 'challenge/session');
@@ -332,12 +321,12 @@ export function login (identifier, password)
         access: ixDir.access
     };
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 
     //
     // วิเคราะห์ข้อมูล
     //
-    util.ignore (() => diag.increment ('authLogin'));
+    util.ignore (() => tracker.increment ('authLogin'));
 
     //
     // บันทึกรหัสประจำตัว
@@ -365,7 +354,7 @@ export function login (identifier, password)
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสประจำตัวไม่ถูกต้อง
 */
-export function loginFacebook (identifier)
+export async function loginFacebook (identifier)
 {
     if (identifier == null || typeof identifier != 'string')
         throw new ErrorArgument (MSG_ERROR_INPUT_ID);
@@ -379,11 +368,11 @@ export function loginFacebook (identifier)
     //
     // ข้อมูลจัดเก็บ
     //
-    const dbRoot        = __dbLoad ();
-    const dbConfig      = util.jsonRead (dbRoot, 'config');
-    const dbFacebook    = util.jsonRead (dbRoot, 'challenge/facebook');
-    const dbSession     = util.jsonRead (dbRoot, 'challenge/session');
-    const dbAccess      = util.jsonRead (dbRoot, 'access');
+    const dbRoot        = await __dbLoadAsync ();
+    const dbConfig      = util.jsonRead (dbRoot, "config");
+    const dbFacebook    = util.jsonRead (dbRoot, "challenge/facebook");
+    const dbSession     = util.jsonRead (dbRoot, "challenge/session");
+    const dbAccess      = util.jsonRead (dbRoot, "access");
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
     if (dbConfig == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -393,7 +382,7 @@ export function loginFacebook (identifier)
 
     const ixFb          = util.jsonRead (dbFacebook, identifier);
     const ixFbAccess    = util.jsonRead (ixFb, 'access');
-    const ixAccess = util.jsonRead (dbAccess, ixFbAccess);
+    const ixAccess      = util.jsonRead (dbAccess, ixFbAccess);
     
     if (ixFb == null) throw new ErrorCredential (MSG_ERROR_INPUT_ID);
     if (ixFbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -414,11 +403,11 @@ export function loginFacebook (identifier)
         access: ixFb.access
     };
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
     //
     // วิเคราะห์ข้อมูล
     //
-    util.ignore (() => diag.increment ('authLoginFacebook'));
+    util.ignore (() => tracker.increment ('authLoginFacebook'));
 
     //
     // บันทึกรหัสประจำตัว
@@ -447,7 +436,7 @@ export function loginFacebook (identifier)
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential รหัสเซสชั่นไม่ถูกต้อง
 */
-export function loginSession ()
+export async function loginSession ()
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session != null) throw new ErrorState (MSG_ERROR_LOGGED);
@@ -461,26 +450,30 @@ export function loginSession ()
     if (id == null || typeof id != 'string')
         return;
 
-    const sJson = __dbLoad ();
-    const sConfig = sJson ["config"];
-    const sChallenge = sJson ["challenge"]["session"];
-    const sAccess = sJson ["access"];
+    const dbRoot        = await __dbLoadAsync ();
+    const dbConfig      = util.jsonRead (dbRoot, "config");
+    const dbChallenge   = util.jsonRead (dbRoot, "challenge/session");
+    const dbAccess      = util.jsonRead (dbRoot, "access");
 
-    if (Object.hasOwn (sChallenge, id))
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbConfig == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbChallenge == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    if (Object.hasOwn (dbChallenge, id))
     {
-        const access = Number (sChallenge[id].access);
-        const accessInfo = sAccess[access];
-
+        const access = Number (dbChallenge[id].access);
+        const accessInfo = dbAccess[access];
         
-        if ((Boolean (sConfig["enableLogin"]) == false) && 
+        if ((Boolean (dbConfig["enableLogin"]) == false) && 
             (Number (accessInfo.role) != ROLE_ADMIN && Number (accessInfo.role != ROLE_DEVELOPER)))
         {
             // บางที่บัญชีสิทธิ์ขั้นสูงอาจสามารถข้ามตั้งค่านี้ได้
             throw new ErrorConfig (MSG_ERROR_CONFIG);
         }
-        if (sChallenge[id].expired != null)
+        if (dbChallenge[id].expired != null)
         {
-            const serverTime = new Date(sChallenge[id].expired);
+            const serverTime = new Date(dbChallenge[id].expired);
             const currentTime = new Date ();
 
             if (currentTime.geTime () > serverTime.getTime ())
@@ -495,7 +488,7 @@ export function loginSession ()
         //
         // วิเคราะห์ข้อมูล
         //
-        util.ignore (() => diag.increment ('authLoginSession'));
+        util.ignore (() => tracker.increment ('authLoginSession'));
 
         state.name = String (accessInfo.name);
         state.role = Number (accessInfo.role);
@@ -506,7 +499,7 @@ export function loginSession ()
     }
     else
     {
-        if (Boolean (sConfig["enableLogin"]) == false)
+        if (Boolean (dbConfig["enableLogin"]) == false)
         {
             throw new ErrorConfig (MSG_ERROR_CONFIG);
         }
@@ -524,20 +517,20 @@ export function loginSession ()
  *  @see ErrorServer ฝั่งเซิฟเวอร์ทำงานผิดพลาด
  *  @see ErrorCredential ผู้ใช้ไม่ได้เข้าสู่ระบบ
 */
-export function logout ()
+export async function logout ()
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorCredential (MSG_ERROR_UNLOGGED);
 
     try
     {
-        const dbRoot    = __dbLoad ();
+        const dbRoot    = await __dbLoadAsync ();
         const dbSession = util.jsonRead (dbRoot, 'challenge/session');
             
         if (dbSession != null)
         {
             dbSession[state.session] = undefined;
-            __dbSave (dbRoot);
+            await __dbSaveAsync (dbRoot);
         }
     }
     finally
@@ -566,24 +559,20 @@ export function logout ()
 /**
  * รับข้อมูลพื้นฐานของบัญชี
 */
-export function getBasic (which = NaN)
+export async function getBasic (which = NaN)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
-    // if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
 
+    if (isNaN (which) && !isLogged ())
+    {
+        throw new ErrorArgument (MSG_ERROR_INPUT_ID);
+    }
     if (isNaN (which))
     {
         which = state.access;
     }
-    // else
-    // {
-    //     if (!(isRole (ROLE_ADMIN) || isRole (ROLE_DEVELOPER)))
-    //     {
-    //         throw new ErrorState (MSG_ERROR_PERMISSION);
-    //     }
-    // }
 
-    const dbRoot    = __dbLoad ();
+    const dbRoot    = await __dbLoadAsync ();
     const dbAccess  = util.jsonRead (dbRoot, 'access');
     const ixAccess  = util.jsonRead (dbAccess, which);
 
@@ -599,7 +588,7 @@ export function getBasic (which = NaN)
 /**
  * รับข้อมูลเกี่ยวกับความปลอดภัย
 */
-export function getSecurity (which = NaN)
+export async function getSecurity (which = NaN)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
@@ -616,8 +605,10 @@ export function getSecurity (which = NaN)
         }
     }
 
-    const dbRoot    = __dbLoad ();
-    const dbAccess  = util.jsonRead (dbRoot, 'access');
+    const dbRoot    = await __dbLoadAsync ();
+    const dbAccess  = util.jsonRead (dbRoot, "access");
+    const dbDirect  = util.jsonRead (dbRoot, `challenge/direct`);
+
     const ixAccess  = util.jsonRead (dbAccess, which);
 
     if (ixAccess == null)
@@ -625,14 +616,28 @@ export function getSecurity (which = NaN)
     
     const result = new DataSecurity ();
     //
-    result.password = '1234';
+
+    for (const key of Object.keys (dbDirect))
+    {
+        const value = dbDirect[key];
+        
+        if (value.access !== which)
+            continue;
+
+        result.identifier = key;
+
+        if (isRole (ROLE_ADMIN) || isRole (ROLE_DEVELOPER))
+        {
+            result.password = value.password;
+        }
+    }
     //
     return result;
 }
 /**
- * รับข้อมูลที่ถูกจำกัดไว้เฉพาะผู้มีสิทธิ์ระดับสูงเท่านั้น
+ * ปรับเปลี่ยนข้อมูลพื้นฐานของบัญชี
 */
-export function getRestricted (which = NaN)
+export async function setBasic (which = NaN, value)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
@@ -648,21 +653,18 @@ export function getRestricted (which = NaN)
             throw new ErrorState (MSG_ERROR_PERMISSION);
         }
     }
-
-    const dbRoot    = __dbLoad ();
+    const dbRoot    = await __dbLoadAsync ();
     const dbAccess  = util.jsonRead (dbRoot, 'access');
     const ixAccess  = util.jsonRead (dbAccess, which);
 
     if (ixAccess == null)
-        throw new ErrorArgument (`No authentication restricted data was found: ${which}`);
-    
-    const result = new DataRestricted ();
-    //
-    result.role = Number (ixAccess.role);
-    result.status = Number (ixAccess.status);
-    //
-    return result;
+        throw new ErrorArgument (`No authentication basic data was found: ${which}`);
+
+    ixAccess.name = String (value.name);
+
+    await __dbSaveAsync (dbRoot);
 }
+
 
 export const ROLE_UNKNOWN   = 0;
 export const ROLE_USER      = 1;
@@ -742,7 +744,7 @@ export function isExpired ()
 }
 export function isRole (which)
 {
-    return Number(state.role) === Number(which);
+    return state.role == which;
 }
 export function isInit ()
 {
@@ -760,7 +762,7 @@ export function isInit ()
 /**
  * รับตั้งค่าการทำงานของระบบ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getConfig ()
+export async function getServerConfig ()
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
@@ -769,13 +771,13 @@ export function getConfig ()
     {
         throw new ErrorState (MSG_ERROR_PERMISSION);
     }
-    const dbRoot    = __dbLoad ();
+    const dbRoot    = await __dbLoadAsync ();
     const dbConfig  = util.jsonRead (dbRoot, 'config');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
     if (dbConfig == null) throw new ErrorServer (MSG_ERROR_SERVER);
 
-    const result = new DataConfig ();
+    const result = new ServerConfig ();
     //
     result.enableCreation = Boolean (dbConfig['enableCreation']);
     result.enableLogin = Boolean (dbConfig['enableLogin']);
@@ -786,7 +788,7 @@ export function getConfig ()
 /**
  * รับดัชนีตำแหน่งของข้อมูลโปรไฟล์ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getMap ()
+export async function getServerMap ()
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
@@ -795,13 +797,15 @@ export function getMap ()
     {
         throw new ErrorState (MSG_ERROR_PERMISSION);
     }
-    const result = new DataMap ().init ();
+    const result = new ServerMap ().init ();
 
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbAccess = util.jsonRead (dbRoot, 'access');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
     if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    result.item = [];
 
     for (const key of Object.keys (dbAccess)) 
     {
@@ -812,7 +816,7 @@ export function getMap ()
 /**
  * รับข้อมูลการเข้าถึง จากตำแหน่งดัชนีที่ระบุ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getMapInfo (key)
+export async function getServerMapInfo (key)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
@@ -821,9 +825,9 @@ export function getMapInfo (key)
     {
         throw new ErrorState (MSG_ERROR_PERMISSION);
     }
-    const result = new DataMapInfo ();
+    const result = new ServerMapInfo ();
 
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbAccess = util.jsonRead (dbRoot, 'access');
     const ixAccess = util.jsonRead (dbAccess, key);
 
@@ -838,10 +842,12 @@ export function getMapInfo (key)
 
     return result;
 }
-
-export function setConfig (value)
+/**
+ * ปรับเปลี่ยนการตั้งค่าการเข้าสู่ระบบ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
+*/
+export async function setServerConfig (value)
 {
-    if (!(value instanceof DataConfig))
+    if (!(value instanceof ServerConfig))
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
@@ -851,7 +857,7 @@ export function setConfig (value)
     {
         throw new ErrorState (MSG_ERROR_PERMISSION);
     }
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
 
     dbRoot["config"] = {
         enableCreation: Boolean (value.enableCreation),
@@ -859,7 +865,31 @@ export function setConfig (value)
         enableDeletion: Boolean (value.enableDeletion),
     };
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
+}
+export async function setServerMapInfo (key, value)
+{
+    if (!(value instanceof ServerMapInfo))
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
+
+    if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
+    if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);
+
+    if (!(isRole (ROLE_ADMIN) || isRole (ROLE_DEVELOPER)))
+    {
+        throw new ErrorState (MSG_ERROR_PERMISSION);
+    }
+    const dbRoot = await __dbLoadAsync ();
+    const dbAccess = util.jsonRead (dbRoot, 'access');
+
+    dbAccess[key] = {
+        name: value.name,
+        email: value.email,
+        role: value.role,
+        status: value.status
+    };
+
+    await __dbSaveAsync (dbRoot);
 }
 
 //                                                                  //
@@ -882,59 +912,122 @@ export const state =
     access: 0,
 };
 
-export function __dbLoad ()
+const MSG_ERROR_AUTH = 'ระบบอาจต้องการให้คุณเข้าสู่ระบบก่อน';
+const MSG_ERROR_AUTH_PERMISSION = 'สิทธิ์เข้าสู่ระบบของคุณไม่เพียงพอ';
+const MSG_ERROR_AUTH_INVALID = 'สถานะเข้าสู่ระบบของคุณไม่ถูกต้อง';
+
+export let __dbCache = {};
+export let __dbCacheAge = new Date (undefined);
+
+/**
+ * ทำการดึงข้อมูล JSON จากเซิฟเวอร์
+*/
+export async function __dbLoadAsync ()
 {
     if (test.REMOTE_ENABLED)
     {
-        const request = new XMLHttpRequest ();
-
-        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/auth`, false);
-        request.send ();
-
-        if (request.status != 200)
+        if (test.CACHING_ENABLED)
         {
-            console.error (request.statusText);
+            if (!util.timeLonger (__dbCacheAge, test.CACHING_AGE))
+                return Promise.resolve (__dbCache);
+        }
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/auth`, {
+            method: "GET",
+        })
+        .then ((response) => response.json ())
+        .then ((json) => 
+        {
+            __dbCache = json;
+            __dbCacheAge = new Date((new Date ()).getTime () + test.CACHING_AGE);
+            return json;
+        });
+    }
+    else
+    {
+        if (typeof localStorage === 'undefined')
+        {
+            // LocalStorage ใช้งานไม่ได้
             return sample;
         }
-        return JSON.parse (request.responseText);
+        const readText = localStorage.getItem ("DbAuth");
+        const readObject = (readText != null) ? JSON.parse (readText) : sample;
+
+        return Promise.resolve (readObject); 
     }
-
-    if (typeof localStorage === 'undefined')
-    {
-        // LocalStorage ใช้งานไม่ได้
-        return sample;
-    }
-
-    const readText = localStorage.getItem ("DbAuth");
-    const readObject = (readText != null) ? JSON.parse (readText) : sample;
-
-    return readObject;
 }
-export function __dbSave (data)
+/**
+ * ทำการบันทึกข้อมูล JSON
+*/
+export async function __dbSaveAsync (content)
 {
-    if (data == null) throw new Error ('The content must not be null');
-    if (typeof data !== 'object') throw new Error ('The content must be an object');
-
     if (test.REMOTE_ENABLED)
     {
-        const json    = JSON.stringify (data);
-        const request = new XMLHttpRequest ();
-
-        request.open ('PUT', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/auth`, false);
-        request.send (json);
-
-        if (request.status !== 200)
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/auth`, {
+            method: "PUT",
+            body: JSON.stringify (content)
+        })
+        .then ((response) =>
         {
-            console.error (request.statusText);
+            if (response.ok && test.CACHING_ENABLED)
+            {
+                __dbCache = content;
+                __dbCacheAge = new Date ((new Date ()).getTime () + test.CACHING_AGE);
+            }
+        });
+    }
+    else
+    {
+        if (typeof localStorage === 'undefined')
+        {
+            // LocalStorage ใช้งานไม่ได้
             return;
         }
+        localStorage.setItem ("DbAuth", JSON.stringify (content));
+    }
+}
+
+export const SEC_MODE_FREE = 1;
+export const SEC_MODE_NORMAL = 2;
+export const SEC_MODE_PRIVILEGED = 3;
+
+export async function __secValidate (which = NaN , mode = SEC_MODE_NORMAL)
+{
+    if (mode == SEC_MODE_FREE)
         return;
+    
+    const dbRoot    = await __dbLoadAsync ();
+    const dbSession = util.jsonRead (dbRoot, 'challenge/session');
+    const dbAccess  = util.jsonRead (dbRoot, 'access');
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbSession == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    const ixSession = util.jsonRead (dbSession, state.session);
+
+    if (ixSession == null) 
+        throw new ErrorState (MSG_ERROR_AUTH_INVALID)
+
+    if (ixSession.access != state.access)
+        return new ErrorState (MSG_ERROR_AUTH_INVALID);
+
+    if (dbAccess[ixSession.access] == null)
+        return new ErrorState (MSG_ERROR_AUTH_INVALID);
+
+    if (mode === SEC_MODE_PRIVILEGED && (
+            dbAccess[ixSession.access].role != ROLE_ADMIN) &&
+            dbAccess[ixSession.access].role != ROLE_DEVELOPER)
+    {
+        return new ErrorState (MSG_ERROR_AUTH_PERMISSION);
     }
 
-    if (typeof localStorage === 'undefined')
-    {
-        // LocalStorage ใช้งานไม่ได้
+    if (which === state.access) 
         return;
+
+
+    if (dbAccess[ixSession.access].role != ROLE_ADMIN && 
+        dbAccess[ixSession.access].role != ROLE_DEVELOPER)
+    {
+        return new ErrorState (MSG_ERROR_AUTH_PERMISSION);
     }
-    localStorage.setItem ("DbAuth", JSON.stringify (data));
 }

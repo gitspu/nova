@@ -25,7 +25,8 @@ export class DataContact
 */
 export class DataEducation
 {
-
+    item = [""];
+    text = "";
 };
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลความสนใจ
@@ -42,6 +43,8 @@ export class DataInterest
 */
 export class DataJob
 {
+    /** ประวัติการทำงาน */
+    history = "";
     /** รายการงาน */
     item = 
     [{
@@ -57,10 +60,19 @@ export class DataJob
     constructor () { this.item = []; }
 };
 /**
+ * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลด้านภาษา
+*/
+export class DataLanguage
+{
+    item = [""];
+};
+/**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลส่วนตัว
 */
 export class DataPersonal
 {
+    /** การมองเห็น */
+    visibility = profile.VISIBILITY_PUBLIC;
     /** ภาพพื้นหลังของโปรไฟล์ */ 
     background = "";
     /** ภาพไอคอนโปรไฟล์ */
@@ -180,11 +192,12 @@ export function init ()
 /**
  * ขอข้อมูลส่วนตัว จากโปรไฟล์ของผู้ใช้ดังกล่าว (ต้องระบุว่าผู้ใช้ไหน)
 */
-export function getPersonal (which = NaN)
+export async function getPersonal (which = NaN)
 {
     const result = new DataPersonal ();
-    const block = __getSection (which, 'personal');
+    const block = await __getSectionAsync (which, 'personal');
 
+    result.visibility = block.visibility;
     result.background = block.background;  
     result.icon = block.icon;
 
@@ -199,10 +212,10 @@ export function getPersonal (which = NaN)
 
     return result;
 }
-export function getContact (which = NaN)
+export async function getContact (which = NaN)
 {
     const result = new DataContact ();
-    const block = __getSection (which, "contact");
+    const block = await __getSectionAsync (which, "contact");
 
     result.website = String (__dbReadVisValue (block, 'website', ''));
     result.email   = String (__dbReadVisValue (block, 'email', ''));
@@ -210,10 +223,10 @@ export function getContact (which = NaN)
 
     return result;
 }
-export function getInterest (which = NaN)
+export async function getInterest (which = NaN)
 {
     const result = new DataInterest ();
-    const block = __getSection (which, 'interest');
+    const block = await __getSectionAsync (which, 'interest');
 
     const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
     const item = new Array (... block.item);
@@ -230,10 +243,10 @@ export function getInterest (which = NaN)
     });
     return result;
 }
-export function getSkill (which = NaN)
+export async function getSkill (which = NaN)
 {
     const result = new DataSkill ();
-    const block = __getSection (which, 'skill');
+    const block = await __getSectionAsync (which, 'skill');
 
     const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
     const item = new Array (... block.item);
@@ -250,17 +263,31 @@ export function getSkill (which = NaN)
     });
     return result;
 }
-export function getEducation (which = NaN)
+export async function getEducation (which = NaN)
 {
     if (isNaN (which))
         throw new ErrorArgument ("Profile identifier isn't specified or valid");
 
-    return new DataEducation ();
+    const result = new DataEducation ();
+    const block = await __getSectionAsync (which, 'education');
+
+    result.text = util.jsonRead (block, 'text', "");
+
+    if (block.item != null) 
+    {
+        result.item = block.item;
+    }
+    else
+    {
+        result.item = [];
+    }
+
+    return result;
 }
-export function getSocial (which = NaN)
+export async function getSocial (which = NaN)
 {
     const result = new DataSocial ();
-    const block = __getSection (which, 'social');
+    const block = await __getSectionAsync (which, 'social');
 
     result.website      = String (__dbReadVisValue (block, 'website', ''));
     result.facebook     = String (__dbReadVisValue (block, 'facebook', ''));
@@ -271,10 +298,10 @@ export function getSocial (which = NaN)
 
     return result;
 }
-export function getJob (which)
+export async function getJob (which)
 {
     const result = new DataJob ();
-    const block = __getSection (which, 'job');
+    const block = await __getSectionAsync (which, 'job');
 
     const visibility = Number (util.jsonRead (block, 'visibility', profile.VISIBILITY_UNKNOWN));
     const item = new Array (... block.item);
@@ -285,6 +312,7 @@ export function getJob (which)
         return result;
     }
 
+    result.history = util.jsonRead (block, "history", "");
     result.item = item.map ((value) =>
     {
         const entity    = String (util.jsonRead (value, 'entity', ''));
@@ -305,7 +333,22 @@ export function getJob (which)
     });
     return result;
 }
-export function getPost (which = NaN, index = NaN)
+export async function getLanguage (which = NaN)
+{
+    const result = new DataLanguage ();
+    const block = await __getSectionAsync (which, 'language');
+
+    if (block.item != null)
+    {
+        result.item = block.item;
+    }
+    else
+    {
+        result.item = [];
+    }
+    return result;
+}
+export async function getPost (which = NaN, index = NaN)
 {
     if (isNaN (which))
         throw new ErrorArgument ("Profile identifier isn't specified or valid");
@@ -313,7 +356,7 @@ export function getPost (which = NaN, index = NaN)
         throw new ErrorArgument ("Post index isn't specified or valid");
 
     const result = new DataPost ();
-    const block = __getSection (which, 'post');
+    const block  = await __getSectionAsync (which, 'post');
     const blockItem = util.jsonRead (block, 'item');
 
     if (blockItem.length > index || index < 0)
@@ -330,10 +373,10 @@ export function getPost (which = NaN, index = NaN)
     throw new ErrorArgument (`Data Out of Bounds (${index}/${blockItem.length})`);
 
 }
-export function getTheme (which)
+export async function getTheme (which)
 {
     const result = new DataTheme ();
-    const block = __getSection (which, 'theme');
+    const block  = await __getSectionAsync (which, 'theme');
 
     result.profileColor = util.jsonRead (block, 'profileColor', '');
     result.profileLayout = util.jsonRead (block, 'profileLayout', 0);
@@ -362,17 +405,17 @@ export const state =
     init: false,
 };
 
-function __getSection (which, name)
+async function __getSectionAsync (which, name)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (isNaN (which)) {
         which = auth.getAccess ();
     }
 
-    const dbRoot = __dbLoad ();
-    const dbItem = util.jsonRead (dbRoot, 'item');
-    const ixItem = util.jsonRead (dbItem, which);
-    const ixBlock = util.jsonRead (ixItem, name);
+    const dbRoot    = await __dbLoadAsync ();
+    const dbItem    = util.jsonRead (dbRoot, 'item');
+    const ixItem    = util.jsonRead (dbItem, which);
+    const ixBlock   = util.jsonRead (ixItem, name);
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
     if (dbItem == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -382,35 +425,9 @@ function __getSection (which, name)
     return ixBlock;
 }
 
-function __dbLoad ()
+function __dbLoadAsync ()
 {
-    if (test.REMOTE_ENABLED)
-    {
-        const request = new XMLHttpRequest ();
-
-        // ใช้ติดตาม
-        // console.trace ();
-
-        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
-        request.send ();
-
-        if (request.status != 200)
-        {
-            console.error (request.statusText);
-            return sample;
-        }
-        return JSON.parse (request.responseText);
-    }
-    if (typeof localStorage === 'undefined')
-    {
-        // LocalStorage ใช้งานไม่ได้
-        return sample;
-    }
-
-    const readText = localStorage.getItem ("DbProfile");
-    const readObject = (readText != null) ? JSON.parse (readText) : sample;
-
-    return readObject;
+    return profile.__dbLoadAsync ();
 }
 function __dbReadVisValue (object, key, fallback = null)
 {

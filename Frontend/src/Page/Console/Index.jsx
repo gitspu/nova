@@ -3,35 +3,61 @@
  * หน้าต่างผู้ดูแลระบบ (เรียกอีกกว่าหน้าต่าง Administrator)
  * 
 */
-'use client';
+"use strict";
+"use client";
 
+/**
+ * 
+ * ส่วนประกอบจาก React
+ * 
+*/
 import { useEffect, useRef, useState } from 'react';
-import { Button, Img, MenuBar, NavBar, Span } from '../../Component/Common';
-
-import SecAccount   from './SecAccount'
-import SecAuth      from './SecAuth'
-import SecAds       from './SecAds'
-import SecDashboard from './SecDashboard'
-import Error        from '../Error'
-
+/**
+ * 
+ * ส่วนประกอบทั้วไป
+ * 
+*/
+import 
+{ 
+    Button, 
+    Img, 
+    MenuBar, 
+    NavBar, 
+    Span 
+} 
+from '../../Component/Common';
+/**
+ * 
+ * ตกแต่ง CSS
+ * 
+*/
+import styled       from 'styled-components'
+/**
+ * 
+ * เชื่อมต่อกับ Logic
+ * 
+*/
 import api          from '../../Script/Api'
 import nav          from '../../Script/Navigator'
 import icon         from '../../Script/Icon'
-import styled       from 'styled-components'
+/**
+ * 
+ * องค์ประกอบย่อยของหน้าต่างเข้าสู่ระบบ
+ * 
+*/
+import ViewAccount      from './ViewAccount'
+import ViewAds          from './ViewAds'
+import ViewAuth         from './ViewAuth'
+import ViewDashboard    from './ViewDashboard'
+import ViewError        from '../Error'
 
-
-// ==================================================================================================== //
-//                                                                                                      //
-// ENTRY POINT                                                                                          //
-//                                                                                                      //
-// ==================================================================================================== //
-
-export default Start;
 
 /**
+ * 
  * จุดเริ่มต้นของการแสดงผลเพจ
+ * 
 */
-function Start ()
+export default function Start ()
 {
     const auth = api.auth;
     const accessible = api.auth.isLogged () && 
@@ -48,6 +74,12 @@ function Start ()
     }
     return <StartRejected/>;
 }
+/**
+ * 
+ * จุดเริ่มต้นของการแสดงผลเพจ
+ * (ผ่านการยืนยันตัวตน)
+ * 
+*/
 function StartResolve ()
 {
     const mounted = useRef (false);
@@ -58,6 +90,15 @@ function StartResolve ()
     const [viewWidth, setViewWidth] = useState (window.innerWidth);
     const [viewHeight, setViewHeight] = useState (window.innerHeight);
 
+    /**
+     * คำสั่งที่ทำงานต่อเมื่อขนาดของหน้าต่างมีการเปลี่ยนแปลง
+    */
+    function onWindowResize ()
+    {      
+        setViewWidth (window.innerWidth);
+        setViewHeight (window.innerHeight);
+    }
+
     useEffect (() =>
     {
         if (mounted == null)
@@ -65,11 +106,6 @@ function StartResolve ()
         if (mounted.current)
             return;
 
-        function onWindowResize ()
-        {      
-            setViewWidth (window.innerWidth);
-            setViewHeight (window.innerHeight);
-        }
         mounted.current = true;
         window.addEventListener ("resize", onWindowResize);
         
@@ -107,9 +143,15 @@ function StartResolve ()
         <Header menuShow={[menuShow, setMenuShow]} menuShowButton={[menuShowButton, setMenuShowButton]}/>
     </>
 }
+/**
+ * 
+ * จุดเริ่มต้นของการแสดงผลเพจ
+ * (ไม่ผ่านการยืนยันตัวตน)
+ * 
+*/
 function StartRejected ()
 {
-    return <Error/>
+    return <ViewError/>
 }
 
 // ==================================================================================================== //
@@ -187,13 +229,16 @@ const MenuViewport = styled.div `
     pointer-events: none;
     position: absolute;
     inset: 56px 0px 0px 0px;
-    margin: 0px 70% 0px 0px;
+    margin: 0px 0px 0px 0px;
+    /* margin: 0px 70% 0px 0px; */
 
     & > *
     {
         pointer-events: all;
-        max-width: 256px;
-        margin: 0px 0px 0px auto;
+        max-width: 20%;
+        margin: 0px 0px 0px 0px;
+        /* max-width: 256px; */
+        /* margin: 0px 0px 0px auto; */
 
         @media (max-width: 512px) 
         {
@@ -225,16 +270,17 @@ const Menu = ({menu, menuShow}) =>
     return <>
       <MenuViewport style={{ display: getMenuShow ? 'block' : 'none' }}>
         <MenuBar direction='vertical' state={menu}>
-          <MenuBar.Child state={1} icon={icon.house} text='แดชบอร์ด'/>
+          <MenuBar.Child state={1} icon={icon.house} text='ภาพรวม'/>
+          <MenuBar.Child state={3} icon={icon.person} text='จัดการผู้ใช้'/>
+          <MenuBar.Child state={4} icon={icon.send} text='จัดการโฆษณา'/>
+          <MenuBar.Separator title="อื่น ๆ"/>
           <MenuBar.Child state={2} icon={icon.unlock} text='การยืนยันตัวตน'/>
-          <MenuBar.Child state={3} icon={icon.person} text='บัญชี'/>
-          <MenuBar.Child state={4} icon={icon.send} text='โฆษณา'/>
-          <MenuBar.Condition state={api.auth.getRole () == api.auth.ROLE_TESTER || api.auth.getRole () == api.auth.ROLE_DEVELOPER}>
+          {/* <MenuBar.Condition state={api.auth.getRole () == api.auth.ROLE_TESTER || api.auth.getRole () == api.auth.ROLE_DEVELOPER}>
             <MenuBar.Separator/>
             <MenuBar.Child state={5} icon={icon.fileEarmarkPlay} text='ดีบัค API'/>
             <MenuBar.Child state={6} icon={icon.chat} text='ดีบัค UI'/>
             <MenuBar.Child state={7} icon={icon.sticky} text='ดีบัค Storage'/>
-          </MenuBar.Condition>
+          </MenuBar.Condition> */}
         </MenuBar>
       </MenuViewport>
     </>
@@ -243,13 +289,13 @@ const Menu = ({menu, menuShow}) =>
 const ContentViewport = styled.div `
     position: absolute;
     inset: 56px 0px 0px 0px;
-    margin: 0px 0px 0px 30%;
+    margin: 0px 0px 0px 20%;
     overflow: hidden scroll;
 
     & > *
     {
         width: 100%;
-        max-width: 210mm;
+        /* max-width: 210mm; */
         margin: 0px auto 0px 0px;
         padding: 0px 12px;
 
@@ -267,10 +313,10 @@ const Content = ({menu}) =>
 {
     return <>
       <ContentViewport>
-        <SecDashboard menu={menu}/>
-        <SecAuth menu={menu}/>
-        <SecAccount menu={menu}/>
-        <SecAds menu={menu}/>
+        <ViewDashboard menu={menu}/>
+        <ViewAuth menu={menu}/>
+        <ViewAccount menu={menu}/>
+        <ViewAds menu={menu}/>
       </ContentViewport>
     </>
 }

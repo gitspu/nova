@@ -50,11 +50,11 @@ export function deinit ()
 /**
  * เพิ่มจำนวนตัวเลข
 */
-export function increment (key)
+export async function increment (key)
 {
     if (! __init) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbItem = util.jsonRead (dbRoot, 'item');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -66,16 +66,16 @@ export function increment (key)
         time: new Date().toUTCString ()
     });
 
-    __dbSave (dbRoot);
+    __dbSaveAsync (dbRoot);
 }
 /**
  * ลดจำนวนตัวเลข
 */
-export function decrement (key)
+export async function decrement (key)
 {
     if (! __init) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbItem = util.jsonRead (dbRoot, 'item');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -86,16 +86,16 @@ export function decrement (key)
         type: ACTIVITY_DECREMENT,
         time: new Date().toUTCString ()
     });
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 }
 /**
  * รีเซ็ตชุดข้อมูล
 */
-export function clear (key)
+export async function clear (key)
 {
     if (! __init) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbItem = util.jsonRead (dbRoot, 'item');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -106,15 +106,15 @@ export function clear (key)
         type: ACTIVITY_CLEAR,
         time: new Date().toUTCString ()
     });
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 }
-export function retrieve ()
+export async function retrieve ()
 {
     if (! __init) throw new ErrorState (MSG_ERROR_DEINIT);
 
     __seValidate ();
 
-    const dbRoot = __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbItem = util.jsonRead (dbRoot, 'item');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -264,70 +264,9 @@ export function isInit ()
 
 let __init = false;
 
-/**
- * โหลดฐานข้อมูลโฆษณา (กระบวณการนี้ใช้ทรัพยากรค่อยข้างสูง)
-*/
-function __dbLoad () 
+async function __seValidate ()
 {
-    if (test.REMOTE_ENABLED)
-    {
-        const request = new XMLHttpRequest ();
-
-        // ใช้ติดตาม
-        // console.trace ();
-
-        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/analytics`, false);
-        request.send ();
-
-        if (request.status != 200)
-        {
-            console.error (request.statusText);
-            return sample;
-        }
-        return JSON.parse (request.responseText);
-    }
-    if (typeof localStorage === 'undefined')
-    {
-        // LocalStorage ใช้งานไม่ได้
-        return sample;
-    }
-
-    const readText = localStorage.getItem ("DbAnalytics");
-    const readObject = (readText != null) ? JSON.parse (readText) : sample;
-
-    return readObject;
-}
-/**
- * บันทึกข้อมูลโฆษณาลงไปยังฐานข้อมูล (กระบวณการนี้ใช้ทรัพยากรค่อยข้างสูง)
-*/
-function __dbSave (data) 
-{
-    if (data == null) throw new Error ('The content must not be null');
-    if (typeof data !== 'object') throw new Error ('The content must be an object');
-
-    if (test.REMOTE_ENABLED)
-    {
-        const request = new XMLHttpRequest ();
-
-        request.open ('PUT', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/analytics`, false);
-        request.send (JSON.stringify(data));
-
-        if (request.status != 200)
-        {
-            console.error (request.statusText);
-        }
-        return;
-    }
-    if (typeof localStorage === 'undefined')
-    {
-        // LocalStorage ใช้งานไม่ได้
-        return;
-    }
-    localStorage.setItem ("DbAnalytics", JSON.stringify (data));
-}
-function __seValidate ()
-{
-    const dbRoot    = auth.__dbLoad ();
+    const dbRoot    = await auth.__dbLoadAsync ();
     const dbSession = util.jsonRead (dbRoot, 'challenge/session');
     const dbAccess  = util.jsonRead (dbRoot, 'access');
 
@@ -350,5 +289,76 @@ function __seValidate ()
         dbAccess[ixSession.access].role != auth.ROLE_DEVELOPER)
     {
         return new ErrorState (MSG_ERROR_AUTH_PERMISSION);
+    }
+}
+
+/**
+ * ทำการดึงข้อมูล JSON จากเซิฟเวอร์
+*/
+export async function __dbLoadAsync ()
+{
+    if (test.REMOTE_ENABLED)
+    {
+        if (test.CACHING_ENABLED)
+        {
+            if (!util.timeLonger (__dbCacheAge, test.CACHING_AGE))
+                return Promise.resolve (__dbCache);
+        }
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/analytics`, {
+            method: "GET",
+        })
+        .then ((response) => response.json ())
+        .then ((json) => 
+        {
+            __dbCache = json;
+            __dbCacheAge = new Date((new Date ()).getTime () + test.CACHING_AGE);
+            return json;
+        });
+    }
+    else
+    {
+        if (typeof localStorage === 'undefined')
+        {
+            // LocalStorage ใช้งานไม่ได้
+            return sample;
+        }
+        const readText = localStorage.getItem ("DbAnalytics");
+        const readObject = (readText != null) ? JSON.parse (readText) : sample;
+
+        return Promise.resolve (readObject); 
+    }
+}
+
+export let __dbCache = {};
+export let __dbCacheAge = new Date (undefined);
+
+/**
+ * ทำการบันทึกข้อมูล JSON
+*/
+export async function __dbSaveAsync (content)
+{
+    if (test.REMOTE_ENABLED)
+    {
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/analytics`, {
+            method: "PUT",
+            body: JSON.stringify (content)
+        })
+        .then ((response) =>
+        {
+            if (response.ok && test.CACHING_ENABLED)
+            {
+                __dbCache = content;
+                __dbCacheAge = new Date ((new Date ()).getTime () + test.CACHING_AGE);
+            }
+        });
+    }
+    else
+    {
+        if (typeof localStorage === 'undefined')
+        {
+            // LocalStorage ใช้งานไม่ได้
+            return;
+        }
+        localStorage.setItem ("DbAnalytics", JSON.stringify (content));
     }
 }

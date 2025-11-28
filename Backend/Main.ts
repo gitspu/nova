@@ -8,17 +8,20 @@ const SAMPLE_ANALYTICS  = './../Frontend/src/Script/Sample/Analytics.json';
 const SAMPLE_ADS        = './../Frontend/src/Script/Sample/Ads.json';
 const SAMPLE_AUTH       = './../Frontend/src/Script/Sample/Auth.json';
 const SAMPLE_PROFILE    = './../Frontend/src/Script/Sample/Profile.json';
+const SAMPLE_PROFILE_EM = './../Frontend/src/Script/Sample/ProfileEmployer.json';
 
 const SAVE_DIR          = './../Database';
 const SAVE_ANALYTICS    = "./../Database/Analytics.json";
 const SAVE_ADS          = "./../Database/Ads.json";
 const SAVE_AUTH         = "./../Database/Auth.json";
 const SAVE_PROFILE      = "./../Database/Profile.json";
+const SAVE_PROFILE_EM   = "./../Database/ProfileEmployer.json";
 
 const URL_ANALYTICS     = '/api/analytics';
 const URL_ADS           = '/api/ads';
 const URL_AUTH          = '/api/auth';
 const URL_PROFILE       = '/api/profile';
+const URL_PROFILE_EM    = '/api/profile-employer';
 
 const connection = http.createServer ();
 
@@ -68,6 +71,19 @@ const callbackGet = (path: string, body: string, res: http.ServerResponse) =>
         res.end (fs.readFileSync (SAVE_PROFILE));
         return;
     }
+    if (path == URL_PROFILE_EM) 
+    {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+
+        mkdir (SAVE_DIR);
+
+        if (fs.existsSync (SAVE_PROFILE_EM) == false)
+            fs.writeFileSync (SAVE_PROFILE_EM, fs.readFileSync (SAMPLE_PROFILE_EM));
+
+        res.end (fs.readFileSync (SAVE_PROFILE_EM));
+        return;
+    }
     if (path == URL_ANALYTICS) 
     {
         res.statusCode = 200;
@@ -108,6 +124,14 @@ const callbackPut = (path: string, body: string, res: http.ServerResponse) =>
         res.setHeader('Content-Type', 'application/json');
         res.end ();
     }
+    if (path == URL_PROFILE_EM)
+    {
+        fs.writeFileSync (SAVE_PROFILE_EM, body);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end ();
+    }
     if (path == URL_ANALYTICS)
     {
         fs.writeFileSync (SAVE_ANALYTICS, body);
@@ -138,6 +162,14 @@ const callbackDelete = (path: string, body: string, res: http.ServerResponse) =>
     if (path == URL_PROFILE)
     {
         fs.rmSync (SAVE_PROFILE);
+        
+        res.statusCode = 200;
+        res.end ();
+        return;
+    }
+    if (path == URL_PROFILE_EM)
+    {
+        fs.rmSync (SAVE_PROFILE_EM);
         
         res.statusCode = 200;
         res.end ();

@@ -336,3 +336,10 @@
 {
     color-scheme: dark;
 }
+.x-dropdown-full
+{
+    & > button
+    {
+        width: 100%;
+    }
+}

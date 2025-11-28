@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { auth } from '../../Script/Api'
 
 import { Button, Div, Header, Main, P, Checkbox, H1, Hr, Span, Section, Img, Label, Br } from "../../Component/Common";
+
+import api from "../../Script/Api"
 import icon from "../../Script/Icon"
 
 // ==================================================================================================== //
@@ -20,9 +21,10 @@ function StartResolve ({menu})
 {
     const mount = useRef (false);
 
+    const auth = api.auth;
     const visible = menu[0] == 2;
-    const config = useRef (new auth.DataConfig ());
-    const configLast = useRef (new auth.DataConfig ());
+    const config = useRef (new auth.ServerConfig ());
+    const configLast = useRef (new auth.ServerConfig ());
 
     const statusInterval = useRef (null);
     const [statusText, setStatusText] = useState ('');
@@ -56,20 +58,34 @@ function StartResolve ({menu})
     }
     function onApply ()
     {
-        auth.setConfig (config.current);
-        configLast.current.enableCreation = config.current.enableCreation;
-        configLast.current.enableLogin = config.current.enableLogin;
-        configLast.current.enableDeletion = config.current.enableDeletion;
-
-        setStatusText ('บันทึกการตั้งค่าเรียบร้อยแล้ว');
-        setModified (false);
-
-        clearInterval (statusInterval.current);
-        statusInterval.current = setInterval (() =>
+        auth.setServerConfig (config.current).then (() =>
         {
-            setStatusText ('');
-        },
-        2500);
+            configLast.current.enableCreation = config.current.enableCreation;
+            configLast.current.enableLogin = config.current.enableLogin;
+            configLast.current.enableDeletion = config.current.enableDeletion;
+    
+            setStatusText ('บันทึกการตั้งค่าเรียบร้อยแล้ว');
+            setModified (false);
+    
+            clearInterval (statusInterval.current);
+            statusInterval.current = setInterval (() =>
+            {
+                setStatusText ('');
+            },
+            2500);
+        })
+        .catch ((except) =>
+        {
+            console.error (except);
+            setStatusText ('เกิดข้อผิดพลาดในขณะที่โหลดข้อมูล: ' + except);
+
+            clearInterval (statusInterval.current);
+            statusInterval.current = setInterval (() =>
+            {
+                setStatusText ('');
+            },
+            5000);
+        });
     }
 
     const onModified = () =>
@@ -97,14 +113,19 @@ function StartResolve ({menu})
             return;
 
         mount.current = true;
-        config.current = auth.getConfig ();
-        configLast.current = { ... config.current };
+        auth.getServerConfig ().then ((x) =>
+        {
+            config.current = { ... x };
+            configLast.current = { ...  x };
 
-        onRead ();
+            onRead ();
+        });
 
         return () => { mount.current = false; }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
+
     //
     // ทำงานทุกครั้งเมื่อ UI มีการเปลี่ยนแปลง
     //

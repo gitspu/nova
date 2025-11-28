@@ -1,18 +1,52 @@
-import { Div, Img, Input, Label, P, Span, Form, Button } from '../../Component/Common';
+/**
+ * 
+ * องค์ประกอบย่อยของหน้าต่าง เข้าสู่ระบบ
+ * ใช้สำหรับแสดงการกู้คืนบัญชี
+ * 
+*/
+"use strict";
+"use client";
+
+/**
+ * 
+ * ส่วนประกอบทั้วไป
+ * 
+*/
+import 
+{ 
+    Button,
+    Div, 
+    Form, 
+    Img, 
+    Input, 
+    Label, 
+    P, 
+    Span, 
+} 
+from '../../Component/Common';
+
+/**
+ * 
+ * เชื่อมต่อกับ Logic
+ * 
+*/
 import icon from '../../Script/Icon'
 
-// ==================================================================================================== //
-//                                                                                                      //
-// ENTRY POINT                                                                                          //
-//                                                                                                      //
-// ==================================================================================================== //
 
+/**
+ * 
+ * พื้นที่สำหรับการแสดงองค์ประกอบ
+ * 
+*/
 export default function Start ({view, username, status})
 {
     const [getView, setView] = view;
     const [getUsername, setUsername] = username;
     const [getStatus, setStatus] = status;
 
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: ย้อนกลับไปหน้าก่อน
+    */
     function onClickBack (event)
     {
         if (event != null)
@@ -20,10 +54,15 @@ export default function Start ({view, username, status})
             event.preventDefault ();
             event.stopPropagation ();
         }
-
+        //
+        // พาไปยังหน้าต้อนรับ
+        //
+        setStatus ("");
         setView (2);
-        setStatus ('');
     }
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: ยืนยันการป้อนข้อมูล
+    */
     function onClickSubmit (event)
     {
         if (event != null)
@@ -31,6 +70,9 @@ export default function Start ({view, username, status})
             event.preventDefault ();
             event.stopPropagation ();
         }
+        //
+        // ค่อยข้างจงใจเพราะตอนนี้เรายังไม่มีแผนที่จะรองรับระบบนี้
+        //
         setStatus ('ขออภัย ระบบไม่พร้อมใช้งานในขณะนี้');
     }
     return <>

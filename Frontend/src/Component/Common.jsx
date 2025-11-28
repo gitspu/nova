@@ -516,6 +516,60 @@ export const Input = styled.input `
        color: var(--app-input-placeholder-disabled); 
     }
 `;
+export const TextArea = styled.textarea `
+    
+    background-color:   var(--app-input-bg);
+    border:             var(--app-input-border);
+    border-radius:      var(--app-input-radius);
+    outline:            var(--app-input-outline);
+    color:              var(--app-input-text);
+
+    padding:            var(--app-input-padding);
+    height: 40px;
+    resize: none;
+
+    transition-property:        background-color, color, outline;
+    transition-duration:        250ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:enabled:hover, &:enabled:focus
+    {
+        background-color:   var(--app-input-bg-hover);
+        border:             var(--app-input-border-hover);
+        border-radius:      var(--app-input-radius-hover);
+        outline:            var(--app-input-outline-hover);
+        color:              var(--app-input-text-hover);
+    }
+    &:enabled:active
+    {
+        background-color:   var(--app-input-bg-active);
+        border:             var(--app-input-border-active);
+        border-radius:      var(--app-input-radius-active);
+        outline:            var(--app-input-outline-active);
+        color:              var(--app-input-text-active);
+    }
+    &:disabled
+    {
+        background-color:   var(--app-input-bg-disabled);
+        border:             var(--app-input-border-disabled);
+        border-radius:      var(--app-input-radius-disabled);
+        outline:            var(--app-input-outline-disabled);
+        color:              var(--app-input-text-disabled);
+    }
+
+    &::placeholder, &::placeholder::enabled {
+       color: var(--app-input-placeholder);          
+    }
+    &::placeholder:enabled:hover, &::placeholder:enabled:focus {
+       color: var(--app-input-placeholder-hover);          
+    }
+    &::placeholder:enabled:active {
+       color: var(--app-input-placeholder-active); 
+    }
+    &::placeholder:disabled {
+       color: var(--app-input-placeholder-disabled); 
+    }
+`;
 export const A = styled.a `
     color: var(--app-link);
     text-decoration: none;
@@ -904,8 +958,8 @@ const MenuBarRoot = styled.div `
 
     & > p
     {
-        width: 1rem;
         height: 1rem;
+        margin: 24px 0px;
     }
     & div
     {
@@ -1419,12 +1473,15 @@ NavBar.Profile = ({image = null, className, children, onClick }) =>
     {
         if (image == null && (auth.isLogged () && auth.isActive ()))
         {
-            let newData = util.ignore (() => decodeContent (profile.getPersonal ().icon), icon.emojiSmile);
+            profile.getPersonal ().then ((x) =>
+            {
+                let data = decodeContent (x.icon);
 
-            if (newData == null || newData == "" || newData == icon.transparent)
-                newData = icon.emojiSmile;
+                if (data == null || data == "" || data == icon.transparent)
+                    data = icon.profile;
 
-            setSrc (newData);
+                setSrc (data);
+            });
         }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

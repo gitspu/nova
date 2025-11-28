@@ -1,6 +1,9 @@
 import * as test from './TestConfig'
 import * as util from './Util'
 
+import sampleProfile from "../Sample/Profile.json";
+import sampleEmployer from "../Sample/ProfileEmployer.json"
+
 /**
  * โครงสร้างที่เก็บข้อมูลส่วนหัว สำหรับเตรียมพร้อมในการเรียกข้อมูล
 */
@@ -12,15 +15,36 @@ export class DataHeader
 /**
  * โครงสร้างที่เก็บข้อมูลรายการโพสต์ ที่ได้จากการเรียกคำสั่ง
 */
-export class DataBody
+export class DataPostProfile
 {
     /** รายการโพสต์ */
     item = 
     [{
-        type: TYPE_UNKNOWN,
         owner: 0,
         index: 0
     }]
+
+    constructor ()
+    {
+        this.item = [];
+    }
+};
+/**
+ * โครงสร้างที่เก็บข้อมูลรายการโพสต์ ที่ได้จากการเรียกคำสั่ง
+*/
+export class DataPostJob
+{
+    /** รายการโพสต์ */
+    item = 
+    [{
+        owner: 0,
+        index: 0
+    }]
+
+    constructor ()
+    {
+        this.item = [];
+    }
 };
 
 /**
@@ -47,78 +71,108 @@ const MSG_ERROR_SERVER = 'เซิฟเวอร์ไม่สามารถ
 /**
  * เริ่มต้นการทำงานระบบฟีด
 */
-export function init ()
+export async function init ()
 {
-    if (state.init) throw new ErrorState (MSG_ERROR_INIT);
+    //
+    // ระบบเริ่มทำงานแล้ว
+    //
+    if (state.init) 
+        throw new ErrorState (MSG_ERROR_INIT);
 
-    state.init = false;
-    state.generation.splice (0, 1);
-
-    const dbRoot = __dbLoad ();
-    const dbProfile = util.jsonRead (dbRoot, 'item');
-
-    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
-    if (dbProfile == null) throw new ErrorServer (MSG_ERROR_SERVER);
-
-    try
-    {
-        //
-        // ดึงโพสต์จากโปรไฟล์ของผู้ใช้เข้ามา
-        //
-        for (const key of util.shuffle (Object.keys (dbProfile)))
-        {
-            const ixRoot = dbProfile[key];
-            const ixPost = util.jsonRead (ixRoot, 'post/item');
-
-            // ไม่น่าจะเกิดขึ้น แต่ก็ ...
-            if (ixRoot == null) continue;
-            if (ixPost == null) continue;
-
-            // สลับข้อมูล
-            util.shuffle (ixPost);
-
-            for (let index = 0; index < ixPost.length; index ++)
-            {
-                state.generation.push (
-                {
-                    type: TYPE_NORMAL,
-                    owner: Number (key),
-                    index: Number (index),
-                });
-            }
-        }
-        //
-        // ดึงข้อมูลโฆษณา (เร็ว ๆ นี้)
-        //
-
-
-        //
-        // สลับอีกครั้ง
-        //
-        util.shuffle (state.generation);
-    }
-    finally
-    {
-        state.init = true;
-    }
+    state.init = true;
 }
 /**
  * รับข้อมูลรายการโพสต์
 */
-export function getBody ()
+export async function getPostProfile (start = NaN, end = NaN)
 {
-    const result = new DataBody ();
-    const collection = state.generation;
+    if (state.init == false)
+        throw new ErrorState (MSG_ERROR_DEINIT);
 
-    result.item.splice (0, 1);
-    result.item.push (... collection.map ((item) =>
+    const dbRoot = await __dbLoadProfile ();
+    const dbProfile = util.jsonRead (dbRoot, "item");
+    const result = new DataPostProfile ();
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbProfile == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    //
+    // ดึงโพสต์จากโปรไฟล์ของผู้ใช้เข้ามา
+    //
+    for (const key of util.shuffle (Object.keys (dbProfile)))
     {
-        return {
-            type:  item.type,
-            owner: item.owner,
-            index: item.index,
-        };
-    }));
+        const ixRoot = dbProfile[key];
+        const ixPost = util.jsonRead (ixRoot, 'post/item');
+
+        // ไม่น่าจะเกิดขึ้น แต่ก็ ...
+        if (ixRoot == null) continue;
+        if (ixPost == null) continue;
+
+        // สลับข้อมูล
+        util.shuffle (ixPost);
+
+        for (let index = 0; index < ixPost.length; index ++)
+        {
+            result.item.push ({
+                owner: Number (key),
+                index: Number (index),
+            });
+        }
+    }
+    //
+    // สลับอีกครั้ง
+    //
+    util.shuffle (result.item);
+    //
+    // ส่งข้อมูลกลับ
+    //
+    return result;
+}
+/**
+ * รับข้อมูลการการโพสต์
+*/
+export async function getPostJob (start = NaN, end = NaN)
+{
+    if (state.init == false)
+        throw new ErrorState (MSG_ERROR_DEINIT);
+
+    const dbRoot = await __dbLoadProfileEmployer ();
+    const dbItem = util.jsonRead (dbRoot, "item");
+    const result = new DataPostJob ();
+
+    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbItem == null) throw new ErrorServer (MSG_ERROR_SERVER);
+
+    //
+    // ดึงโพสต์จากโปรไฟล์ของผู้ใช้เข้ามา
+    //
+    for (const key of util.shuffle (Object.keys (dbItem)))
+    {
+        const ixRoot = dbItem[key];
+        const ixPost = util.jsonRead (ixRoot, 'post/item');
+
+        // ไม่น่าจะเกิดขึ้น แต่ก็ ...
+        if (ixRoot == null) continue;
+        if (ixPost == null) continue;
+
+        // สลับข้อมูล
+        util.shuffle (ixPost);
+
+        for (let index = 0; index < ixPost.length; index ++)
+        {
+            result.item.push ({
+                owner: Number (key),
+                index: Number (index),
+            });
+        }
+    }
+    //
+    // สลับอีกครั้ง
+    //
+    util.shuffle (result.item);
+    //
+    // ส่งข้อมูลกลับ
+    //
     return result;
 }
 
@@ -142,34 +196,45 @@ export function isInit ()
 export const state =
 {
     init: false,
-    generation: [{
-        type: TYPE_UNKNOWN,
-        owner: 0,
-        index: 0
-    }]
 };
-const key = "DbProfile";
 
-function __dbLoad ()
+function __dbLoadProfile ()
 {
     if (test.REMOTE_ENABLED)
     {
-        const request = new XMLHttpRequest ();
-
-        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
-        request.send ();
-
-        if (request.status != 200)
-        {
-            console.error (request.statusText);
-            return {};
-        }
-        return JSON.parse (request.responseText);
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, {
+            method: "GET"  
+        })
+        .then ((response) => response.json ());
     }
-    let raw = localStorage.getItem (key);
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return sampleProfile;
+    }
 
-    if (raw == null) 
-        return {};
+    const readText = localStorage.getItem ("DbProfile");
+    const readObject = (readText != null) ? JSON.parse (readText) : sampleProfile;
 
-    return JSON.parse (raw);
+    return Promise.resolve (readObject);
+}
+function __dbLoadProfileEmployer ()
+{
+    if (test.REMOTE_ENABLED)
+    {
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile-employer`, {
+            method: "GET"  
+        })
+        .then ((response) => response.json ());
+    }
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return sampleEmployer;
+    }
+
+    const readText = localStorage.getItem ("DbProfileEmployer");
+    const readObject = (readText != null) ? JSON.parse (readText) : sampleProfile;
+
+    return Promise.resolve (readObject);
 }

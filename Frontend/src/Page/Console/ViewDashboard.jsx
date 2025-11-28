@@ -68,8 +68,9 @@ function StartResolve ({menu})
     const [chartGrowth, setChartGrowth] = useState ([]);
     const [chartRole, setChartRole] = useState ([]);
 
-
-
+    /**
+     * คำสั่งที่ถูกเรีนกเมื่อผู้ใช้ต้องการ: เปลี่ยนขนาดการแสดงผล (มาตราแสดง)
+    */
     function onChangeScale (type)
     {
         switch (type)
@@ -88,20 +89,28 @@ function StartResolve ({menu})
                 break;
         }
     }
+    /**
+     * คำสั่งที่ถูกเรียกเพื่อผู้ใช้ต้องการ: โหลดข้อมูลใหม่
+     * (คำสั่งนี้ถูกเรียกตอนหน้าเว็บโหลดเช่นกัน)
+    */
     function onLoadData ()
     {
         const analytics = api.analytics;
-        const data = analytics.retrieve ();
 
-        dataset.current = data;
+        return analytics.retrieve ().then ((x) => 
+        {
+            dataset.current = x;
+
+            
+        });
     }
+    /**
+     * คำสั่งที่ถูกเรียกเมื่อมีการเปลี่ยนแปลงของ UI
+    */
     function onLoadUI ()
     {
-        if (dataset.current == null)
-            return;
-
         const analytics = api.analytics;
-        
+
         //
         // จับบบ ๆ และกรองข้อมูล
         //
@@ -227,8 +236,6 @@ function StartResolve ({menu})
         {
             const role = [];
 
-
-
             setChartRole (role);
         }
 
@@ -237,28 +244,123 @@ function StartResolve ({menu})
         renderGraphGrowth ();
         renderGraphRole ();
     }
-    function onRefresh ()
+    /**
+     * คำสั่งที่ถูกเรียกเมื่อผู้ใช้ต้องการ: ส่งออกข้อมูล
+     * (แปลงข้อมูลเป็นไฟล์ CSV และดาวน์โหลด)
+    */
+    function onClickExport ()
     {
-        onLoadData ();
-        onLoadUI ();
+        //
+        // จับบบ ๆ และกรองข้อมูล
+        //
+        const analytics = api.analytics;
+        const now = new Date ();
 
-        setStatusText ('ข้อมูลถูกดึงใหม่เรียบร้อยแล้ว');
+        const captureLogin = analytics.capture (dataset.current, 
+            ['authLogin', 'authLoginSession', 'authLoginFacebook' ], 
+            scale, range
+        );
+        const captureRegister = analytics.capture (
+            dataset.current, 
+            ['authRegister', 'authRegisterFacebook' ], 
+            scale, range
+        );
+        const capturePost = analytics.capture (
+            dataset.current,
+            ['jobPost'],
+            scale, range
+        );
+        const captureResume = analytics.capture (
+            dataset.current,
+            ['jobResume'],
+            scale, range
+        );
 
-        clearInterval (statusInterval.current);
-        statusInterval.current = setInterval (() =>
+        // วิธีแบบ hack ๆ ในโหลดข้อมูล
+
+        const enumerate = () =>
         {
-            setStatusText ('');
-        },
-        5000);
+            let result = "";
+            let index = 0;
+            let total = Math.ceil (range / scale);
+
+            while (index < total)
+            {
+                result += `${new Date(now.getTime () - (scale * index)).toLocaleDateString ()}, `;
+                result += `${captureLogin.item[index]}, `;
+                result += `${captureRegister.item[index]}, `;
+                result += `${capturePost.item[index]}, `;
+                result += `${captureResume.item[index]}`;
+                result += "\n";
+                index += 1;
+            }
+            return result;
+        }
+
+        const block = 
+        [
+            ["วันที่บันทึก", "จำนวนเข้าสู่ระบบ", "จำนวนสมัครสมาชิก", "จำนวนโพสต์งาน", "จำนวนเรซูเม่"].join (","),
+            enumerate (),
+        ]
+        .join ("\n");
+
+        // สร้าง Blob object สำหรับไฟล์ CSV
+        const blob = new Blob ([block], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL (blob);
+        
+        // สร้าง link element และ trigger download
+        const anchor = document.createElement ("a");
+        anchor.href = url;
+        anchor.download = `ข้อมูลภาพรวมของระบบ - ${now.toDateString ()}`;
+
+        document.body.appendChild (anchor);
+        anchor.click ();
+        document.body.removeChild (anchor);
+
+        // ทำความสะอาด URL object
+        URL.revokeObjectURL(url);
+    }
+    /**
+     * คำสั่งที่ถูกเรียกเมื่อผู้ใช้ต้องการ: โหลดข้อมูลใหม่
+    */
+    function onClickRefresh ()
+    {
+        onLoadData ()
+        .then (() => onLoadUI)
+        .then (() =>
+        {
+            setStatusText ('ข้อมูลถูกดึงใหม่เรียบร้อยแล้ว');
+
+            clearInterval (statusInterval.current);
+            statusInterval.current = setInterval (() =>
+            {
+                setStatusText ('');
+            },
+            5000);
+        })
+        .catch ((except) =>
+        {
+            console.error (except);
+            setStatusText ('เกิดข้อผิดพลาดในขณะที่โหลดข้อมูล: ' + except);
+
+            clearInterval (statusInterval.current);
+            statusInterval.current = setInterval (() =>
+            {
+                setStatusText ('');
+            },
+            5000);
+        });
     }
 
+    //
+    // ทำงานแค่ครั้งเดียว (เมื่อหน้าเว็บถูกโหลด)
+    //
     useEffect (() =>
     {
         if (mounted.current)
             return;
 
-        onLoadData ();
-        onLoadUI ();
+        onLoadData ().then (onLoadUI);
 
         return () => {
             mounted.current = false;
@@ -300,11 +402,11 @@ function StartResolve ({menu})
             )}
           </Section>
           <Section>
-            <Button className='me-1 mb-2' onClick={onRefresh}>
+            <Button className='me-1 mb-2' onClick={onClickExport}>
               <Img src={icon.download}/>
               <Span>ส่งออกข้อมูล</Span>
             </Button>
-            <Button className='me-1 mb-2' onClick={onRefresh}>
+            <Button className='me-1 mb-2' onClick={onClickRefresh}>
               <Img src={icon.arrowClockwise}/>
               <Span>โหลดข้อมูลใหม่</Span>
             </Button>
@@ -325,7 +427,7 @@ function StartResolve ({menu})
           <Section className="mb-2">
             <Div className="mb-2">
               <Label $size="h2" $weight="bold">สถิติการใช้งาน</Label>
-              <P $variant="secondary">แสดงข้อมูล 6 เดือนล่าสุด</P>
+              {/* <P $variant="secondary">แสดงข้อมูล 6 เดือนล่าสุด</P> */}
             </Div>
             <Div>
               <ChartLineUsage value={chartUsage}/>
@@ -337,7 +439,7 @@ function StartResolve ({menu})
           <Section className="mb-2">
             <Div className="mb-2">
               <Label $size="h2" $weight="bold">สถิติการเติบโต</Label>
-              <P $variant="secondary">แสดงข้อมูล 6 เดือนล่าสุด</P>
+              {/* <P $variant="secondary">แสดงข้อมูล 6 เดือนล่าสุด</P> */}
             </Div>
             <Div>
               <ChartLineGrowth value={chartGrowth}/>

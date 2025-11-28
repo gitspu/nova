@@ -6,8 +6,18 @@
 export const LINK_HOME = '/';
 export const LINK_AUTH = '/auth';
 export const LINK_CONSOLE = '/console';
+
 export const LINK_USER_PROFILE = '/user-profile';
+export const LINK_EMPLOYER_PROFILE = '/employer-profile';
+export const LINK_EMPLOYER_ENROLLMENT = '/employer-enrollment';
 export const LINK_USER_SETTINGS = '/user-settings';
+
+let reactNavigator = null;
+
+export function init (reactNavigatorObject)
+{
+    reactNavigator = reactNavigatorObject;
+}
 
 /**
  * ตรวจสอบเส้นทาง
@@ -56,6 +66,11 @@ export function home ()
     if (window.location.pathname == '' || window.location.pathname == LINK_HOME) 
         return;
 
+    if (typeof reactNavigator == "function")
+    {
+        reactNavigator (LINK_HOME);
+        return;
+    }
     window.location.href = LINK_HOME;
 }
 /**
@@ -66,6 +81,11 @@ export function userProfile (which = NaN)
     if (is (LINK_USER_PROFILE)) 
         return;
 
+    if (typeof reactNavigator == "function")
+    {
+        reactNavigator (`${LINK_USER_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
+        return;
+    }
     window.location.href = (`${LINK_USER_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
 }
 /**
@@ -76,7 +96,42 @@ export function userSettings (to = undefined)
     if (is (LINK_USER_SETTINGS)) 
         return;
 
+    if (typeof reactNavigator == "function")
+    {
+        reactNavigator (`${LINK_USER_SETTINGS}` + (to != undefined ? `?to=${to}` : ``));
+        return;
+    }
     window.location.href = `${LINK_USER_SETTINGS}` + (to != undefined ? `?to=${to}` : ``);
+}
+/**
+ * นำทางไปสู่หน้าโปรไฟล์
+*/
+export function employerProfile (which = NaN)
+{
+    if (is (LINK_USER_PROFILE)) 
+        return;
+
+    if (typeof reactNavigator == "function")
+    {
+        reactNavigator (`${LINK_EMPLOYER_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
+        return;
+    }
+    window.location.href = (`${LINK_EMPLOYER_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
+}
+/**
+ * นำทางไปสู่หน้าโปรไฟล์
+*/
+export function employerEnrollment ()
+{
+    if (is (LINK_EMPLOYER_ENROLLMENT)) 
+        return;
+
+    if (typeof reactNavigator == "function")
+    {
+        reactNavigator (LINK_EMPLOYER_ENROLLMENT);
+        return;
+    }
+    window.location.href = (LINK_EMPLOYER_ENROLLMENT);
 }
 
 export default
@@ -87,9 +142,12 @@ export default
     LINK_PROFILE: LINK_USER_PROFILE,
     LINK_SETTINGS: LINK_USER_SETTINGS,
 
+    init,
     is,
     auth,
     console,
+    employerProfile,
+    employerEnrollment,
     home,
     userProfile,
     userSettings,

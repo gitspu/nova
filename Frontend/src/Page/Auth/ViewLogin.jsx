@@ -1,15 +1,51 @@
+/**
+ * 
+ * องค์ประกอบย่อยของหน้าต่าง เข้าสู่ระบบ
+ * ใช้สำหรับแสดงตอนป้องข้อมูลเข้าสู่ระบบ
+ * 
+*/
+"use strict";
+"use client";
+/**
+ * 
+ * ส่วนประกอบจาก React
+ * 
+*/
+import { useEffect, useRef, useState } from "react";
+/**
+ * 
+ * ส่วนประกอบทั้วไป
+ * 
+*/
+import 
+{ 
+    A,
+    Div, 
+    Header, 
+    Main, 
+    Span, 
+    Img, 
+    Button, 
+    P, 
+    Form, 
+    Section, 
+    Input, 
+} 
+from "../../Component/Common";
+
+/**
+ * 
+ * เชื่อมต่อกับ Logic
+ * 
+*/
+import auth from "../../Script/Auth"
 import icon from '../../Script/Icon'
-import { Header, Main, Div, Span, Img, Button, P, Form, Section, Input, A } from "../../Component/Common";
-import { useEffect, useRef, useState } from 'react';
-import { RESOLVE_CREATED, RESOLVE_LOGGED, login } from '../../Script/Auth';
 
-// ==================================================================================================== //
-//                                                                                                      //
-
-// ENTRY POINT                                                                                          //
-//                                                                                                      //
-// ==================================================================================================== //
-
+/**
+ * 
+ * พื้นที่สำหรับการแสดงองค์ประกอบ
+ * 
+*/
 export default function Start ({view, username, password, status, blocking, callback})
 {
     const [getView, setView] = view;
@@ -25,6 +61,9 @@ export default function Start ({view, username, password, status, blocking, call
 
     const visible = getView == 2;
 
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: ย้อนกลับ
+    */
     function onClickBack (event)
     {
         if (event != null)
@@ -35,6 +74,9 @@ export default function Start ({view, username, password, status, blocking, call
         setStatus ("");
         setView (1);
     }
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: สมัครสมาชิกแทน
+    */
     function onClickRegister (event)
     {
         if (event != null)
@@ -44,6 +86,9 @@ export default function Start ({view, username, password, status, blocking, call
         }
         setView (3);
     }
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: กู้คืนบัญชี
+    */
     function onClickRecovery (event)
     {
         if (event != null)
@@ -53,6 +98,9 @@ export default function Start ({view, username, password, status, blocking, call
         }
         setView (4);
     }
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: ยืนยันการเข้าสู่ระบบ
+    */
     function onClickSubmit (event)
     {
         if (event != null)
@@ -60,9 +108,15 @@ export default function Start ({view, username, password, status, blocking, call
             event.preventDefault ();
             event.stopPropagation ();
         }
-
+        //
+        // กระบวณนี้ใช้เวลานานจึงต้องมีการบล็อกไว้ก่อน
+        //
         setBlocking (true);      
-        login (getUsername, getPassword).then (() =>
+        setStatus ("");
+        //
+        // จงทำงาน ๆๆ
+        //
+        auth.login (getUsername, getPassword).then (() =>
         {
             callback.onLogged ();
         })
@@ -91,6 +145,10 @@ export default function Start ({view, username, password, status, blocking, call
         }
     }
 
+    //
+    // คำสั่งนี้ทำงานเมื่อองค์ประกอบนี้แสดงผล
+    // ซึ่งอาจทำให้ Browser พยายามแสดงหน้าจัดการรหัสผ่าน ทำให้การเข้าสู่ระบบสะดวกมากขึ้น
+    //
     useEffect (() =>
     {
         if (visible)

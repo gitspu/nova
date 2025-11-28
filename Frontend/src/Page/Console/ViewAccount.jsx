@@ -1,7 +1,9 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { auth } from '../../Script/Api'
-import icon from '../../Script/Icon'
 import { Modal, Button, Div, Main, P, Section, Td, Img,  Checkbox, H1, Hr, Span, Input, Table, Tr, THead, TBody, Header, Label, MenuBar } from "../../Component/Common";
+
+import api from '../../Script/Api'
+import icon from '../../Script/Icon'
 
 
 // ==================================================================================================== //
@@ -18,11 +20,12 @@ function Start ({menu})
 }
 function StartResolve ({menu})
 {
+    const auth = api.auth;
     const mounted = useRef (false);
     const visible = menu[0] == 3;
 
-    const map = useRef (new auth.DataMap ().init ());
-    const mapInfo = useRef ([ new auth.DataMapInfo() ]);
+    const map = useRef (new auth.ServerMap ().init ());
+    const mapInfo = useRef ([ new auth.ServerMapInfo () ]);
 
     const statusInterval = useRef (null);
     const [forceUpdateIdx, forceUpdate] = useReducer (x => x + 1);
@@ -41,16 +44,23 @@ function StartResolve ({menu})
 
     function onLoadDataset ()
     {
-        map.current = auth.getMap ();
+        let newMap = new auth.ServerMap ().init ();
+        let newMapInfo = [new auth.ServerMapInfo ()].splice (0, 1);
 
-        console.log (map.current);
-    }
-    function onLoadUI ()
-    {
-        mapInfo.current.splice (0, mapInfo.current.length);
-        mapInfo.current.push ( ... map.current.item.map ((value => auth.getMapInfo (value))))
-
-        forceUpdate ();
+        return auth.getServerMap ()
+              .then ((x) => newMap = x)
+              .then (async (x) => 
+              {
+                  for (const key of x.item)
+                  {
+                      newMapInfo.push (await auth.getServerMapInfo (key));
+                  }
+              })
+              .then (() =>
+              {
+                  map.current = newMap;
+                  mapInfo.current = newMapInfo;
+              });
     }
 
     function onRenderTable ()
@@ -107,19 +117,34 @@ function StartResolve ({menu})
     }
     function onClickRefresh ()
     {
-        onLoadDataset ();
-        onLoadUI ();
-
-        setStatusText ('ข้อมูลถูกดึงเรียบร้อยแล้ว');
-
-        clearInterval (statusInterval.current);
-        statusInterval.current = setInterval (() =>
+        onLoadDataset ().then (() =>
         {
-            setStatusText ('');
-        },
-        2500);
+            setStatusText ('ข้อมูลถูกดึงเรียบร้อยแล้ว');
+
+            clearInterval (statusInterval.current);
+            statusInterval.current = setInterval (() =>
+            {
+                setStatusText ('');
+            },
+            2500);
+        })
+        .catch ((except) =>
+        {
+            console.error (except);
+            setStatusText ('เกิดข้อผิดพลาดในขณะที่โหลดข้อมูล: ' + except);
+
+            clearInterval (statusInterval.current);
+            statusInterval.current = setInterval (() =>
+            {
+                setStatusText ('');
+            },
+            5000);
+        });
     }
 
+    //
+    // ทำงานแค่ครั้งเดียว (เมื่อหน้าเว็บถูกโหลด)
+    //
     useEffect (() =>
     {
         if (mounted == null)
@@ -129,14 +154,14 @@ function StartResolve ({menu})
 
         mounted.current = true;
 
-        onLoadDataset ();
-        onLoadUI ();
+        onLoadDataset ().then (() => forceUpdate);
 
         return () => 
         { 
           mounted.current = false;
         }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
 
     return <>

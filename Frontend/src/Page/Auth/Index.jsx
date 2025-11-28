@@ -3,37 +3,53 @@
  * หน้าต่างเข้าสู่ระบบ
  * 
 */
-'use client';
+"use strict";
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+/**
+ * ส่วนประกอบจาก React
+*/
+import { useEffect, useRef, useState } from "react";
 
-import background   from '../../Asset/Background/AuthBackground.webp' 
-import styled       from 'styled-components'
-import navigator    from '../../Script/Navigator'
-
-import ViewIntro    from './ViewIntro'
-import ViewLogin    from './ViewLogin'
-import ViewRegister from './ViewRegister'
-import ViewRecovery from './ViewRecovery'
-import ViewLogout   from './ViewLogout'
-
+/**
+ * ส่วนประกอบทั้วไป
+*/
 import 
 {
-    Div,
     Header,
     Main,
-    Img,
     Label,
     P
 } 
-from '../../Component/Common'
-import { auth } from '../../Script/Api';
+from "../../Component/Common"
 
-// ==================================================================================================== //
-//                                                                                                      //
-// ENTRY POINT                                                                                          //
-//                                                                                                      //
-// ==================================================================================================== //
+/**
+ * ตกแต่ง CSS
+*/
+import styled       from "styled-components"
+
+/**
+ * รูปพื้นหลัง
+*/
+import background   from "../../Asset/Background/AuthBackground.webp"
+
+/**
+ * เชื่อมต่อกับ Logic
+*/
+import api          from "../../Script/Api"
+import navigator    from "../../Script/Navigator"
+
+/**
+ * องค์ประกอบย่อยของหน้าต่างเข้าสู่ระบบ
+*/
+import ViewIntro    from "./ViewIntro"
+import ViewLogin    from "./ViewLogin"
+import ViewRegister from "./ViewRegister"
+import ViewRecovery from "./ViewRecovery"
+import ViewLogout   from "./ViewLogout"
+
+
+
 
 /**
  * 
@@ -42,24 +58,35 @@ import { auth } from '../../Script/Api';
 */
 export default function Start ()
 {
-    const mounted = useRef (false);
-    const memory = useRef ({
+    const auth          = api.auth;
+    const mounted       = useRef (false);
+    const memory        = useRef (
+    {
         afterLogin: "",
         afterRegister: ""
     });
-    const callback = useRef ({
-        onLogged: onResultLogged,
-        onRegistered: onResultRegistered
+    const callback      = useRef (
+    {
+        onLogged:       onResultLogged,
+        onRegistered:   onResultRegistered
     });
 
-    const [view, setView] = useState ((auth.isLogged () && auth.isActive ()) ? 5 : 1);           // หน้าปัจบุบันที่ผู้ใช้กำลังอยู่
-    const [blocking, setBlocking] = useState (false); // สถานะบอกว่ามีกระบวณพื้นหลังทำงานอยู่ UI จะไม่ตอบสนองในขณะนี้
-    const [status, setStatus] = useState ("");        // สถานะล่าสุดของการเข้าสู่ระบบ
+    // หน้าปัจบุบันที่ผู้ใช้กำลังอยู่
+    const [view, setView]           = useState ((auth.isLogged () && auth.isActive ()) ? 5 : 1);           
+    // สถานะบอกว่ามีกระบวณพื้นหลังทำงานอยู่ UI จะไม่ตอบสนองในขณะนี้
+    const [blocking, setBlocking]   = useState (false); 
+    // สถานะล่าสุดของการเข้าสู่ระบบ
+    const [status, setStatus]       = useState ("");    
+    // ข้อมูลชื่อผู้ใช้
+    const [username, setUsername]   = useState ("");    
+    // ข้อมูลรหัสผ่าน
+    const [password, setPassword]   = useState ("");
+    // ข้อมูลอีเมล
+    const [email, setEmail]         = useState ("");    
 
-    const [username, setUsername] = useState ("");    // ข้อมูลชื่อผู้ใช้
-    const [password, setPassword] = useState ("");    // ข้อมูลรหัสผ่าน
-    const [email, setEmail] = useState ("");          // ข้อมูลอีเมล
-
+    /**
+     * ทำการโหลดข้อมูลจาก URL ซึ่งเก็บข้อมูลเกี่ยวกับการนำทางหลังจากเข้าสู่ระบบ
+    */
     function onLoadSearch ()
     {
         const search = new URLSearchParams (location.search);
@@ -79,10 +106,14 @@ export default function Start ()
         {
             if (context != null)
             {
+                //
+                // ข้อมูลที่เก็บ Base64 ดังนั้นเราจึงต้องถอดรหัสก่อน
+                // จากนั้นเราจะได้ JSON ที่เก็บข้อมูลการนำทางไว้
+                //
                 const contextDecoded = atob (context);
-                const contextObj = JSON.parse (contextDecoded);
-                const afterLogin = contextObj ["redirectLogin"];
-                const afterRegister = contextObj ["redirectRegister"];
+                const contextObj     = JSON.parse (contextDecoded);
+                const afterLogin     = contextObj ["redirectLogin"];
+                const afterRegister  = contextObj ["redirectRegister"];
                 
                 //
                 // ลิงค์ที่ระบบจะพาไปเมื่อเข้าสู่ระบบเสร็จสิ้น
@@ -90,10 +121,16 @@ export default function Start ()
                 mem.afterLogin = afterLogin;
                 mem.afterRegister = afterRegister;
     
-                if (mem.afterLogin == null) mem.afterLogin = navigator.LINK_HOME;
-                if (mem.afterRegister == null) mem.afterRegister = navigator.LINK_HOME;
+                //
+                // ไม่แน่ว่าลิงค์นั้นอาจจะเสีย ๆ
+                //
+                if (mem.afterLogin == null || mem.afterLogin == undefined) 
+                    mem.afterLogin = navigator.LINK_HOME;
+
+                if (mem.afterRegister == null || mem.afterRegister == undefined) 
+                    mem.afterRegister = navigator.LINK_HOME;
     
-                console.log ("UI/Auth: Redirection is memorized");
+                console.log ("UI/Auth: Redirection is being memorized");
                 return;
             }
             console.warn ("UI/Auth: Redirection isn't provided, default link will be used");
@@ -108,10 +145,18 @@ export default function Start ()
 
         return;
     }
+    /**
+     * คำสั่งที่ถูกเรียกหลังจากที่เข้าสู่ระบบเรียบร้อยแล้ว
+     * (สถานะบัญชีไม่ถูกระงับหรือปิดใช้งาน)
+    */
     function onResultLogged ()
     {
         window.location.pathname = memory.current.afterLogin;
     }
+    /**
+     * คำสั่งที่ถูกเรียกหลังจากที่สร้างบัญชี และ เข้าสู่ระบบเรียบร้อยแล้ว
+     * (สถานะบัญชีไม่ถูกระงับหรือปิดใช้งาน)
+    */
     function onResultRegistered ()
     {
         window.location.pathname = memory.current.afterRegister;
@@ -127,6 +172,9 @@ export default function Start ()
         if (mounted.current)
             return;
         
+        //
+        // โหลดข้อมูลและจดจำไว้
+        //
         onLoadSearch ();
 
         document.title = "NOVA เข้าสู่ระบบ";
@@ -343,6 +391,4 @@ const ViewRegion = styled.div `
             }
         }
     }
-
-
 `;

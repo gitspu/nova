@@ -246,9 +246,6 @@ function __dbLoad ()
     {
         const request = new XMLHttpRequest ();
 
-        // ใช้ติดตาม
-        // console.trace ();
-
         request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/ads`, false);
         request.send ();
 
@@ -269,6 +266,29 @@ function __dbLoad ()
     const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
     return readObject;
+}
+/**
+ * โหลดฐานข้อมูลโฆษณา (กระบวณการนี้ใช้ทรัพยากรค่อยข้างสูง)
+*/
+async function __dbLoadAsync ()
+{
+    if (test.REMOTE_ENABLED)
+    {
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/ads`, {
+            method: 'GET'
+        })
+        .then ((response) => response.json ());
+    }
+    if (typeof localStorage === 'undefined')
+    {
+        // LocalStorage ใช้งานไม่ได้
+        return sample;
+    }
+
+    const readText = localStorage.getItem ("DbAds");
+    const readObject = (readText != null) ? JSON.parse (readText) : sample;
+
+    return Promise.resolve (readObject);
 }
 /**
  * บันทึกข้อมูลโฆษณาลงไปยังฐานข้อมูล (กระบวณการนี้ใช้ทรัพยากรค่อยข้างสูง)

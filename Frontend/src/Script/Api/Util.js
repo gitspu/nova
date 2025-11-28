@@ -57,7 +57,7 @@ export function jsonRead (object, path, def = null)
 
     for (let index = 0; index < item.length; index++)
     {
-        last = last[item[index]];
+        last = last[String (item[index])];
 
         if (index == (item.length - 1))
         {
@@ -108,6 +108,20 @@ export function uniqueUUID (space)
         }
         return uuid;
     }
+}
+/**
+ * ตรวจสอบเวลาว่านานกว่า ...
+ */
+export function timeLonger (dateObject, milliseconds)
+{
+    const now = new Date ();
+    const subject = new Date (dateObject);
+
+    if (isNaN (dateObject.getTime ())) {
+        return true;
+    }
+
+    return (now.getTime () - subject.getTime ()) > milliseconds;
 }
 
 export function objectSerialize (baseObject, rawObject)

@@ -22,29 +22,45 @@ import
     Search
 } 
 from "lucide-react";
-import { A, Div, H1, H2, H3, H4, H5, H6, Img, Label, P, Span } from "./Common";
+import { A, Div, H1, H2, H3, H4, H5, H6, Hr, Img, Label, P, Section, Span } from "./Common";
 import styled from "styled-components";
-
+import api, { profileEm, util } from "../Script/Api"
+import icon from "../Script/Icon"
 
 //
 // JobCard (การ์ดงานแต่ละรายการ)
 //
-export function PostList ({ data, isActive, onClick, isSaved }) 
+export function PostList ({ oOwner, oData, sActive, sSaved }) 
 {
-    if (data == null) return;
+    let logo      = String (api.decodeContent (oOwner.icon));
+    const name      = String (oOwner.name);
 
-    const title = String (data.title);
-    const entity = String (data.company);
-    const location = String (data.location);
-    const brief = String (data.snippet);
-    const created = new Date (data.posted).toLocaleDateString ();
+    const title     = String (oData.title);
+    const location  = String (oData.location);
+    const brief     = String (oData.brief);
+    const created   = new Date (oData.created);
+    let salary    = "";
+
+    salary = `${oData.minSalary} - ${oData.maxSalary}`;
+
+
+    if (logo == "" || logo == icon.transparent)
+        logo = icon.profile;
+
+    if (oData.minSalary == 0 && oData.maxSalary == 0)
+        salary = "รายได้ไม่ตายตัว";
+
+    const isRecently = !util.timeLonger (created, 259200000); // 3 วัน
+
+    const [isActive, setActive] = sActive;
+    const [isSaved] = sSaved;
 
     return <>
       <Card
         className={`mb-3 shadow-sm transition-all border-2 ${
-          isActive ? "border-primary border-2 border-start bg-light" : ""
+          isActive ? "border-success border-2 border-start bg-light" : ""
         }`}
-        onClick={onClick}
+        onClick={setActive}
         style={{ cursor: "pointer" }}
       >
         <Card.Body className="p-3">
@@ -54,10 +70,10 @@ export function PostList ({ data, isActive, onClick, isSaved })
                 <H2>{title}</H2>
               </Div>
 
-              <H4 $variant="secondary" $weight="medium" className="mb-2">{entity}</H4>
+              <H4 $variant="secondary" $weight="medium" className="mb-2">{name}</H4>
 
               <Div className="d-flex gap-2 mb-2">
-                {data.isNew && (<Badge bg="light" className="border border-success rounded-pill fw-medium px-2" text="success">ใหม่</Badge>)}
+                {isRecently && (<Badge bg="light" className="border border-success rounded-pill fw-medium px-2" text="success">ใหม่</Badge>)}
                 {isSaved && (<Badge bg="danger" className="rounded-pill">บันทึกแล้ว</Badge>)}
               </Div>
 
@@ -72,7 +88,7 @@ export function PostList ({ data, isActive, onClick, isSaved })
               </Div>
 
               <Div className="text-muted mt-2" style={{ fontSize: "0.75rem" }}>
-                <H5>{created} • {data.salary}</H5>
+                <H5>{created.toLocaleDateString()} • {salary}</H5>
               </Div>
             </Col>
 
@@ -82,7 +98,7 @@ export function PostList ({ data, isActive, onClick, isSaved })
               className="text-end d-flex flex-column justify-content-between align-items-end"
             >
               <Img
-                src={data.logoUrl}
+                src={logo}
                 alt="logo"
                 className="rounded-1 border p-1"
                 style={{
@@ -95,7 +111,7 @@ export function PostList ({ data, isActive, onClick, isSaved })
           </Row>
         </Card.Body>
       </Card>
-    </>
+    </>;
 };
 
 const StylePostDetail = styled.div `
@@ -147,111 +163,102 @@ const StylePostDetailContent = styled.div `
     overflow-y: auto;
 `;
 
-export function PostDetail ({job, save, share})
+export function PostDetail ({oOwner, oData, sSave, sShare })
 {
-    if (job == null) return;
+    const background = String (api.decodeContent (oOwner.background));
+    let logo = String (api.decodeContent (oOwner.icon));
+    const name = String (oOwner.name);
 
-    const [getSaved, setSaved] = save;
+    const title = String (oData.title);
+    const created = String (oData.created.toLocaleDateString ());
+    const location = String (oData.location);
+    const description = String (oData.description);
+    const requirement = String (oData.requirement);
+
+    let time = Number (oData.workTime);
+    let salary = "";
+
+    switch (time)
+    {
+        case profileEm.WORK_TIME_FULL: time = "ทำงานเต็มเวลา"; break;
+        case profileEm.WORK_TIME_PART: time = "พาร์ทไทม์"; break;
+        case profileEm.WORK_TIME_CONTRACT: time = "ตามเงื่อนไขสัญญา"; break;
+    }
+    salary = `${oData.minSalary} - ${oData.maxSalary}`;
+
+
+    
+    if (logo == "" || logo == icon.transparent)
+        logo = icon.profile;
+
+    if (oData.minSalary == 0 && oData.maxSalary == 0)
+        salary = "รายได้ไม่ตายตัว";
+
+    const [saved, setSaved] = sSave;
+    const [shared, setShared] = sShare;
 
     return <>
       <StylePostDetail className="shadow-lg border-0">
-        <StylePostDetailBanner
-          src="https://placehold.co/600x150/0d1b3e/ffffff?text=Company+Banner"
-          alt="Company Banner">
-        </StylePostDetailBanner>
+        <StylePostDetailBanner src={background}/>
         <StylePostDetailHeading>
           {/* โลโก้บริษัท */}
-          <Img
-            src={job.logoUrl}
-            alt={`Logo of ${job.company}`}
-            width={96} height={96}
-          />
+          <Img src={logo} alt={name} width={96} height={96}/>
           {/* ปุ่ม Save และ Share */}
           <Div className="d-flex gap-2 ">
-            <Button
-              variant="light"
-              className={`rounded-circle border shadow-sm  ${
-                getSaved ? "bg-danger text-white border-danger" : "text-danger"
-              }`}
+            <Button variant="light"className={`rounded-circle border shadow-sm
+                ${saved ? "bg-danger text-white border-danger" : "text-danger"}`}
               style={{ width: '48px', height: '48px'}}
               // เมื่อคลิกปุ่มนี้ จะเรียก onToggleSave โดยส่ง id ของงาน
-              onClick={() => setSaved (!getSaved)}>
-              <Heart className={getSaved ? "fill-current" : ""} size={24} />
+              onClick={() => setSaved (!saved)}>
+              <Heart className={saved ? "fill-current" : ""} size={24} />
             </Button>
             <Button
               variant="light"
               className="rounded-circle border shadow-sm text-primary "
-              style={{ width: '48px', height: '48px'}} onClick={share}>
+              style={{ width: '48px', height: '48px'}} onClick={setShared}>
               <Share2 size={24} />
             </Button>
           </Div>
         </StylePostDetailHeading>
         <StylePostDetailContent>
-          <H1 $variant='primary' $size='h1'>{String (job.title)}</H1>
-          <Div className=" d-flex align-items-center gap-2">
-            <H2 $variant='secondary' $size='text'>{String (job.company)}</H2>
-            <A>ดูโปรไฟล์บริษัท</A>
-          </Div>
-          {/* Job Info Grid (ข้อมูลงาน) */}
-          <div className="mt-4 row g-3 mb-4 text-secondary small border-top">
-            <div className="col-6 d-flex align-items-center gap-2">
-              <MapPin className="text-info" size={18} />{" "}
-              <Label $weight='medium'>{job.location}</Label>
-            </div>
-            <div className="col-6 d-flex align-items-center gap-2">
-              <Briefcase className="text-info" size={18} />{" "}
-              <Label $weight='medium'>{job.type}</Label>
-            </div>
-            <div className="col-6 d-flex align-items-center gap-2">
-              <Banknote className="text-success" size={18} />{" "}
-              <Label $weight='bold'>{job.salary}</Label>
-            </div>
-            <div className="col-6 d-flex align-items-center gap-2">
-              <Clock className="text-info" size={18} />{" "}
-              <Label $weight='medium'>{job.posted}</Label>
-            </div>
-          </div>
-           {/* Job Description (คำอธิบายงาน) */}
-        <h5 className="fw-bold text-dark border-bottom pb-2 mb-3">
-          รายละเอียดงาน
-        </h5>
-        <div className="job-description text-muted">
-          <p>
-            We are seeking a highly motivated and experienced **{job.title}**
-            to join our dynamic team. The successful candidate will be
-            responsible for overseeing daily operations. {job.snippet}
-          </p>
-          {/* ใช้ list-unstyled และเพิ่ม margin/padding แทนการสร้าง Bullet ใหม่ */}
-          <ul className="list-unstyled ps-3">
-            <li className="mb-2">
-              <span className="text-primary me-2">•</span>Develop and
-              implement operational strategies.
-            </li>
-            <li className="mb-2">
-              <span className="text-primary me-2">•</span>Lead
-              cross-functional teams to achieve business goals.
-            </li>
-            <li className="mb-2">
-              <span className="text-primary me-2">•</span>Analyze data to
-              improve performance matching KPIs.
-            </li>
-          </ul>
-          <h6 className="fw-bold mt-4 text-dark">คุณสมบัติ</h6>
-          <ul className="list-unstyled ps-3">
-            <li className="mb-2">
-              <span className="text-primary me-2">•</span>Bachelor's degree in
-              related field.
-            </li>
-            <li className="mb-2">
-              <span className="text-primary me-2">•</span>Minimum 3-5 years of
-              experience.
-            </li>
-            <li className="mb-2">
-              <span className="text-primary me-2">•</span>Strong communication
-              skills in English and Thai.
-            </li>
-          </ul>
-        </div>
+          <Section className="mb-2">
+            <H1 className="mb-1" $variant='primary' $size='h1'>{String (title)}</H1>
+            <Div className=" d-flex align-items-center gap-2">
+              <H2 $variant='secondary' $size='text'>{name}</H2>
+              <A>ดูโปรไฟล์บริษัท</A>
+            </Div>
+          </Section>
+          <Section className="mb-4">
+            <Row>
+              <Col>
+                <MapPin className="me-2 text-info" size={24} />
+                <Label $weight='medium'>{location}</Label>
+              </Col>
+              <Col>
+                <Briefcase className="me-2 text-info" size={24}/>
+                <Label $weight='medium'>{time}</Label>  
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Banknote className="me-2 text-success" size={24}/>
+                <Label $weight='medium'>{salary}</Label>
+              </Col>
+              <Col>
+                <Clock className="me-2 text-info" size={24}/>
+                <Label $weight='medium'>{created}</Label>
+              </Col>
+            </Row>
+          </Section>
+
+          <Section>
+            <H2 className="mb-4">รายละเอียดงาน</H2>
+            <P className="mt-4 mb-4 ms-4 me-4">{description}</P>
+          </Section>
+          <Section>
+            <H2 className="mb-4">คุณสมบัติ</H2>
+            <P className="mb-4 ms-4 me-4">{requirement}</P>
+          </Section>
         </StylePostDetailContent>
       </StylePostDetail>
     </>

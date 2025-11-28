@@ -38,7 +38,12 @@ export class DataContact
 */
 export class DataEducation
 {
-    
+    /** การมองเห็น */
+    visibility = VISIBILITY_PUBLIC;
+    /** รายการ */
+    item = [""];
+
+    text = "";
 };
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลความสนใจ
@@ -57,6 +62,8 @@ export class DataInterest
 */
 export class DataJob
 {
+    /** ประวัติ */
+    history = "";
     /** รายการงาน */
     item = 
     [{
@@ -75,6 +82,16 @@ export class DataJob
     set (value = []) { this.value = value; }
 };
 /**
+ * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลด้านภาษา
+*/
+export class DataLanguage
+{
+    /** การมองเห็น */
+    visibility = VISIBILITY_PUBLIC;
+    /** รายการ */
+    item = [""];
+}
+/**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลโพสต์ (หนึ่งรายการ)
 */
 export class DataPost
@@ -91,10 +108,24 @@ export class DataPost
     }];
 };
 /**
+ * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลโพสต์ที่บันทึกไว้
+*/
+export class DataPostSaved
+{
+    item = 
+    [{
+        type: 0,
+        owner: 0,
+        index: 0
+    }];
+};
+/**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลส่วนตัว
 */
 export class DataPersonal
 {
+    /** การมองเห็น */
+    visibility = VISIBILITY_PUBLIC;
     /** ภาพพื้นหลังของโปรไฟล์ */ 
     background = "";
     /** ภาพไอคอนโปรไฟล์ */
@@ -267,15 +298,15 @@ export function init ()
  *  @see ErrorAuth การเข้าสู่ระบบไม่สมบูรณ์
  *  @see ErrorState ระบบโปรไฟล์ไม่ทำงาน หรือ มีข้อมูลโปรไฟล์อยู่แล้ว
 */
-export function create (which = NaN)
+export async function create (which = NaN)
 {
 
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    which = __seIndex (which); 
-            __seValidate (which);
+    which = await __seIndex (which); 
+            await __seValidate (which);
 
-    const dbRoot        = __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -298,6 +329,7 @@ export function create (which = NaN)
     const newEducation  = new DataEducation ();
     const newInterest   = new DataInterest ();
     const newJob        = new DataJob ();
+    const newLanguage   = new DataLanguage ();
     const newPersonal   = new DataPersonal ();
     const newSkill      = new DataSkill ();
     const newSocial     = new DataSocial ();
@@ -307,19 +339,22 @@ export function create (which = NaN)
     // ล้างข้อมูล prototype ออก
     //
     newInterest.item = [];
-    newSkill.item = [];
+    newLanguage.item = [];
+    newSkill.item = []; 
 
     dbCollection[which]['contact'] = { ... newContact };
     dbCollection[which]['education'] = { ... newEducation };
     dbCollection[which]['interest'] = { ... newInterest };
     dbCollection[which]['job'] = { ... newJob };
+    dbCollection[which]['language'] = { ... newLanguage };
     dbCollection[which]['personal'] = { ... newPersonal };
     dbCollection[which]['post'] = { item: [] };
+    dbCollection[which]['post_saved'] = { item: [] };
     dbCollection[which]['skill'] = { ... newSkill };
     dbCollection[which]['social'] = { ... newSocial };
     dbCollection[which]['theme'] = { ... newTheme };
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 }
 /**
  * ขอข้อมูลติดต่อ จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
@@ -329,9 +364,9 @@ export function create (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getContact (which = NaN)
+export async function getContact (which = NaN)
 {
-    const result = new DataContact (); __getSection (result, which, "contact");
+    const result = new DataContact (); __getSectionAsync (result, which, "contact");
     return result;
 }
 /**
@@ -342,9 +377,9 @@ export function getContact (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getEducation (which = NaN)
+export async function getEducation (which = NaN)
 {
-    const result = new DataEducation (); __getSection (result, which, "education");
+    const result = new DataEducation (); await __getSectionAsync (result, which, "education");
     return result;
 }
 /**
@@ -355,9 +390,9 @@ export function getEducation (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getInterest (which = NaN)
+export async function getInterest (which = NaN)
 {
-    const result = new DataInterest (); __getSection (result, which, "interest");
+    const result = new DataInterest (); await __getSectionAsync (result, which, "interest");
     return result;
 }
 /**
@@ -368,9 +403,22 @@ export function getInterest (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getJob (which = NaN)
+export async function getJob (which = NaN)
 {
-    const result = new DataJob (); __getSection (result, which, "job");
+    const result = new DataJob (); await __getSectionAsync (result, which, "job");
+    return result;
+}
+/**
+ * ขอข้อมูลด้านภาษา จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
+ * 
+ * ข้อผิดพลาดที่เป็นไปได้
+ *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
+ *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
+ *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
+*/
+export async function getLanguage (which = NaN)
+{
+    const result = new DataLanguage (); await __getSectionAsync (result, which, "language");
     return result;
 }
 /**
@@ -381,9 +429,9 @@ export function getJob (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getPersonal (which = NaN)
+export async function getPersonal (which = NaN)
 {
-    const result = new DataPersonal (); __getSection (result, which, "personal");
+    const result = new DataPersonal (); await __getSectionAsync (result, which, "personal");
     return result;
 }
 /**
@@ -394,9 +442,9 @@ export function getPersonal (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getPost (index = NaN, which = NaN)
+export async function getPost (index = NaN, which = NaN)
 {
-    const item = __getSectionRaw (which, "post")["item"][index];
+    const item = await __getSectionRawAsync (which, "post")["item"][index];
 
     if (item == null)
         throw new ErrorArgument ("Out of Bounds");
@@ -415,15 +463,37 @@ export function getPost (index = NaN, which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getPostHead (which = NaN)
+export async function getPostHead (which = NaN)
 {
-    const item = __getSectionRaw (which, "post");
+    const item = await __getSectionRawAsync (which, "post");
 
     const prototype = 
     {
         count: item["item"].length
     };
     return prototype;
+}
+/**
+ * ขอข้อมูลโพสต์ทั้งหมดที่บันทึกไว้ในโปรไฟล์ (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
+ * 
+ * ข้อผิดพลาดที่เป็นไปได้
+ *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
+ *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
+ *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
+*/
+export async function getPostSaved (which = NaN)
+{
+    const block = await __getSectionRawAsync (which, "post_saved");
+    const result = new DataPostSaved ();
+
+    result.item = [];
+
+    if (block == null)
+        return result;
+
+    result.item = block["item"];
+
+    return result;
 }
 /**
  * ขอข้อมูลทักษะ จากโปรไฟล์ของผู้ใช้ดังกล่าว (ถ้าไม่ระบุจะเป็นดึงของตัวเอง, จำเป็นต้องมีสิทธิ์ขั้นสูงสำหรับการดึงข้อมูลผู้ใช้อื่น)
@@ -433,9 +503,9 @@ export function getPostHead (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getSkill (which = NaN)
+export async function getSkill (which = NaN)
 {
-    const result = new DataSkill (); __getSection (result, which, "skill");
+    const result = new DataSkill (); await __getSectionAsync (result, which, "skill");
     return result;
 }
 /**
@@ -446,9 +516,9 @@ export function getSkill (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getSocial (which = NaN)
+export async function getSocial (which = NaN)
 {
-    const result = new DataSocial (); __getSection (result, which, "social");
+    const result = new DataSocial (); await __getSectionAsync (result, which, "social");
     return result;
 }
 /**
@@ -459,9 +529,9 @@ export function getSocial (which = NaN)
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
  *  @see ErrorArgument ไม่พบข้อมูลโปรไฟล์ดังกล่าว (ถ้าระบุรหัสผู้ใช้)
 */
-export function getTheme (which = NaN)
+export async function getTheme (which = NaN)
 {
-    const result = new DataTheme (); __getSection (result, which, "theme");
+    const result = new DataTheme (); await __getSectionAsync (result, which, "theme");
     return result;
 }
 /**
@@ -471,12 +541,12 @@ export function getTheme (which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setContact (data, which = NaN)
+export async function setContact (data, which = NaN)
 {
     if ((data instanceof DataContact) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "contact");
+    await __setSectionAsync (data, which, "contact");
 }
 /**
  * อัพเดทข้อมูลการศึกษา ลงในข้อมลโปรไฟล์
@@ -485,12 +555,12 @@ export function setContact (data, which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setEducation (data, which = NaN)
+export async function setEducation (data, which = NaN)
 {
     if ((data instanceof DataEducation) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "education");
+    await __setSectionAsync (data, which, "education");
 }
 /**
  * อัพเดทข้อมูลความสนใจ ลงในข้อมลโปรไฟล์
@@ -499,12 +569,12 @@ export function setEducation (data, which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setInterest (data, which = NaN)
+export async function setInterest (data, which = NaN)
 {
     if ((data instanceof DataInterest) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "interest");
+    await __setSectionAsync (data, which, "interest");
 }
 /**
  * อัพเดทข้อมูลงาน ลงในข้อมลโปรไฟล์
@@ -513,12 +583,26 @@ export function setInterest (data, which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setJob (data, which = NaN)
+export async function setJob (data, which = NaN)
 {
     if ((data instanceof DataJob) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "job");
+    await __setSectionAsync (data, which, "job");
+}
+/**
+ * อัพเดทข้อมูลด้านภาษา ลงในข้อมลโปรไฟล์
+ * ข้อผิดพลาดที่เป็นไปได้
+ *  @see ErrorArgument ข้อมูลที่ป้อนให้คำสั่งไม่ถูกต้อง
+ *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
+ *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
+*/
+export async function setLanguage (data, which = NaN)
+{
+    if ((data instanceof DataLanguage) == false)
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
+
+    await __setSectionAsync (data, which, "language");
 }
 /**
  * อัพเดทข้อมูลส่วนตัว ลงในข้อมลโปรไฟล์
@@ -527,12 +611,26 @@ export function setJob (data, which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setPersonal (data, which = NaN)
+export async function setPersonal (data, which = NaN)
 {
     if ((data instanceof DataPersonal) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "personal");
+    __setSectionAsync (data, which, "personal");
+}
+/**
+ * อัพเดทข้อมูลโพสต์ที่บันทึกไว้ ลงในข้อมลโปรไฟล์
+ * ข้อผิดพลาดที่เป็นไปได้
+ *  @see ErrorArgument ข้อมูลที่ป้อนให้คำสั่งไม่ถูกต้อง
+ *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
+ *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
+*/
+export async function setPostSaved (data, which = NaN)
+{
+    if ((data instanceof DataPostSaved) == false)
+        throw new ErrorArgument (MSG_ERROR_DATATYPE);
+
+    await __setSectionAsync (data, which, "post_saved");
 }
 /**
  * อัพเดทข้อมูลทักษะ ลงในข้อมลโปรไฟล์
@@ -541,12 +639,12 @@ export function setPersonal (data, which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setSkill (data, which = NaN)
+export async function setSkill (data, which = NaN)
 {
     if ((data instanceof DataSkill) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "skill");
+    await __setSectionAsync (data, which, "skill");
 }
 /**
  * อัพเดทข้อมูลสังคม ลงในข้อมลโปรไฟล์
@@ -560,7 +658,7 @@ export function setSocial (data, which = NaN)
     if ((data instanceof DataSocial) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "social");
+    __setSectionAsync (data, which, "social");
 }
 /**
  * อัพเดทข้อมูลธีม ลงในข้อมลโปรไฟล์
@@ -569,25 +667,26 @@ export function setSocial (data, which = NaN)
  *  @see ErrorAuth ยังไม่ได้เข้าสู่ระบบ
  *  @see ErrorState ระบบโปรไฟล์ยังไม่เริ่มทำงาน หรือ ไม่มีข้อมูล
 */
-export function setTheme (data, which = NaN)
+export async function setTheme (data, which = NaN)
 {
     if ((data instanceof DataTheme) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    __setSection (data, which, "theme");
+    await __setSectionAsync (data, which, "theme");
 }
-export function createPost (data, which = NaN)
+export async function createPost (data, which = NaN)
 {
     if ((data instanceof DataPost) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    const block = __getSectionRaw (which, "post");
+    const block = await __getSectionRawAsync (which, "post");
+
     const blockItem = block["item"];
     const index = blockItem.length;
 
     blockItem.push (data);
 
-    __setSection (block, which, "post");
+    await __setSectionAsync (block, which, "post");
 
     return Number (index);
 }
@@ -602,6 +701,7 @@ export const VISIBILITY_DEFAULT     = 1;
 export const VISIBILITY_PUBLIC      = 2;
 export const VISIBILITY_PRIVATE     = 3;
 export const VISIBILITY_FRIEND      = 4;
+export const VISIBILITY_RESTRICTED  = 5;
 
 export const MEDIA_TEXT             = 1;
 export const MEDIA_IMAGE            = 2;
@@ -634,7 +734,7 @@ export const PRONOUN_OTHER          = 5;
 /**
  * รับดัชนีตำแหน่งของข้อมูลโปรไฟล์ (คำสั่งนี้ต้องมีสิทธิ์ขั้นสูง)
 */
-export function getMap ()
+export async function getMap ()
 {
     if (state.init == false)
         throw new ErrorState ("Profile system must be initialized");
@@ -647,7 +747,7 @@ export function getMap ()
 
     const result = [""]; result.splice (0, 1);
 
-    const json = __dbLoad ();
+    const json = await __dbLoadAsync ();
     const itemList = json["item"];
 
     for (const key of Object.keys (itemList)) {
@@ -670,18 +770,18 @@ export const state =
     init: false,
 };
 
-function __getSection (structure, which, name)
+function __getSectionAsync (structure, which, name)
 {
-    util.objectDeserialize (structure, __getSectionRaw (which, name));
+    return __getSectionRawAsync (which, name).then ((result) => util.objectDeserialize (structure, result));
 }
-function __getSectionRaw (which, name)
+async function __getSectionRawAsync (which, name)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
     which = __seIndex (which);
             __seValidate (which);
 
-    const dbRoot        = __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
     const dbTarget      = util.jsonRead (dbCollection, which);
     const dbTargetSec   = util.jsonRead (dbTarget, name);
@@ -689,41 +789,41 @@ function __getSectionRaw (which, name)
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
     if (dbCollection == null) throw new ErrorServer (MSG_ERROR_SERVER);
 
-    if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
-    if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
+    if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND + " -- " + which);
+    if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2 + " -- " + which); 
 
     return dbTargetSec;
 }
-function __setSection (structure, which, name)
+async function __setSectionAsync (structure, which, name)
 {
      if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    which = __seIndex (which);
-            __seValidate (which);
+    which = await __seIndex (which);
+            await __seValidate (which);
 
-    const dbRoot        = __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
     const dbTarget      = util.jsonRead (dbCollection, which);
     const dbTargetSec   = util.jsonRead (dbTarget, name);
 
-    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
-    if (dbCollection == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbRoot == null)         throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbCollection == null)   throw new ErrorServer (MSG_ERROR_SERVER);
 
-    if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
-    if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
+    if (dbTarget == null)       throw new ErrorState (MSG_ERROR_NOT_FOUND);
+    if (dbTargetSec == null)    throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
 
     util.objectSerialize (structure, dbTargetSec);
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 }
-function __setSectionRaw (structure, which, name)
+async function __setSectionRawAsync (structure, which, name)
 {
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
 
-    which = __seIndex (which);
-            __seValidate (which);
+    which = await __seIndex (which);
+            await __seValidate (which);
 
-    const dbRoot        = __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
     const dbTarget      = util.jsonRead (dbCollection, which);
     let dbTargetSec   = util.jsonRead (dbTarget, name);
@@ -736,7 +836,7 @@ function __setSectionRaw (structure, which, name)
 
     dbTargetSec = structure;
 
-    __dbSave (dbRoot);
+    await __dbSaveAsync (dbRoot);
 }
 
 function __seIndex (which)
@@ -749,15 +849,15 @@ function __seIndex (which)
 
     return which;
 }
-function __seValidate (which)
+async function __seValidate (which)
 {
-    const dbRoot    = auth.__dbLoad ();
+    const dbRoot    = await auth.__dbLoadAsync ();
     const dbSession = util.jsonRead (dbRoot, 'challenge/session');
     const dbAccess  = util.jsonRead (dbRoot, 'access');
 
-    if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
-    if (dbSession == null) throw new ErrorServer (MSG_ERROR_SERVER);
-    if (dbAccess == null) throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbRoot == null)     throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbSession == null)  throw new ErrorServer (MSG_ERROR_SERVER);
+    if (dbAccess == null)   throw new ErrorServer (MSG_ERROR_SERVER);
 
     const ixSession = util.jsonRead (dbSession, auth.getSession ());
 
@@ -780,58 +880,66 @@ function __seValidate (which)
     }
 }
 
-function __dbLoad ()
+export let __dbCache = {};
+export let __dbCacheAge = new Date (undefined);
+
+export async function __dbLoadAsync ()
 {
     if (test.REMOTE_ENABLED)
     {
-        const request = new XMLHttpRequest ();
-
-        // ใช้ติดตาม
-        // console.trace ();
-
-        request.open ('GET', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
-        request.send ();
-
-        if (request.status != 200)
+        if (test.CACHING_ENABLED)
         {
-            console.error (request.statusText);
+            if (!util.timeLonger (__dbCacheAge, test.CACHING_AGE))
+                return Promise.resolve (__dbCache);
+        }
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, {
+            method: "GET",
+        })
+        .then ((response) => response.json ())
+        .then ((json) => 
+        {
+            __dbCache = json;
+            __dbCacheAge = new Date((new Date ()).getTime () + test.CACHING_AGE);
+            return json;
+        });
+    }
+    else
+    {
+        if (typeof localStorage === 'undefined')
+        {
+            // LocalStorage ใช้งานไม่ได้
             return sample;
         }
-        return JSON.parse (request.responseText);
-    }
-    if (typeof localStorage === 'undefined')
-    {
-        // LocalStorage ใช้งานไม่ได้
-        return sample;
-    }
+        const readText = localStorage.getItem ("DbProfile");
+        const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
-    const readText = localStorage.getItem ("DbProfile");
-    const readObject = (readText != null) ? JSON.parse (readText) : sample;
-
-    return readObject;
+        return Promise.resolve (readObject); 
+    }
 }
-function __dbSave (data)
+export async function __dbSaveAsync (content)
 {
-    if (data == null) throw new Error ('The content must not be null');
-    if (typeof data !== 'object') throw new Error ('The content must be an object');
-
     if (test.REMOTE_ENABLED)
     {
-        const request = new XMLHttpRequest ();
-
-        request.open ('PUT', `http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, false);
-        request.send (JSON.stringify(data));
-
-        if (request.status != 200)
+        return fetch (`http://${test.REMOTE_ADDRESS}:${test.REMOTE_PORT}/api/profile`, {
+            method: "PUT",
+            body: JSON.stringify (content)
+        })
+        .then ((response) =>
         {
-            console.error (request.statusText);
-        }
-        return;
+            if (response.ok && test.CACHING_ENABLED)
+            {
+                __dbCache = content;
+                __dbCacheAge = new Date ((new Date ()).getTime () + test.CACHING_AGE);
+            }
+        });
     }
-    if (typeof localStorage === 'undefined')
+    else
     {
-        // LocalStorage ใช้งานไม่ได้
-        return;
+        if (typeof localStorage === 'undefined')
+        {
+            // LocalStorage ใช้งานไม่ได้
+            return;
+        }
+        localStorage.setItem ("DbProifle", JSON.stringify (content));
     }
-    localStorage.setItem ("DbProfile", JSON.stringify (data));
 }

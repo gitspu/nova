@@ -1,4 +1,13 @@
 {
     "files.eol": "\n",
-    "editor.indentSize": "tabSize",
+    "editor.insertSpaces": true,
+
+    "[javascript]": 
+    {
+        "editor.tabSize": 4
+    },
+    "[javascriptreact]": 
+    {
+        "editor.tabSize": 2
+    }
 }

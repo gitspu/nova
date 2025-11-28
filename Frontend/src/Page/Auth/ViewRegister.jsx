@@ -1,16 +1,53 @@
+/**
+ * 
+ * องค์ประกอบย่อยของหน้าต่าง เข้าสู่ระบบ
+ * ใช้สำหรับแสดงการสมัครบัญชี
+ * 
+*/
+"use strict";
+"use client";
 
+
+/**
+ * 
+ * ส่วนประกอบจาก React
+ * 
+*/
 import { useState } from "react";
-import { A, Button, Div, Form, Img, Input, Label, MenuBar, P, Span } from "../../Component/Common";
-import api from "../../Script/Api"
+
+/**
+ * 
+ * ส่วนประกอบทั้วไป
+ * 
+*/
+import 
+{ 
+    A, 
+    Button, 
+    Div, 
+    Form, 
+    Img, 
+    Input, 
+    Label, 
+    MenuBar, 
+    P, 
+    Span 
+}
+from "../../Component/Common";
+/**
+ * 
+ * เชื่อมต่อกับ Logic
+ * 
+*/
+import auth from '../../Script/Auth'
 import icon from '../../Script/Icon'
-import { RESOLVE_CREATED, RESOLVE_LOGGED, create } from '../../Script/Auth';
 
-// ==================================================================================================== //
-//                                                                                                      //
-// ENTRY POINT                                                                                          //
-//                                                                                                      //
-// ==================================================================================================== //
 
+/**
+ * 
+ * พื้นที่สำหรับการแสดงองค์ประกอบ
+ * 
+*/
 export default function Start ({view, username, password, email, status, blocking, callback})
 {
     const [getView, setView] = view;
@@ -23,6 +60,9 @@ export default function Start ({view, username, password, email, status, blockin
     const [getPasswordConfirm, setPasswordConfirm] = useState ("");
     const [getRole, setRole] = useState (1);
 
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: ย้อนกลับไปหน้าก่อน
+    */
     function onClickBack (event)
     {
         if (event != null)
@@ -30,9 +70,15 @@ export default function Start ({view, username, password, email, status, blockin
             event.preventDefault ();
             event.stopPropagation ();
         }
+        //
+        // พาไปยังหน้าเข้าสู่ระบบ
+        //
         setStatus ("");
         setView (2);
     }
+    /**
+     * คำสั่งปุ่มกดทำงานเมื่อต้องการ: ยืนยันการป้อนข้อมูล
+    */
     function onClickSubmit (event)
     {
         if (event != null)
@@ -40,8 +86,14 @@ export default function Start ({view, username, password, email, status, blockin
             event.preventDefault ();
             event.stopPropagation ();
         }
-        setBlocking (true);      
-        create (getUsername, getPassword, getPasswordConfirm, getEmail, getRole).then (() =>
+        //
+        // กระบวณนี้ใช้เวลานานจึงต้องมีการบล็อกไว้ก่อน
+        //
+        setBlocking (true);
+        setStatus ("");
+
+        
+        auth.create (getUsername, getPassword, getPasswordConfirm, getEmail, getRole).then (() =>
         {
             callback.onRegistered ();
         })
@@ -50,7 +102,6 @@ export default function Start ({view, username, password, email, status, blockin
             setBlocking (false);
             setStatus (message);
         });
-
     }
     return <>
       <Div className={getView == 3 ? 'd-block' : 'd-none'}>

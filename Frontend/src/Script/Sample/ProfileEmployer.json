@@ -1,0 +1,237 @@
+{
+    "format": 1,
+    "item":
+    {
+        "24077":
+        {
+            "profile":
+            {
+                "icon":        "",
+                "background":  "",
+                "name":        "",
+                "location":    "",
+    
+                "description":"",
+                "gallery": [],
+    
+                "contactWebsite":  "",
+                "contactFacebook": "",
+                "contactLine":     "",
+                "contactPhone":    ""
+            },
+            "post":
+            {
+                "item": []
+            }
+        },
+        "49905":
+        {
+            "profile":
+            {
+                "icon":        "",
+                "background":  "",
+                "name":        "",
+                "location":    "",
+    
+                "description":"",
+                "gallery": [],
+    
+                "contactWebsite":  "",
+                "contactFacebook": "",
+                "contactLine":     "",
+                "contactPhone":    ""
+            },
+            "post":
+            {
+                "item": []
+            }
+        },
+        "60000":
+        {
+            "profile":
+            {
+                "icon":        "",
+                "background":  "",
+                "name":        "",
+                "location":    "",
+    
+                "description":"",
+                "gallery": [],
+    
+                "contactWebsite":  "",
+                "contactFacebook": "",
+                "contactLine":     "",
+                "contactPhone":    ""
+            },
+            "post":
+            {
+                "item": []
+            }
+        },
+        "50000":
+        {
+            "profile":
+            {
+                "icon": "https://placehold.co/50x50/1e40af/ffffff?text=BCP",
+                "background": "",
+                "name": "Bangchak Corporation PLC",
+                "location": "พระโขนง, กรุงเทพฯ"
+            },
+            "post":
+            {
+                "item": 
+                [
+                    {
+                        "created": "2025-11-13T10:10:36.807Z",
+                        "category": 3,
+    
+                        "title": "Chief Operating Officer (COO)",
+                        "position": [],
+                        "location": "พระโขนง, กรุงเทพฯ",
+    
+                        "workTime": 1,
+                        "workDuration": 28800000,
+
+                        "brief": "Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+                        "description": "We are seeking a highly motivated and experienced **Chief Operating Officer (COO)** to join our dynamic team. The successful candidate will be responsible for overseeing daily operations. Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+    
+                        "minSalary": 150000,
+                        "maxSalary": 250000
+                    }
+                ]
+            }
+        },
+        "50001":
+        {
+            "profile":
+            {
+                "icon": "https://placehold.co/50x50/065f46/ffffff?text=SCG",
+                "background": "",
+                "name": "SCG Logistics Management",
+                "location": "บางซื่อ, กรุงเทพฯ"
+            },
+            "post":
+            {
+                "item":
+                [
+                    {
+                        "created": "2025-11-14T13:14:26.807Z",
+                        "category": 3,
+    
+                        "title": "Senior Project Manager",
+                        "position": [],
+                        "location": "พระโขนง, กรุงเทพฯ",
+    
+                        "workTime": 1,
+                        "workDuration": 28800000,
+    
+                        "brief": "Manage logistics projects, ensuring timely delivery and cost efficiency using agile methodologies.",
+                        "description": "We are seeking a highly motivated and experienced **Senior Project Manager** to join our dynamic team. The successful candidate will be responsible for overseeing daily operations. Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+    
+                        "minSalary": 0,
+                        "maxSalary": 0
+                    }
+                ]
+            }
+        },
+        "50002":
+        {
+            "profile":
+            {
+                "icon": "https://placehold.co/50x50/be123c/ffffff?text=CG",
+                "background": "",
+                "name": "Central Group",
+                "location": "ปทุมวัน, กรุงเทพฯ"
+            },
+            "post":
+            {
+                "item":
+                [
+                    {
+                        "created": "2025-11-06T09:50:55.807Z",
+                        "category": 2,
+    
+                        "title": "Marketing Director",
+                        "position": [],
+                        "location": "พระโขนง, กรุงเทพฯ",
+    
+                        "workTime": 3,
+                        "workDuration": 28800000,
+    
+                        "brief": "Oversee marketing campaigns, brand positioning, and digital transformation strategies.",
+                        "description": "We are seeking a highly motivated and experienced **Marketing Director** to join our dynamic team. The successful candidate will be responsible for overseeing daily operations. Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+    
+                        "minSalary": 80000,
+                        "maxSalary": 120000
+                    }
+                ]
+            }
+        },
+        "50003":
+        {
+            "profile":
+            {
+                "icon": "https://placehold.co/50x50/059669/ffffff?text=KBTG",
+                "background": "",
+                "name": "Kasikorn Business-Technology",
+                "location": "สามย่าน, กรุงเทพฯ"
+            },
+            "post":
+            {          
+                "item":  
+                [
+                    {
+                        "created": "2025-10-28T11:50:09.807Z",
+                        "category": 1,
+    
+                        "title": "UX/UI Designer",
+                        "position": [],
+                        "location": "พระโขนง, กรุงเทพฯ",
+    
+                        "workTime": 1,
+                        "workDuration": 28800000,
+    
+                        "brief": "Design intuitive user experiences for mobile banking applications reaching millions of users.",
+                        "description": "We are seeking a highly motivated and experienced **UX/UI Designer** to join our dynamic team. The successful candidate will be responsible for overseeing daily operations. Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+    
+                        "minSalary": 50000,
+                        "maxSalary": 85000
+                    }
+                ]
+            }
+        },
+        "50004":
+        {
+            "profile":
+            {
+                "icon": "https://placehold.co/50x50/3b82f6/ffffff?text=LMW",
+                "background": "",
+                "name": "LINE MAN Wongnai",
+                "location": "สาทร, กรุงเทพฯ"
+            },
+            "post":
+            {          
+                "item":  
+                [
+                    {
+                        "created": "2025-11-22T14:01:09.807Z",
+                        "category": 1,
+                        
+                        "title": "Frontend Developer",
+                        "position": [],
+                        "location": "พระโขนง, กรุงเทพฯ",
+    
+                        "workTime": 1,
+                        "workDuration": 28800000,
+    
+                        "brief": "Develop UI/UX features using React, Next.js, and TailwindCSS.",
+                        "description": "We are seeking a highly motivated and experienced **Frontend Developer** to join our dynamic team. The successful candidate will be responsible for overseeing daily operations. Lead global operations, optimize asset performance, and drive strategic initiatives for sustainable growth.",
+    
+                        "minSalary": 45000,
+                        "maxSalary": 70000
+                    }
+                ]
+            }
+        }
+    }
+}
