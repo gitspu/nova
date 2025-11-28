@@ -446,24 +446,24 @@ function StartResolve ({menu})
             </Div>
           </Section>
           <Section>
-            <Div className="mb-2">
+            {/* <Div className="mb-2">
               <Label $size="h2" $weight="bold">ประเภทผู้ใช้งาน</Label>
               <P $variant="secondary">จำนวนผู้ใช้แต่ละประเภท</P>
             </Div>
             <Div>
               <ChartBar value={chartRole}/>
-            </Div>
+            </Div> */}
           </Section>
           <Section>
-            <Div>
+            {/* <Div>
               <Div className="mb-2">
                 <Label $size="h2" $weight="bold">งานยอดนิยม 5 อันดับ</Label>
                 <P $variant="secondary">ตำแหน่งที่มีผู้สมัครมากที่สุด</P>
               </Div>
-            </Div>
+            </Div> */}
           </Section>
           <Section>
-            <Div>
+            {/* <Div>
               <Div className="mb-2">
                 <Label $size="h2" $weight="bold">เรซูเม่ยอดนิยม 5 อันดับ</Label>
                 <P $variant="secondary">เรซูเม่ที่ดูมากที่สุด</P>
@@ -471,7 +471,7 @@ function StartResolve ({menu})
             </Div>
             <Div>
 
-            </Div>
+            </Div> */}
           </Section>
         </Main>
       </Div>

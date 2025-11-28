@@ -35,6 +35,7 @@ import EmployerProfile  from "./Page/EmployerProfile/Index"
 import EmployerSettings from "./Page/EmployerSettings/Index"
 import UserProfile      from "./Page/UserProfile/Index"
 import UserSearch       from "./Page/Search/Profile"
+import UserSearch2       from "./Page/Search/Profile2"
 import UserSettings     from "./Page/UserSettings/Index"
 import Search           from './Page/Search/Index'
 
@@ -99,7 +100,8 @@ export function App ()
                 <Route element={null} ErrorBoundary={<Error/>} Component={AppOverlay}>
                   <Route path='/' element={<Search/>} index={true}/>
                   <Route path='/user-profile' element={<UserProfile/>}/>
-                  <Route path='/user-search' element={<UserSearch/>}/>
+                  {/* <Route path='/user-search' element={<UserSearch/>}/> */}
+                  <Route path='/user-search' element={<UserSearch2/>}/>
                   <Route path='/user-settings' element={<UserSettings/>}/>
                   <Route path='/employer-profile' element={<EmployerProfile/>}/>
                   <Route path='/employer-enrollment' element={<EmployerProfile/>}/>
