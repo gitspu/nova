@@ -209,7 +209,7 @@ function StartResolve ({menu})
                 const ratioPost       = Math.max (0, 1 - (relativePost / currentPost));
                 const ratioResume     = Math.max (0, 1 - (relativeResume / currentResume));
 
-                console.log (`${relativeLogin}/${currentLogin} = ${ratioLogin}`);
+                // console.log (`${relativeLogin}/${currentLogin} = ${ratioLogin}`);
 
                 relativeLogin         = relativeLogin + ratioLogin;
                 relativeRegister      = relativeRegister + ratioRegister;

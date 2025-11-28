@@ -110,7 +110,7 @@ export async function create (which = NaN)
     which = await __seIndex (which); 
             await __seValidate (which, true, false);
 
-    const dbRoot        = await __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
 
     if (dbRoot == null) throw new ErrorServer (MSG_ERROR_SERVER);
@@ -118,7 +118,7 @@ export async function create (which = NaN)
 
     if (Object.hasOwn (dbCollection, which)) 
     {
-        throw new ErrorState (MSG_ERROR_CREATED);
+        throw new ErrorState (MSG_ERROR_CREATED + " -- " + which);
     }
     Object.defineProperty (dbCollection, which, 
     {
@@ -150,7 +150,7 @@ export async function createPost (data = null, which = NaN)
     which = await __seIndex (which); 
             await __seValidate (which, true, false);
 
-    const dbRoot = await __dbLoad ();
+    const dbRoot = await __dbLoadAsync ();
     const dbPost = util.jsonRead (dbRoot, `item/${which}/post/item`);
     const index = dbPost.length;
 
@@ -279,7 +279,7 @@ async function __getSectionRaw (which, name, requireLogged, requirePrivilege)
     which = await __seIndex (which);
             await __seValidate (which, requireLogged, requirePrivilege);
 
-    const dbRoot        = await __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
     const dbTarget      = util.jsonRead (dbCollection, which);
     const dbTargetSec   = util.jsonRead (dbTarget, name);
@@ -299,7 +299,7 @@ async function __setSectionAsync (structure, which, name)
     which = await __seIndex (which);
             await __seValidate (which);
 
-    const dbRoot        = await __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
     const dbTarget      = util.jsonRead (dbCollection, which);
     const dbTargetSec   = util.jsonRead (dbTarget, name);
@@ -321,7 +321,7 @@ async function __setSectionRawAsync (structure, which, name)
     which = await __seIndex (which);
             await __seValidate (which);
 
-    const dbRoot        = await __dbLoad ();
+    const dbRoot        = await __dbLoadAsync ();
     const dbCollection  = util.jsonRead (dbRoot, 'item');
     const dbTarget      = util.jsonRead (dbCollection, which);
     let dbTargetSec   = util.jsonRead (dbTarget, name);
@@ -341,7 +341,7 @@ export let __dbCache = {};
 export let __dbCacheAge = new Date (undefined);
 
 
-async function __dbLoad ()
+export async function __dbLoadAsync ()
 {
     if (test.REMOTE_ENABLED)
     {

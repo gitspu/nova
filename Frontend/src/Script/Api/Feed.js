@@ -172,6 +172,33 @@ export async function getPostJob (start = NaN, end = NaN)
     //
     util.shuffle (result.item);
     //
+    // นำโพสต์ใหม่อยู่บนสุด
+    //
+    try 
+    {
+        result.item = result.item.sort ((a, b) =>
+        {
+            const itemA = dbRoot["item"][a.owner]["post"]["item"][a.index];
+            const itemB = dbRoot["item"][b.owner]["post"]["item"][b.index];
+
+            const dateA = new Date (itemA);
+            const dateB = new Date (itemB);
+
+            console.log (itemA, itemB);
+
+            if (dateA.getTime () > dateB.getTime ())
+                return 1;
+            if (dateA.getTime () < dateB.getTime ())
+                return -1;
+
+            return 0;
+        });
+    }
+    catch (ex)
+    {
+        console.error (ex);
+    }
+    //
     // ส่งข้อมูลกลับ
     //
     return result;

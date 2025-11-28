@@ -33,14 +33,10 @@ function StartResolve ({menu})
     const [searchText, setSearchText] = useState ('');
 
     const [newShow, setNewShow] = useState (false);
-    const newData = useRef ({
-        username: '',
-        password: '',
-        role: '',
-        status: ''
-    });
     const [editShow, setEditShow] = useState (false);
-    const editData = useRef (0);
+
+    const [currentId, setCurrentId] = useState ("");
+    const [currentAccess, setCurrentAccess] = useState (0);
 
     function onLoadDataset ()
     {
@@ -69,6 +65,7 @@ function StartResolve ({menu})
         {
             let access = Number (value.access);
             let username = String (value.name);
+            let email = String (value.email);
             let role = 'ไม่รู้จัก';
             let status = 'ไม่ทราบ';
 
@@ -96,9 +93,10 @@ function StartResolve ({menu})
                 case auth.STATUS_SUSPENDED: status = 'ถูกระงับ'; break;
             }
             return <>
-              <Tr key={index} onClick={() => onClickEdit (access)}>
+              <Tr key={index} onClick={() => onClickEdit (access, username)}>
                 <Td>{String(access)}</Td>
                 <Td>{String(username)}</Td>
+                <Td>{String(email)}</Td>
                 <Td>{String(role)}</Td>
                 <Td>{String(status)}</Td>
               </Tr>
@@ -110,9 +108,11 @@ function StartResolve ({menu})
     {
         setNewShow (true);
     }
-    function onClickEdit (which)
+    function onClickEdit (which, username)
     {
-        editData.current = which;
+        setCurrentId (username);
+        setCurrentAccess (which);
+
         setEditShow (true);
     }
     function onClickRefresh ()
@@ -211,6 +211,7 @@ function StartResolve ({menu})
                 <Tr>
                   <Td>ไอดีบัญชี</Td>
                   <Td>ชื่อบัญชี</Td>
+                  <Td>อีเมล</Td>
                   <Td>บทบาท</Td>
                   <Td>สถานะ</Td>
                 </Tr>
@@ -229,8 +230,8 @@ function StartResolve ({menu})
           height: '100%', maxHeight: '100%',
           pointerEvents: 'none'
         }}>
-          <ModalNew ref={newData} show={[newShow, setNewShow]}/>
-          <ModalEdit ref={editData} show={[editShow, setEditShow]}/>
+          <ModalNew show={[newShow, setNewShow]} cSubmit={() => onClickRefresh ()}/>
+          <ModalEdit show={[editShow, setEditShow]} oIdentifier={currentId} oAccess={currentAccess}/>
         </Div>
       </Div>
     </>
@@ -242,14 +243,51 @@ function StartResolve ({menu})
 //                                                                                                      //
 // ==================================================================================================== //
 
-function ModalNew ({show, ref})
+function ModalNew ({show, cSubmit })
 {
-    const memory = ref.current;
+    const auth = api.auth;
+    const profile = api.profile;
+    const profileEm = api.profileEm;
+
     const [getShow, setShow] = show;
     const [username, setUsername] = useState ('');
     const [password, setPassword] = useState ('');
+    const [email, setEmail] = useState ('');
     const [role, setRole] = useState (auth.ROLE_USER);
     const [status, setStatus] = useState (auth.STATUS_ACTIVE);
+    const [disabled, setDisabled] = useState (false);
+
+    function onSubmit ()
+    {
+        setDisabled (true);
+
+        auth.create (username, password, email, role, status).then (async (newId) =>
+        {
+            console.log ("Authentication created: " + newId);
+
+            await profile.create (newId);
+            await profileEm.create (newId);
+        })
+        .then (() =>
+        {
+            alert ("สร้างบัญชีเรียบร้อย");
+
+            setUsername ("");
+            setPassword ("");
+            setRole (auth.ROLE_USER);
+            setStatus (auth.STATUS_ACTIVE);
+            setDisabled (false);
+            setShow (false);
+
+            cSubmit ();
+        })
+        .catch ((ex) =>
+        {
+            console.error(ex);
+            alert ("เกิดข้อผิดพลาด: " + ex);
+            setDisabled (false);
+        });
+    }
 
     return <>
       <Modal show={getShow}>
@@ -260,7 +298,7 @@ function ModalNew ({show, ref})
               <P>กรุณาป้อนข้อมูลเบื้องต้น</P>
             </Div>
             <Div>
-              <Button onClick={() => setShow (false)}>
+              <Button $variant="caution" onClick={() => setShow (false)}>
                 <Img src={icon.xCircle}/>
               </Button>
             </Div>
@@ -269,17 +307,26 @@ function ModalNew ({show, ref})
             <Hr/>
           </Div>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className='d-flex flex-column h-100'>
           <Div className='mb-2'>
             <P className='mb-2'>ชื่อผู้ใช้</P>
             <Input className='w-100' type='text' autoComplete='off'
+                   disabled={disabled}
                    value={username} onChange={(event) => setUsername (event.target.value)}>
             </Input>
           </Div>
           <Div className='mb-2'>
             <P className='mb-2'>รหัสผ่าน</P>
             <Input className='w-100' type='text' autoComplete='off'
+                  disabled={disabled}
                   value={password} onChange={(event) => setPassword (event.target.value)}>
+            </Input>
+          </Div>
+          <Div className='mb-2'>
+            <P className='mb-2'>อีเมล</P>
+            <Input className='w-100' type='text' autoComplete='off'
+                  disabled={disabled}
+                  value={email} onChange={(event) => setEmail (event.target.value)}>
             </Input>
           </Div>
           <Div className='mb-2'>
@@ -300,17 +347,73 @@ function ModalNew ({show, ref})
               <MenuBar.Child state={auth.STATUS_SUSPENDED} icon={icon.ban} text='ถูกระงับ'></MenuBar.Child>
             </MenuBar>
           </Div>
+          <Div className="flex-grow-1"></Div>
+          <Button className="mt-4" style={{ width: '96px' }} onClick={onSubmit} disabled={disabled}>
+            <Img src={icon.plusCircle}/>
+            <Span>สร้าง</Span>
+          </Button>
         </Modal.Body>
         <Modal.Footer>
-
         </Modal.Footer>
       </Modal>
     </>
 }
-function ModalEdit ({show, ref})
+function ModalEdit ({show, oIdentifier, oAccess})
 {
-    const memory = ref.current;
+    const auth = api.auth;
+    const profile = api.profile;
+    const profileEm = api.profileEm;
+
     const [getShow, setShow] = show;
+
+    const [username, setUsername] = useState ('');
+    const [password, setPassword] = useState ('');
+    const [email, setEmail] = useState ('');
+    const [role, setRole] = useState (auth.ROLE_USER);
+    const [status, setStatus] = useState (auth.STATUS_ACTIVE);
+    const [disabled, setDisabled] = useState (false);
+
+    function onSubmit ()
+    {
+
+    }
+    function onDelete ()
+    {
+        async function run ()
+        {
+            const dbAuth = await auth.__dbLoadAsync ();
+            const dbProfile = await profile.__dbLoadAsync ();
+            const dbProfileEm = await profileEm.__dbLoadAsync ();
+
+            dbAuth["challenge"]["direct"][oIdentifier] = undefined;
+            dbAuth["access"][oAccess] = undefined;
+
+            dbProfile["item"][oAccess] = undefined;
+            dbProfileEm["item"][oAccess] = undefined;
+
+            await auth.__dbSaveAsync (dbAuth);
+            await profile.__dbSaveAsync (dbProfile);
+            await profileEm.__dbSaveAsync (dbProfileEm);
+        }
+
+        if (prompt (`คุณยืนยันหรือไม่ว่าต้องการที่จะลบบัญชีนี้ ป้อน 'ใช่' เพื่อดำเนินการต่อ\nคุณกำลังลบ: ${oIdentifier} (${oAccess})`) === "ใช่")
+        {
+            setDisabled (true);
+            run ().then (() =>
+            {
+                alert ("ลบบัญชีเรียบร้อย");
+
+                setDisabled (false);
+                setShow (false);
+            })
+            .catch ((except) =>
+            {
+                console.error(except);
+                alert ("เกิดข้อผิดพลาด: " + except);
+                setDisabled (false);
+            });
+        }
+    }
 
     return <>
       <Modal show={getShow}>
@@ -320,15 +423,67 @@ function ModalEdit ({show, ref})
               <Label $size='h1'>แก้ไขบัญชี</Label>
             </Div>
             <Div>
-              <Button onClick={() => setShow (false)}>ปิด</Button>
+              <Button onClick={() => setShow (false)}>
+                <Img src={icon.xCircle}/>
+              </Button>
             </Div>
           </Div>
           <Div className="mt-2 mb-2">
             <Hr/>
           </Div>
         </Modal.Header>
-        <Modal.Body>
-          
+        <Modal.Body className='d-flex flex-column h-100'>
+                    <Div className='mb-2'>
+            <P className='mb-2'>ชื่อผู้ใช้</P>
+            <Input className='w-100' type='text' autoComplete='off'
+                   disabled={disabled}
+                   value={username} onChange={(event) => setUsername (event.target.value)}>
+            </Input>
+          </Div>
+          <Div className='mb-2'>
+            <P className='mb-2'>รหัสผ่าน</P>
+            <Input className='w-100' type='text' autoComplete='off'
+                  disabled={disabled}
+                  value={password} onChange={(event) => setPassword (event.target.value)}>
+            </Input>
+          </Div>
+          <Div className='mb-2'>
+            <P className='mb-2'>อีเมล</P>
+            <Input className='w-100' type='text' autoComplete='off'
+                  disabled={disabled}
+                  value={email} onChange={(event) => setEmail (event.target.value)}>
+            </Input>
+          </Div>
+          <Div className='mb-2'>
+            <P className='mb-2'>บทบาท</P>
+            <MenuBar state={[role, setRole]} direction='horizontal'>
+              <MenuBar.Child state={auth.ROLE_USER} icon={icon.person} text='ผู้ใช้'></MenuBar.Child>
+              <MenuBar.Child state={auth.ROLE_EMPLOYER} icon={icon.people} text='องค์กร'></MenuBar.Child>
+              <MenuBar.Child state={auth.ROLE_ADMIN} icon={icon.personGear} text='ผู้ดูแลระบบ'></MenuBar.Child>
+              <MenuBar.Child state={auth.ROLE_TESTER} icon={icon.personGear} text='ผู้ทดสอบ'></MenuBar.Child>
+              <MenuBar.Child state={auth.ROLE_DEVELOPER} icon={icon.personGear} text='ผู้พัฒนาระบบ'></MenuBar.Child>
+            </MenuBar>
+          </Div>
+          <Div>
+            <P className='mb-2'>สถานะ</P>
+            <MenuBar state={[status, setStatus]} direction='horizontal'>
+              <MenuBar.Child state={auth.STATUS_ACTIVE} icon={icon.checkCircle} text='เปิดใช้งาน'></MenuBar.Child>
+              <MenuBar.Child state={auth.STATUS_INACTIVE} icon={icon.xCircle} text='ปิดใช้งาน'></MenuBar.Child>
+              <MenuBar.Child state={auth.STATUS_SUSPENDED} icon={icon.ban} text='ถูกระงับ'></MenuBar.Child>
+            </MenuBar>
+          </Div>
+          <Div className="flex-grow-1"></Div>
+          <Div className="d-flex mt-4">
+            <Button className="me-1" style={{ minWidth: '96px' }} onClick={onSubmit} disabled={disabled}>
+              <Img src={icon.download}/>
+              <Span>บันทึก</Span>
+            </Button>
+            <Div className="flex-grow-1"></Div>
+            <Button style={{ minWidth: '96px' }} $variant="caution" onClick={onDelete} disabled={disabled}>
+              <Img src={icon.xCircle}/>
+              <Span>ลบบัญชี</Span>
+            </Button>
+          </Div>
         </Modal.Body>
         <Modal.Footer>
 

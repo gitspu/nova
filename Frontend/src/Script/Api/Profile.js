@@ -322,7 +322,7 @@ export async function create (which = NaN)
 
     if (Object.hasOwn (dbCollection, which)) 
     {
-        throw new ErrorState (MSG_ERROR_CREATED);
+        throw new ErrorState (MSG_ERROR_CREATED + " -- " + which);
     }
 
     Object.defineProperty (dbCollection, which, 

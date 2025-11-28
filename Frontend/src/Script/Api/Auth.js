@@ -197,6 +197,10 @@ export async function create (identifier, password, email, role, status)
     // วิเคราะห์ข้อมูล
     //
     util.ignore (() => tracker.increment ('authRegister'));
+    //
+    // คืนข้อมูล
+    //
+    return newAccess;
 }
 /**
  * ทำการสร้างรหัสยืนยันตัวตน จากรหัสที่ได้รับจาก Facebook
@@ -836,9 +840,16 @@ export async function getServerMapInfo (key)
     if (ixAccess == null) throw new ErrorServer (MSG_ERROR_INPUT_CRED);
 
     result.name     = String (ixAccess['name']);
+    result.email    = String (ixAccess['email']);
     result.role     = Number (ixAccess['role']);
     result.status   = Number (ixAccess['status']);
     result.access   = Number (key);
+
+    if (result.name == undefined)
+        result.name = "";
+
+    if (result.email == undefined)
+        result.email = "";
 
     return result;
 }
