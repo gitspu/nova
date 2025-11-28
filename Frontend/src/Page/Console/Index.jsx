@@ -45,10 +45,14 @@ import icon         from '../../Script/Icon'
  * องค์ประกอบย่อยของหน้าต่างเข้าสู่ระบบ
  * 
 */
-import ViewAccount      from './ViewAccount'
+// import ViewAccount      from './ViewAccount'
+import ViewAccount      from '../../Component/admin_pages/UserManagement'
 import ViewAds          from './ViewAds'
 import ViewAuth         from './ViewAuth'
-import ViewDashboard    from './ViewDashboard'
+// import ViewDashboard    from './ViewDashboard'
+import ViewDashboard    from '../../Component/admin_pages/Dashboard'
+import ViewJob          from '../../Component/admin_pages/JobManagement'
+import ViewResume       from '../../Component/admin_pages/ResumeManagement'
 import ViewError        from '../Error'
 
 
@@ -267,9 +271,11 @@ const Menu = ({menu, menuShow}) =>
     return <>
       <MenuViewport style={{ display: getMenuShow ? 'block' : 'none' }}>
         <MenuBar direction='vertical' state={menu}>
-          <MenuBar.Child state={1} icon={icon.house} text='แดชบอร์ด'/>
-          <MenuBar.Child state={3} icon={icon.person} text='บัญชี'/>
-          <MenuBar.Child state={4} icon={icon.send} text='โฆษณา'/>
+          <MenuBar.Child state={1} icon={icon.house} text='ภาพรวม'/>
+          <MenuBar.Child state={3} icon={icon.people} text='จัดการบัญชี'/>
+          <MenuBar.Child state={5} icon={icon.briefcase} text='จัดการงาน'/>
+          <MenuBar.Child state={6} icon={icon.sticky} text='จัดการเรซูเม่'/>
+          {/* <MenuBar.Child state={4} icon={icon.send} text='โฆษณา'/> */}
           <MenuBar.Separator title='อื่น ๆ'/>
           <MenuBar.Child state={2} icon={icon.unlock} text='การยืนยันตัวตน'/>
           {/* <MenuBar.Condition state={api.auth.getRole () == api.auth.ROLE_TESTER || api.auth.getRole () == api.auth.ROLE_DEVELOPER}>
@@ -314,6 +320,8 @@ const Content = ({menu}) =>
         <ViewAuth menu={menu}/>
         <ViewAccount menu={menu}/>
         <ViewAds menu={menu}/>
+        <ViewJob menu={menu}/>
+        <ViewResume menu={menu}/>
       </ContentViewport>
     </>
 }
