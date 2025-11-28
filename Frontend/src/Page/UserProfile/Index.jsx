@@ -156,17 +156,24 @@ function StartResolve ({userId})
         onRefreshData ()
           .then (() =>
           {
-              console.log (dataset.current);
-
-              if (dataset.current.personal.visibility == profile.VISIBILITY_RESTRICTED && !auth.isLogged ())
+              if (userId != auth.getAccess ())
               {
-                    setView (2);
-                    return;
-              }
-              if (dataset.current.personal.visibility == profile.VISIBILITY_PRIVATE)
-              {
-                    setView (2);
-                    return;
+                  if (dataset.current.personal.visibility == profile.VISIBILITY_RESTRICTED)
+                  {
+                        if (!auth.isRole (auth.ROLE_ADMIN) && !auth.isRole (auth.ROLE_DEVELOPER) && !auth.isRole (auth.ROLE_EMPLOYER))
+                        {
+                            setView (2);
+                            return;
+                        }
+                  }
+                  if (dataset.current.personal.visibility == profile.VISIBILITY_PRIVATE)
+                  {
+                        if (!auth.isRole (auth.ROLE_ADMIN) && !auth.isRole (auth.ROLE_DEVELOPER))
+                        {
+                            setView (2);
+                            return;
+                        }
+                  }                  
               }
 
               onRefreshUI ();

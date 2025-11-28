@@ -138,6 +138,11 @@ export function objectSerialize (baseObject, rawObject)
             rawObject[key] = Number (baseObject[key]);
             continue;
         }
+        if (typeof baseObject[key] == "boolean") 
+        {
+            rawObject[key] = Boolean (baseObject[key]);
+            continue;
+        }
         if (typeof baseObject[key] == "object")
         {            
             if (baseObject[key] == null)
@@ -195,6 +200,15 @@ export function objectDeserialize (baseObject, rawObject)
                 continue;
             }
             baseObject[key] = Number (rawObject[key]);
+            continue;
+        }
+        if (typeof baseObject[key] == "boolean")
+        {
+            if (rawObject == null || rawObject[key] == null || rawObject[key] == undefined) 
+            {
+                continue;
+            }
+            baseObject[key] = Boolean (rawObject[key]);
             continue;
         }
         if (typeof baseObject[key] == "object")

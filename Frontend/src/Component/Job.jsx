@@ -25,6 +25,7 @@ from "lucide-react";
 import { A, Div, H1, H2, H3, H4, H5, H6, Hr, Img, Label, P, Section, Span } from "./Common";
 import styled from "styled-components";
 import api, { profileEm, util } from "../Script/Api"
+import nav from "../Script/Navigator"
 import icon from "../Script/Icon"
 
 //
@@ -135,6 +136,8 @@ const StylePostDetailBanner = styled.img `
     border: none;
     outline: none;
     object-fit: cover;
+
+    background-color: var(--app-bg-2);
 `;
 const StylePostDetailHeading = styled.div `
   
@@ -225,7 +228,7 @@ export function PostDetail ({oOwner, oData, sSave, sShare })
             <H1 className="mb-1" $variant='primary' $size='h1'>{String (title)}</H1>
             <Div className=" d-flex align-items-center gap-2">
               <H2 $variant='secondary' $size='text'>{name}</H2>
-              <A>ดูโปรไฟล์บริษัท</A>
+              <A onClick={() => nav.userProfile (oOwner.id)}>ดูโปรไฟล์บริษัท</A>
             </Div>
           </Section>
           <Section className="mb-4">

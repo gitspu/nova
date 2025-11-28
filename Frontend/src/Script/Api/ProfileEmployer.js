@@ -15,6 +15,7 @@ import { analytics } from '../Api';
 
 export class DataProfile
 {
+    id          = 0;
     icon        = "";
     background  = "";
     name        = "";
@@ -185,6 +186,7 @@ export async function getProfile (which = NaN)
     const ixPersonal = dbItem["personal"];
     const result = new DataProfile ();
 
+    result.id = which;
     result.background = ixPersonal.background;
     result.icon = ixPersonal.icon;
     result.description = ixPersonal.bio.value;

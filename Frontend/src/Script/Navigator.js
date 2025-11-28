@@ -8,6 +8,8 @@ export const LINK_AUTH = '/auth';
 export const LINK_CONSOLE = '/console';
 
 export const LINK_USER_PROFILE = '/user-profile';
+export const LINK_USER_SEARCH = "/user-search";
+
 export const LINK_EMPLOYER_PROFILE = '/employer-profile';
 export const LINK_EMPLOYER_ENROLLMENT = '/employer-enrollment';
 export const LINK_USER_SETTINGS = '/user-settings';
@@ -89,6 +91,21 @@ export function userProfile (which = NaN)
     window.location.href = (`${LINK_USER_PROFILE}` + (isFinite (which) ? `?id=${which}` : ``));
 }
 /**
+ * นำทางไปสู่หน้าค้นหาโปรไฟล์
+*/
+export function userSearch ()
+{
+    if (is (LINK_USER_SEARCH)) 
+        return;
+
+    if (typeof reactNavigator == "function")
+    {
+        reactNavigator (LINK_USER_SEARCH);
+        return;
+    }
+    window.location.href = (LINK_USER_SEARCH);
+}
+/**
  * นำทางไปสู่หน้าตั้งค่า
 */
 export function userSettings (to = undefined)
@@ -140,6 +157,7 @@ export default
     LINK_CONSOLE,
     LINK_HOME,
     LINK_PROFILE: LINK_USER_PROFILE,
+    LINK_PROFILE_SEARCH: LINK_USER_SEARCH,
     LINK_SETTINGS: LINK_USER_SETTINGS,
 
     init,
@@ -150,5 +168,6 @@ export default
     employerEnrollment,
     home,
     userProfile,
+    userSearch,
     userSettings,
 }

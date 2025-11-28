@@ -73,6 +73,8 @@ export class DataPersonal
 {
     /** การมองเห็น */
     visibility = profile.VISIBILITY_PUBLIC;
+    /** แชร์ */
+    shared = false;
     /** ภาพพื้นหลังของโปรไฟล์ */ 
     background = "";
     /** ภาพไอคอนโปรไฟล์ */
@@ -198,6 +200,7 @@ export async function getPersonal (which = NaN)
     const block = await __getSectionAsync (which, 'personal');
 
     result.visibility = block.visibility;
+    result.shared = Boolean (block.shared);
     result.background = block.background;  
     result.icon = block.icon;
 

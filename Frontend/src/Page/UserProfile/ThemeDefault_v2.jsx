@@ -115,6 +115,23 @@ export default function Start ({oId, oLoading, rData})
         .then (() => profile.setContact (contact))
         .then (() => profile.setPersonal (personal));
     }
+    function onSaveShare (data)
+    {
+        let personal = new profile.DataPersonal ();
+
+        return profile.getPersonal ()
+          .then ((x) => personal = x)
+          .then (() => 
+          {
+              personal.shared = data;
+          })
+          .then (() => profile.setPersonal (personal))
+          .then (() =>
+          {
+              rPersonal.shared = data;
+              forceUpdate (forceUpdateIdx + 1);
+          });
+    }
     function onSaveBio (data)
     {
         let personal = new profile.DataPersonal ();
@@ -217,7 +234,14 @@ export default function Start ({oId, oLoading, rData})
 
         <Div style={{ opacity: oLoading ? '0.5' : '1.0' }}>
   
-          <Header oEditable={rEditable} oId={oId} rContact={rContact} rPersonal={rPersonal} cSave={onSaveHeader} sToast={[toast, setToast]}/>
+          <Header 
+            oEditable={rEditable} 
+            oId={oId} 
+            rContact={rContact} 
+            rPersonal={rPersonal} 
+            cSave={onSaveHeader} 
+            cShare={onSaveShare}
+            sToast={[toast, setToast]}/>
 
             {/* เนื้อหาหลัก */}
             <Div className="container py-4">
@@ -316,7 +340,7 @@ export default function Start ({oId, oLoading, rData})
     </>
 }
 
-export function Header ({oEditable, oId, rPersonal, rContact, cSave, sToast })
+export function Header ({oEditable, oId, rPersonal, rContact, cSave, cShare, sToast })
 {
     const [edit, setEdit] = useState (false);
     const [image, setImage] = useState (api.decodeContent (rPersonal.icon));
@@ -384,7 +408,31 @@ export function Header ({oEditable, oId, rPersonal, rContact, cSave, sToast })
     {
         setEdit (true);
     }
-    function onClickShare ()
+    function onClickShare (event)
+    {
+        setDisabled (true);
+        cShare (!rPersonal.shared).then (() =>
+        {
+            setDisabled (false);
+
+            if (rPersonal.shared)
+            {
+                setToast ({ show: true, msg: "แชร์โปรไฟล์เรียบร้อยแล้ว", type: "success" });
+            }
+            else
+            {
+                setToast ({ show: true, msg: "ยกเลิกแชร์โปรไฟล์เรียบร้อยแล้ว", type: "primary" });
+            }
+        })
+        .catch ((except) =>
+        {
+            console.error (except);
+            alert ("เกิดข้อผิดพลาดในขณะที่กำลังโปรไฟช์ของคุณ");
+
+            setDisabled (false);
+        });
+    }
+    function onClickLink ()
     {
         const url = window.location.hostname;
         const pathname = `/user-profile?id=${oId}`;
@@ -465,14 +513,20 @@ export function Header ({oEditable, oId, rPersonal, rContact, cSave, sToast })
               </Div>
               <Div>
                 {
-                  oEditable && <Button className='me-1' onClick={onClickEdit} style={{ width: '96px' }}>
-                    <Img src={icon.pencil}/>
-                    <Span>แก้ไข</Span>
-                  </Button>
+                  oEditable && <>
+                    <Button className='me-1' onClick={onClickEdit} style={{ minWidth: '160px' }}>
+                      <Img src={icon.pencil}/>
+                      <Span>แก้ไข</Span>
+                    </Button>
+                    <Button onClick={onClickShare} style={{ minWidth: '160px',  marginRight: '48px' }}>
+                      <Img src={icon.share}/>
+                      <Span>{rPersonal.shared ? "แชร์โปรไฟล์แล้ว" : "แชร์โปรไฟล์"}</Span>
+                    </Button>
+                  </>
                 }
-                <Button onClick={onClickShare} style={{ width: '96px' }}>
-                  <Img src={icon.share}/>
-                  <Span>แชร์</Span>
+                <Button onClick={onClickLink} style={{ minWidth: '128px' }}>
+                  <Img src={icon.sticky}/>
+                  <Span>คัดลอกลิงค์</Span>
                 </Button>
 
               </Div>

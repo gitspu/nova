@@ -192,6 +192,34 @@ export const Label = styled.label `
     margin: 0;
     padding: 0;
 `;
+export const Ul = styled.ul `
+    margin: 0;
+    padding: 0;
+    font-size: var(--app-size-text);
+
+    color: ${props => 
+        props.$variant == 'secondary' ? 'var(--app-text-2)' : 
+        props.$variant == 'tertiary'  ? 'var(--app-text-3)' : 
+        props.$variant == 'warning'   ? 'var(--app-text-warning)' : 
+        props.$variant == 'caution'   ? 'var(--app-text-caution)' : 
+        'var(--app-text-1)'
+    };
+`;
+export const Li = styled.li`
+    margin: 0;
+    margin-left: 24px;
+    padding: 0;
+    font-size: var(--app-size-text);
+
+    color: ${props => 
+        props.$variant == 'secondary' ? 'var(--app-text-2)' : 
+        props.$variant == 'tertiary'  ? 'var(--app-text-3)' : 
+        props.$variant == 'warning'   ? 'var(--app-text-warning)' : 
+        props.$variant == 'caution'   ? 'var(--app-text-caution)' : 
+        'var(--app-text-1)'
+    };
+`;
+
 export const Button = styled.button `
 
     background-color:   ${props => 

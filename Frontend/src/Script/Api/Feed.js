@@ -3,6 +3,7 @@ import * as util from './Util'
 
 import sampleProfile from "../Sample/Profile.json";
 import sampleEmployer from "../Sample/ProfileEmployer.json"
+import { profile } from '../Api';
 
 /**
  * โครงสร้างที่เก็บข้อมูลส่วนหัว สำหรับเตรียมพร้อมในการเรียกข้อมูล

@@ -118,6 +118,12 @@ export class DataPostSaved
         owner: 0,
         index: 0
     }];
+
+    init ()
+    {
+        this.item = [];
+        return this;
+    }
 };
 /**
  * บล็อกสำหรับพื้นที่จัดเก็บข้อมูลส่วนตัว
@@ -126,6 +132,8 @@ export class DataPersonal
 {
     /** การมองเห็น */
     visibility = VISIBILITY_PUBLIC;
+    /** แชร์ */
+    shared = false;
     /** ภาพพื้นหลังของโปรไฟล์ */ 
     background = "";
     /** ภาพไอคอนโปรไฟล์ */
@@ -484,7 +492,7 @@ export async function getPostHead (which = NaN)
 export async function getPostSaved (which = NaN)
 {
     const block = await __getSectionRawAsync (which, "post_saved");
-    const result = new DataPostSaved ();
+    const result = new DataPostSaved ().init ();
 
     result.item = [];
 

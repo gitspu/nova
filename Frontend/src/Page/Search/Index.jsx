@@ -109,7 +109,7 @@ export default function Start ()
     const list = useRef (new feed.DataPostJob ());
     const listOwner = useRef ([]);
     const listInfo = useRef ([]);
-    const saved = useRef (new profile.DataPostSaved ());
+    const saved = useRef (new profile.DataPostSaved ().init ());
     const personal = useRef (new profile.DataPersonal ());
 
     /**
@@ -491,6 +491,8 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
     const [searchTag, setSearchTag] = sSearchTag;
     const [filter, setFilter] = sFilter;
 
+    const myPostCount = useRef ({ num: 0 });
+
     /**
      * คำสั่งปุ่มกดทำงานเมื่อต้องการ: เริ่มกระบวณเข้าสู่ระบบ
     */
@@ -525,11 +527,17 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
     {
         const children = [];
 
+        myPostCount.current.num = 0;
+
         for (let index = 0; index < list.item.length; index ++)
         {
             const itemHead = list.item[index];
             const itemOwner = listOwner[index];
             const itemValue = listInfo[index];
+
+            if (itemHead.owner == auth.getAccess ())
+                myPostCount.current.num += 1;
+
 
             //
             // กรองตามที่บันทึกไว้
@@ -574,6 +582,16 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
                 if (!m1 && !m2)
                     continue;
             }
+
+            //
+            // กรองตามโพสต์ของฉัน
+            //
+            if (filter == 3)
+            {
+                if (itemHead.owner != auth.getAccess ())
+                    continue;
+            }
+
             //
             // แสดงผลรายการ
             //
@@ -586,7 +604,7 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
               </PostList>
             );
         }
-         //
+        //
         // บางครั้งรายการอาจว่างเปล่า สาเหตุก็อาจจะข้อมูลว่าง
         // หรือคำค้นหานั้นไม่ตรงกับข้อมูลใด ๆ
         //
@@ -599,22 +617,24 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
               <Div className="d-flex flex-column flex-grow-1 p-4 bg-white rounded-3 shadow-sm">
                 <Div className="mb-4 d-flex justify-content-center">
                   <Div className="bg-light rounded-circle p-4">
-                    <Img src={filter == 1 ? icon.inbox : icon.heart} width={48} height={48}/>
+                    <Img src={filter == 1 ? icon.inbox : filter == 2 ? icon.heart : icon.briefcase} width={48} height={48}/>
                   </Div>
                 </Div>
                 <Div className="mb-4 w-100">
                   <H2 $variant="primary" $align="center">
                     {filter == 1 && <>ไม่พบงานที่คุณค้นหา</>}
                     {filter == 2 && <>ในนี้ไม่มีอะไรเลยนะ</>}
+                    {filter == 3 && <>ในนี้ไม่มีอะไรเลยนะ</>}
                   </H2>
                   <P $variant="secondary" $align="center">
                     {filter == 1 && <>ลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่อื่นดูนะ</>}
-                    {filter == 2 && <>เมื่อคุณบันทึกโพสต์ไว้ โพสต์เหล่านั่นจะปรากฏให้คุณตรงนี้<br/>ลองเริ่มบันทึกโพสต์เลย</>}
+                    {filter == 2 && <>เมื่อคุณบันทึกโพสต์ไว้ โพสต์เหล่านั่นจะปรากฏให้คุณตรงนี้ ลองเริ่มบันทึกโพสต์เลย</>}
                     {(filter == 2 && !auth.isLogged ()) && <>
                       <Br/>
                       <Br/>
                       <Span>(คุณต้องเข้าสู่ระบบก่อนจึงสามารถบันทึกได้)</Span>
                     </>}
+                    {filter == 3 && <>โพสต์งานของคุณที่คุณเคยสร้างจะปรากฏให้คุณเห็นตรงนี้<Br/>ลองเริ่มสร้างโพสต์เลย</>}
                   </P>
                 </Div>
 
@@ -652,7 +672,7 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
               <MenuBar direction='horizontal' state={[filter, setFilter]} className="p-1 rounded-3 shadow-sm mb-3 d-flex">
                 <MenuBar.Child className="flex-grow-1" state={1} icon={icon.listTask} text={`งานทั้งหมด (${list.item.length})`}/>
                 {auth.isRole (auth.ROLE_EMPLOYER) ? 
-                  (<MenuBar.Child className="flex-grow-1" state={3} icon={icon.sticky} text={`โพสต์ของฉัน`}/>) :
+                  (<MenuBar.Child className="flex-grow-1" state={3} icon={icon.sticky} text={`โพสต์ของฉัน (${myPostCount.current.num})`}/>) :
                   (<MenuBar.Child className="flex-grow-1" state={2} icon={icon.heart} text={`บันทึกไว้ ${saved.item.length > 0 ? `(${saved.item.length})` : ``}`}/>)
                 }
               </MenuBar>

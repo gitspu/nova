@@ -34,6 +34,7 @@ import Error            from "./Page/Error"
 import EmployerProfile  from "./Page/EmployerProfile/Index"
 import EmployerSettings from "./Page/EmployerSettings/Index"
 import UserProfile      from "./Page/UserProfile/Index"
+import UserSearch       from "./Page/Search/Profile"
 import UserSettings     from "./Page/UserSettings/Index"
 import Search           from './Page/Search/Index'
 
@@ -98,6 +99,7 @@ export function App ()
                 <Route element={null} ErrorBoundary={<Error/>} Component={AppOverlay}>
                   <Route path='/' element={<Search/>} index={true}/>
                   <Route path='/user-profile' element={<UserProfile/>}/>
+                  <Route path='/user-search' element={<UserSearch/>}/>
                   <Route path='/user-settings' element={<UserSettings/>}/>
                   <Route path='/employer-profile' element={<EmployerProfile/>}/>
                   <Route path='/employer-enrollment' element={<EmployerProfile/>}/>
@@ -206,20 +208,25 @@ export function AppOverlay ()
         <NavBar.Branding onClick={() => nav.home ()}/>
         <NavBar.Flex grow={1} justify={'center'}>
           <Button $variant='outlined' onClick={() => nav.home ()} className='me-4'>
-            <Img src={icon.house}/>
-            <Span>หน้าหลัก</Span>
+            <Img src={icon.briefcase}/>
+            <Span>ค้นหางาน</Span>
           </Button>
+          <Button $variant='outlined' onClick={() => nav.userSearch ()} className='me-4'>
+            <Img src={icon.people}/>
+            <Span>ค้นหาโปรไฟล์</Span>
+          </Button>
+          
           <Button $variant='outlined' onClick={() => nav.userProfile ()} className='me-4'>
             <Img src={icon.person}/>
-            <Span>โปรไฟล์</Span>
+            <Span>โปรไฟล์ของฉัน</Span>
           </Button>
-            {
+            {/* {
               (auth.isRole (auth.ROLE_EMPLOYER) || auth.isRole (auth.ROLE_DEVELOPER)) &&
               <Button $variant='outlined' onClick={() => nav.employerEnrollment ()} className='me-4'>
                 <Img src={icon.briefcase}/>
-                <Span>สมัครงาน</Span>
+                <Span>รายการสมัครงาน</Span>
               </Button>
-            }
+            } */}
 
         </NavBar.Flex>
         {auth.isLogged () ? <NavBar.Profile onClick={() => setShowContext (!showContext)}>
