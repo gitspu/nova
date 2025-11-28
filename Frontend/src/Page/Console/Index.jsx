@@ -229,16 +229,13 @@ const MenuViewport = styled.div `
     pointer-events: none;
     position: absolute;
     inset: 56px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-    /* margin: 0px 70% 0px 0px; */
+    margin: 0px 70% 0px 0px;
 
     & > *
     {
         pointer-events: all;
-        max-width: 20%;
-        margin: 0px 0px 0px 0px;
-        /* max-width: 256px; */
-        /* margin: 0px 0px 0px auto; */
+        max-width: 256px;
+        margin: 0px 0px 0px auto;
 
         @media (max-width: 512px) 
         {
@@ -270,10 +267,10 @@ const Menu = ({menu, menuShow}) =>
     return <>
       <MenuViewport style={{ display: getMenuShow ? 'block' : 'none' }}>
         <MenuBar direction='vertical' state={menu}>
-          <MenuBar.Child state={1} icon={icon.house} text='ภาพรวม'/>
-          <MenuBar.Child state={3} icon={icon.person} text='จัดการผู้ใช้'/>
-          <MenuBar.Child state={4} icon={icon.send} text='จัดการโฆษณา'/>
-          <MenuBar.Separator title="อื่น ๆ"/>
+          <MenuBar.Child state={1} icon={icon.house} text='แดชบอร์ด'/>
+          <MenuBar.Child state={3} icon={icon.person} text='บัญชี'/>
+          <MenuBar.Child state={4} icon={icon.send} text='โฆษณา'/>
+          <MenuBar.Separator title='อื่น ๆ'/>
           <MenuBar.Child state={2} icon={icon.unlock} text='การยืนยันตัวตน'/>
           {/* <MenuBar.Condition state={api.auth.getRole () == api.auth.ROLE_TESTER || api.auth.getRole () == api.auth.ROLE_DEVELOPER}>
             <MenuBar.Separator/>
@@ -289,13 +286,13 @@ const Menu = ({menu, menuShow}) =>
 const ContentViewport = styled.div `
     position: absolute;
     inset: 56px 0px 0px 0px;
-    margin: 0px 0px 0px 20%;
+    margin: 0px 0px 0px 30%;
     overflow: hidden scroll;
 
     & > *
     {
         width: 100%;
-        /* max-width: 210mm; */
+        max-width: 210mm;
         margin: 0px auto 0px 0px;
         padding: 0px 12px;
 

@@ -262,7 +262,7 @@ function __dbLoadProfileEmployer ()
     }
 
     const readText = localStorage.getItem ("DbProfileEmployer");
-    const readObject = (readText != null) ? JSON.parse (readText) : sampleProfile;
+    const readObject = (readText != null) ? JSON.parse (readText) : sampleEmployer;
 
-    return Promise.resolve (readObject);
+    return readObject;
 }

@@ -371,7 +371,7 @@ export async function __dbLoadAsync ()
         const readText = localStorage.getItem ("DbProifleEmployer");
         const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
-        return Promise.resolve (readObject); 
+        return readObject; 
     }
 }
 export async function __dbSaveAsync (content)

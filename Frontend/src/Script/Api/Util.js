@@ -65,10 +65,12 @@ export function jsonRead (object, path, def = null)
         }
         if (last == undefined || last == null)
         {
+            console.warn ("Cannot find (undefined): ", path);
             return def;
         }
         if (typeof last != 'object')
         {
+            console.warn ("Cannot find the object: ", path);
             return def;
         }
         continue;
