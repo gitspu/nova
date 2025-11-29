@@ -150,9 +150,9 @@ export default
                     const newPersonal = new profile.DataPersonal ();
 
         
-                    if (email != null)    { newContact.email.set(email, profile.VISIBILITY_PUBLIC); }
-                    if (birthday != null) { newPersonal.birthday.set(birthday, profile.VISIBILITY_PUBLIC); }
-                    if (username != null) { newPersonal.nickname.set(username, profile.VISIBILITY_PUBLIC); }
+                    if (email != null && email != undefined)    { newContact.email.set(email, profile.VISIBILITY_PUBLIC); }
+                    if (birthday != null && birthday != undefined) { newPersonal.birthday.set(birthday, profile.VISIBILITY_PUBLIC); }
+                    if (username != null && username != undefined) { newPersonal.nickname.set(username, profile.VISIBILITY_PUBLIC); }
                     
                     switch (usernameSplit.length)
                     {
