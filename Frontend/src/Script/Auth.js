@@ -28,7 +28,9 @@ export default
 
         if (emailExpression.test (email) == false) return Promise.reject ("รูปแบบอีเมลที่คุณป้อนไม่ถูกต้อง");
 
-        return auth.create (username, password, email, role, status)
+        return new Promise ((resolve, reject) =>
+        {
+            auth.create (username, password, email, role, status)
                 .then (() => auth.login (username, password))
                 .then (() => profile.create ())
                 .then (() => profileEm.create ())
@@ -46,22 +48,32 @@ export default
                     await profile.setContact (contact);
                     await profile.setPersonal (personal);
 
-                    return RESOLVE_CREATED;
+                    resolve (RESOLVE_CREATED);
                 })
                 .catch ((except) =>
                 {
-                if (except instanceof auth.ErrorCredential)
-                    return "ขออภัย รหัสประจำตัวนี้ถูกใช้ไปแล้ว โปรดใช้รหัสอื่น";
+                    console.error (except);
 
-                if (except instanceof auth.ErrorConfig)
-                    return "ขออภัย คุณไม่สมัครสมาชิกได้ในขณะนี้";
-
-                if (except instanceof auth.ErrorServer)
-                    return "ขออภัย ระบบปลายทางไม่สามารถประมวลผลได้";
-
-                console.error (except);
+                    if (except instanceof auth.ErrorCredential) 
+                    {
+                        reject ("ขออภัย รหัสประจำตัวนี้ถูกใช้ไปแล้ว โปรดใช้รหัสอื่น");
+                        return;
+                    }
+                    if (except instanceof auth.ErrorConfig) 
+                    {
+                        reject ("ขออภัย คุณไม่สมัครสมาชิกได้ในขณะนี้");
+                        return;
+                    }
+                    if (except instanceof auth.ErrorServer)
+                    {
+                        reject ("ขออภัย ระบบปลายทางไม่สามารถประมวลผลได้");
+                        return;
+                    }
+                    
+                    reject ("ขออภัย เกิดข้อผิดพลาดบางอย่าง");
+                    return;
             });
-                  
+        });                  
     },
 
     login: async function login (username = "", password = "")
