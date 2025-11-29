@@ -184,7 +184,7 @@ export async function getPostJob (start = NaN, end = NaN)
             const dateA = new Date (itemA);
             const dateB = new Date (itemB);
 
-            console.log (itemA, itemB);
+            // console.log (itemA, itemB);
 
             if (dateA.getTime () > dateB.getTime ())
                 return 1;

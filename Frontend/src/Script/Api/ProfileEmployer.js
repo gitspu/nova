@@ -332,7 +332,7 @@ async function __setSectionRawAsync (structure, which, name)
     if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
     if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
 
-    dbTargetSec = structure;
+    dbRoot["item"][which][name] = structure;
 
     await __dbSaveAsync (dbRoot);
 }
@@ -368,7 +368,7 @@ export async function __dbLoadAsync ()
             // LocalStorage ใช้งานไม่ได้
             return sample;
         }
-        const readText = localStorage.getItem ("DbProifleEmployer");
+        const readText = localStorage.getItem ("DbProfileEmployer");
         const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
         return readObject; 
@@ -398,6 +398,6 @@ export async function __dbSaveAsync (content)
             // LocalStorage ใช้งานไม่ได้
             return;
         }
-        localStorage.setItem ("DbProifleEmployer", JSON.stringify (content));
+        localStorage.setItem ("DbProfileEmployer", JSON.stringify (content));
     }
 }

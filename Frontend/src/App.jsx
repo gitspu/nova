@@ -218,10 +218,13 @@ export function AppOverlay ()
             <Span>ค้นหาโปรไฟล์</Span>
           </Button>
           
-          <Button $variant='outlined' onClick={() => nav.userProfile ()} className='me-4'>
-            <Img src={icon.person}/>
-            <Span>โปรไฟล์ของฉัน</Span>
-          </Button>
+          { 
+            !auth.isRole (auth.ROLE_EMPLOYER) && !auth.isRole (auth.ROLE_ADMIN) &&
+            <Button $variant='outlined' onClick={() => nav.userProfile ()} className='me-4'>
+              <Img src={icon.person}/>
+              <Span>โปรไฟล์ของฉัน</Span>
+            </Button>
+          }
             {/* {
               (auth.isRole (auth.ROLE_EMPLOYER) || auth.isRole (auth.ROLE_DEVELOPER)) &&
               <Button $variant='outlined' onClick={() => nav.employerEnrollment ()} className='me-4'>
@@ -233,13 +236,16 @@ export function AppOverlay ()
         </NavBar.Flex>
         {auth.isLogged () ? <NavBar.Profile onClick={() => setShowContext (!showContext)}>
           <NavBar.ContextMenu className={showContext ? 'd-block' : "d-none"}>
-            <Button 
-              $align="left"
-              $variant="primary"
-              onClick={onClickProfile}>
-              <Img src={icon.person}/>
-              <Span>โปรไฟล์</Span>
-            </Button>
+            {
+              (!auth.isRole (auth.ROLE_EMPLOYER) && !auth.isRole (auth.ROLE_ADMIN)) &&
+              <Button 
+                $align="left"
+                $variant="primary"
+                onClick={onClickProfile}>
+                <Img src={icon.person}/>
+                <Span>โปรไฟล์</Span>
+              </Button>
+            }
             {/* <Button 
               $align="left"
               $variant="primary"

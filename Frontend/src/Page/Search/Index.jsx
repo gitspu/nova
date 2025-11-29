@@ -247,7 +247,6 @@ export default function Start ()
         {
             const entry = saved.current.item[key];
 
-            if (entry.type != 2) continue;
             if (entry.owner != owner) continue;
             if (entry.index != index) continue;
 
@@ -402,7 +401,7 @@ export default function Start ()
                         onChange={(event) => setSearch (event.target.value)}
                   />
 
-                  <Img src={icon.briefcase} height={24}/>
+                  {/* <Img src={icon.briefcase} height={24}/>
                   <Input className="w-25 " placeholder="ค้นหางาน"
                         value="นักพัฒนาซอฟแวร์"
                         readOnly={true}
@@ -411,7 +410,7 @@ export default function Start ()
                   <Input className="w-25 " placeholder="ค้นหางาน"
                         value="กรุงเทพมหานคร"
                         readOnly={true}
-                  />
+                  /> */}
                 </Div>
                 </Div>
               <TagBar state={[searchTag, setSearchTag]}>
@@ -444,7 +443,7 @@ export default function Start ()
                 <PostDetail
                   oOwner={listOwner.current.at (selected)}
                   oData={listInfo.current.at (selected)}
-                  sSave={[isSaved(selected), () => onClickJobSave ()]}
+                  sSave={auth.isRole (auth.ROLE_EMPLOYER) ? [null, null] : [isSaved(selected), () => onClickJobSave ()]}
                   sShare={[false, () => onClickJobShare ()]}
                   
                 />

@@ -398,6 +398,25 @@ export const downloadCSV = (data, filename = 'data.csv') => {
 };
 
 /**
+ * ดาวน์โหลดข้อมูลเป็นไฟล์ PDF
+ * @param {array} data - ข้อมูลที่ต้องการดาวน์โหลด
+ * @param {string} filename - ชื่อไฟล์
+ */
+export const downloadPdf = (data, filename = 'data.pdf') =>
+{
+  const blob = new Blob([], { type: 'application/pdf' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+/**
  * คัดลอกข้อความไปยัง Clipboard
  * @param {string} text - ข้อความที่ต้องการคัดลอก
  * @returns {Promise} - Promise ที่ resolve เมื่อคัดลอกสำเร็จ

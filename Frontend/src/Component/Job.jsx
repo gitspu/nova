@@ -208,13 +208,15 @@ export function PostDetail ({oOwner, oData, sSave, sShare })
           <Img src={logo} alt={name} width={96} height={96}/>
           {/* ปุ่ม Save และ Share */}
           <Div className="d-flex gap-2 ">
-            <Button variant="light"className={`rounded-circle border shadow-sm
-                ${saved ? "bg-danger text-white border-danger" : "text-danger"}`}
-              style={{ width: '48px', height: '48px'}}
-              // เมื่อคลิกปุ่มนี้ จะเรียก onToggleSave โดยส่ง id ของงาน
-              onClick={() => setSaved (!saved)}>
-              <Heart className={saved ? "fill-current" : ""} size={24} />
-            </Button>
+            {saved != null &&
+              <Button variant="light"className={`rounded-circle border shadow-sm
+                  ${saved ? "bg-danger text-white border-danger" : "text-danger"}`}
+                style={{ width: '48px', height: '48px'}}
+                // เมื่อคลิกปุ่มนี้ จะเรียก onToggleSave โดยส่ง id ของงาน
+                onClick={() => setSaved (!saved)}>
+                <Heart className={saved ? "fill-current" : ""} size={24} />
+              </Button>
+            }
             <Button
               variant="light"
               className="rounded-circle border shadow-sm text-primary "

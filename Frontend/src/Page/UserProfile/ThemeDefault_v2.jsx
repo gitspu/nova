@@ -246,7 +246,7 @@ export default function Start ({oId, oLoading, rData})
             {/* เนื้อหาหลัก */}
             <Div className="container py-4">
               <Row>
-                <Col lg={8}>                
+                <Col lg={12}>                
                   <Div className='d-flex flex-column gap-1'>
                     {/* 1. ข้อมูลส่วนตัวโดยสรุป */}
                     <SectionEditable 
@@ -291,7 +291,7 @@ export default function Start ({oId, oLoading, rData})
                   </Div>
                 </Col>
                 <Col>
-                  <Div>
+                  {/* <Div>
                     <P className='mb-1'>ระดับการเปิดโปรไฟล์</P>
                     <P key={forceUpdateIdx} className='mb-4' $weight='bold' style={{ color: 
                         rPersonal.visibility == profile.VISIBILITY_PUBLIC ? 'green' :
@@ -304,8 +304,8 @@ export default function Start ({oId, oLoading, rData})
                         rPersonal.visibility == profile.VISIBILITY_PRIVATE ? 'ส่วนตัว' : ''
                       }
                     </P>
-                  </Div>
-                  <Div className={rEditable ? 'd-block' : 'd-none'}>
+                  </Div> */}
+                  {/* <Div className={rEditable ? 'd-block' : 'd-none'}>
                     <DropdownButton title="เปลี่ยนระดับ" variant="success" className='x-dropdown-full'>
                       <Dropdown.Item onClick={() => onSaveVisibility (profile.VISIBILITY_PUBLIC)}>สาธารณะ</Dropdown.Item>
                       <Dropdown.Item onClick={() => onSaveVisibility (profile.VISIBILITY_RESTRICTED)}>จำกัด</Dropdown.Item>
@@ -319,7 +319,7 @@ export default function Start ({oId, oLoading, rData})
                     <P><strong>สาธารณะ:</strong> ทุกคนสามารถค้นหาและดูโปรไฟล์ของคุณ</P>
                     <P><strong>จำกัด:</strong> เฉพาะผู้ใช้ที่ลงทะเบียนและมีบัญชีเท่านั้นที่ดูได้</P>
                     <P><strong>ส่วนตัว:</strong> มีเพียงคุณเท่านั้นที่สามารถดูโปรไฟล์นี้ได้</P>
-                  </Div>
+                  </Div> */}
                 </Col>
               </Row>
             </Div>

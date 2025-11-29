@@ -491,16 +491,24 @@ export async function getPostHead (which = NaN)
 */
 export async function getPostSaved (which = NaN)
 {
-    const block = await __getSectionRawAsync (which, "post_saved");
+    const dbRoot = await __getSectionRawAsync (which, "post_saved");
+    const dbItem = util.jsonRead (dbRoot, "item");
     const result = new DataPostSaved ().init ();
 
     result.item = [];
 
-    if (block == null)
+    if (dbRoot == null || dbItem == null) 
+    {
         return result;
-
-    result.item = block["item"];
-
+    }
+    for (const item of dbItem)
+    {
+        result.item.push ({
+            type: item.type,
+            owner: item.owner,
+            index: item.index
+        });
+    }
     return result;
 }
 /**
@@ -638,7 +646,11 @@ export async function setPostSaved (data, which = NaN)
     if ((data instanceof DataPostSaved) == false)
         throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
-    await __setSectionAsync (data, which, "post_saved");
+    console.warn (data);
+
+    await __setSectionRawAsync (data, which, "post_saved");
+
+    console.warn (await getPostSaved ());
 }
 /**
  * อัพเดทข้อมูลทักษะ ลงในข้อมลโปรไฟล์
@@ -842,8 +854,8 @@ async function __setSectionRawAsync (structure, which, name)
     if (dbTarget == null) throw new ErrorState (MSG_ERROR_NOT_FOUND);
     if (dbTargetSec == null) throw new ErrorState (MSG_ERROR_NOT_FOUND_2); 
 
-    dbTargetSec = structure;
-
+    dbRoot["item"][which][name] = structure;
+    
     await __dbSaveAsync (dbRoot);
 }
 
@@ -921,6 +933,11 @@ export async function __dbLoadAsync ()
         const readText = localStorage.getItem ("DbProfile");
         const readObject = (readText != null) ? JSON.parse (readText) : sample;
 
+        if (readText == null)
+        {
+            console.warn ("Sample data is being used due no previous data");
+        }
+
         return Promise.resolve (readObject); 
     }
 }
@@ -948,6 +965,6 @@ export async function __dbSaveAsync (content)
             // LocalStorage ใช้งานไม่ได้
             return;
         }
-        localStorage.setItem ("DbProifle", JSON.stringify (content));
+        localStorage.setItem ("DbProfile", JSON.stringify (content));
     }
 }

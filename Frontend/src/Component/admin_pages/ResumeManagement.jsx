@@ -25,6 +25,7 @@ import Pagination from '../admin_component/Pagination';
 // Import Data & Helpers
 import { mockResumes } from '../admin_data/mockData';
 import { 
+  downloadPdf,
   formatDate, 
   getStatusBadge,
   paginateData,
@@ -185,6 +186,17 @@ const ResumeManagement = ({menu}) => {
       alert('เกิดข้อผิดพลาดในการดาวน์โหลดไฟล์ กรุณาลองใหม่อีกครั้ง');
     }
   };
+
+  const handleExportPDF = () =>
+  {
+      const today = new Date();
+      const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+      const fileName = `resumes_data_${dateStr}.pdf`;
+      
+      downloadPdf (fileName);
+      // แสดงข้อความสำเร็จ
+      alert(`ดาวน์โหลดไฟล์ ${fileName} สำเร็จ!\n\nจำนวนข้อมูลทั้งหมด: ${filteredResumes.length} ฉบับ`);
+  }
 
   // แบ่งหน้าข้อมูล (ใช้ข้อมูลที่กรองแล้ว)
   const paginatedResult = paginateData(filteredResumes, currentPage, itemsPerPage);
@@ -382,7 +394,7 @@ const ResumeManagement = ({menu}) => {
             </div>
             <Button 
               variant="outline-primary"
-              onClick={handleExportCSV}
+              onClick={handleExportPDF}
               className="d-flex align-items-center gap-2 px-3"
               style={{
                 fontWeight: '500',
