@@ -290,6 +290,7 @@ const Menu = ({menu, menuShow}) =>
 }
 
 const ContentViewport = styled.div `
+
     position: absolute;
     inset: 56px 0px 0px 0px;
     margin: 0px 0px 0px 30%;
@@ -298,7 +299,7 @@ const ContentViewport = styled.div `
     & > *
     {
         width: 100%;
-        max-width: 210mm;
+        max-width: 250mm;
         margin: 0px auto 0px 0px;
         padding: 0px 12px;
 
