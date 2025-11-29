@@ -797,7 +797,7 @@ export const Checkbox = ({
     function injectSet (event) 
     {
         // event.preventDefault ();
-        const checked = Boolean (event.target.checked);
+        const checked = Boolean (!injectGet ());
 
         if (state != null)
             state[1] (checked);
@@ -805,20 +805,15 @@ export const Checkbox = ({
         if (onChange != null)
             onChange (event);
     }
-    function modify (newValue)
-    {
-        if (state != null)
-            state[1] (newValue);
-    }
 
     return (
-      <CheckboxRoot className={className} onClick={() => modify (!injectGet ())}>
-          <CheckboxInput type='checkbox' 
-                         checked={injectGet()}
-                         onChange={injectSet}>
-          </CheckboxInput>
+      <CheckboxRoot className={className} onClick={(event) => { event.stopPropagation (); injectSet (event); }}>
           <CheckboxTitle>{title}</CheckboxTitle>
           <CheckboxSubtitle>{subtitle}</CheckboxSubtitle>
+          <CheckboxInput type='checkbox' 
+                         checked={injectGet()}
+                         style={{ pointerEvents: 'none' }}>
+          </CheckboxInput>
       </CheckboxRoot>
     );
 }
