@@ -71,7 +71,7 @@ const Dashboard = ({menu}) => {
         </Col>
         <Col md={6} lg={4}>
           <StatCard
-            title="เรซูเม่ทั้งหมด"
+            title="โปรไฟล์ทั้งหมด"
             value={summaryStats.totalResumes}
             growth={summaryStats.resumeGrowth}
             icon={<FaFileAlt />}
@@ -129,7 +129,7 @@ const Dashboard = ({menu}) => {
                     dot={{ fill: '#0d6efd', r: 4 }}
                     activeDot={{ r: 6 }}
                   />
-                  <Line 
+                  {/* <Line 
                     type="monotone" 
                     dataKey="resumes" 
                     stroke="#198754" 
@@ -137,7 +137,7 @@ const Dashboard = ({menu}) => {
                     name="เรซูเม่ใหม่" 
                     dot={{ fill: '#198754', r: 4 }}
                     activeDot={{ r: 6 }}
-                  />
+                  /> */}
                   <Line 
                     type="monotone" 
                     dataKey="jobs" 
@@ -251,8 +251,8 @@ const Dashboard = ({menu}) => {
             <Card.Header className="bg-white border-0 py-3 d-flex align-items-center">
               <FaEye className="text-info me-2" size={20} />
               <div>
-                <h5 className="mb-0 fw-bold">เรซูเม่ยอดนิยม 5 อันดับ</h5>
-                <small className="text-muted">เรซูเม่ที่ดูมากที่สุด</small>
+                <h5 className="mb-0 fw-bold">โปรไฟล์ยอดนิยม 5 อันดับ</h5>
+                <small className="text-muted">โปรไฟล์ที่ดูมากที่สุด</small>
               </div>
             </Card.Header>
             <Card.Body className="p-0">
@@ -260,7 +260,7 @@ const Dashboard = ({menu}) => {
                 <thead className="table-light">
                   <tr>
                     <th className="px-3" style={{ width: '60px' }}>อันดับ</th>
-                    <th>ชื่อเรซูเม่</th>
+                    <th>ชื่อโปรไฟล์</th>
                     <th className="text-center" style={{ width: '100px' }}>ยอดดู</th>
                   </tr>
                 </thead>
