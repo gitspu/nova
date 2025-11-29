@@ -576,7 +576,7 @@ function JobList ({sLoad, sSelected, sSearch, sSearchTag, sFilter, rList, rListO
                 const m1 =  itemValue.title.toLowerCase ().startsWith (search.toLowerCase ()) ||
                             itemValue.title.toLowerCase ().includes (search.toLowerCase ());
                 const m2 =  itemOwner.name.toLowerCase ().startsWith (search.toLowerCase ()) ||
-                            itemOwner.name.toLowerCase ().startsWith (search.toLowerCase ());
+                            itemOwner.name.toLowerCase ().includes (search.toLowerCase ());
 
                 if (!m1 && !m2)
                     continue;

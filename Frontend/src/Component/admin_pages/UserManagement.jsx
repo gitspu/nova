@@ -90,7 +90,7 @@ const UserManagement = ({menu}) => {
         'ประเภท',
         'สถานะ',
         'วันที่สมัคร',
-        'จำนวนเรซูเม่',
+        // 'จำนวนเรซูเม่',
         'จำนวนงานที่โพสต์',
         'จำนวนการสมัครงาน'
       ];
@@ -220,18 +220,18 @@ const UserManagement = ({menu}) => {
         <small className="text-muted">{formatDate(value)}</small>
       )
     },
-    {
-      key: 'resumeCount',
-      label: 'เรซูเม่',
-      sortable: true,
-      className: 'text-center',
-      render: (value, row) => {
-        if (row.type === 'jobseeker') {
-          return <Badge bg="info" pill>{value || 0}</Badge>;
-        }
-        return <span className="text-muted">-</span>;
-      }
-    },
+    // {
+    //   key: 'resumeCount',
+    //   label: 'เรซูเม่',
+    //   sortable: true,
+    //   className: 'text-center',
+    //   render: (value, row) => {
+    //     if (row.type === 'jobseeker') {
+    //       return <Badge bg="info" pill>{value || 0}</Badge>;
+    //     }
+    //     return <span className="text-muted">-</span>;
+    //   }
+    // },
     {
       key: 'jobPostCount',
       label: 'งานที่โพสต์',

@@ -274,7 +274,7 @@ const Menu = ({menu, menuShow}) =>
           <MenuBar.Child state={1} icon={icon.house} text='ภาพรวม'/>
           <MenuBar.Child state={3} icon={icon.people} text='จัดการบัญชี'/>
           <MenuBar.Child state={5} icon={icon.briefcase} text='จัดการงาน'/>
-          <MenuBar.Child state={6} icon={icon.sticky} text='จัดการเรซูเม่'/>
+          <MenuBar.Child state={6} icon={icon.sticky} text='จัดการโปรไฟล์'/>
           {/* <MenuBar.Child state={4} icon={icon.send} text='โฆษณา'/> */}
           <MenuBar.Separator title='อื่น ๆ'/>
           <MenuBar.Child state={2} icon={icon.unlock} text='การยืนยันตัวตน'/>

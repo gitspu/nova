@@ -230,7 +230,7 @@ export function PostDetail ({oOwner, oData, sSave, sShare })
             <H1 className="mb-1" $variant='primary' $size='h1'>{String (title)}</H1>
             <Div className=" d-flex align-items-center gap-2">
               <H2 $variant='secondary' $size='text'>{name}</H2>
-              <A onClick={() => nav.userProfile (oOwner.id)}>ดูโปรไฟล์บริษัท</A>
+              {/* <A onClick={() => nav.userProfile (oOwner.id)}>ดูโปรไฟล์บริษัท</A> */}
             </Div>
           </Section>
           <Section className="mb-4">
