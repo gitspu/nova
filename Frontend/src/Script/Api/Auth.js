@@ -858,8 +858,8 @@ export async function getServerMapInfo (key)
 */
 export async function setServerConfig (value)
 {
-    if (!(value instanceof ServerConfig))
-        throw new ErrorArgument (MSG_ERROR_DATATYPE);
+    // if (!(value instanceof ServerConfig))
+    //     throw new ErrorArgument (MSG_ERROR_DATATYPE);
 
     if (state.init == false) throw new ErrorState (MSG_ERROR_DEINIT);
     if (state.session == null) throw new ErrorState (MSG_ERROR_UNLOGGED);

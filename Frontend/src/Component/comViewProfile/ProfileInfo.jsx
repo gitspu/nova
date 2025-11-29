@@ -4,6 +4,8 @@ import { Badge, Button } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 
+import { Button as Button2 } from "../Common";
+
 // Import รูปภาพ Resume
 const resumeImages = import.meta.glob(
   "/src/Asset/resumepicture/*.{png,jpg,jpeg,webp}",
@@ -90,11 +92,11 @@ const ProfileInfo = ({ setPic }) => {
           <Dropdown.Divider />
 
           <div className="px-3 pb-2 d-flex gap-2">
-            <Button variant="primary" size="sm" onClick={applyFilter}>
+            <Button style={{ minWidth: '96px', minHeight: '40px', fontSize: '1rem' }} variant="success" size="sm" onClick={applyFilter}>
               ยืนยัน
             </Button>
 
-            <Button variant="secondary" size="sm" onClick={clearFilter}>
+            <Button style={{ minWidth: '64px', minHeight: '40px', fontSize: '1rem' }} variant="secondary" size="sm" onClick={clearFilter}>
               ล้าง
             </Button>
           </div>
@@ -121,7 +123,7 @@ const ProfileInfo = ({ setPic }) => {
               key={profileData.id}
               // ไฮไลท์ Card ที่เลือก
               className={`d-flex gap-3 p-3 border rounded bg-light ${
-                isSelected ? "border-primary border-3" : ""
+                isSelected ? "border-success border-2" : "border-2"
               }`}
               style={{ cursor: "pointer" }}
               onClick={() => {
@@ -170,7 +172,7 @@ const ProfileInfo = ({ setPic }) => {
                 </div>
 
                 <div className="fs-5">
-                  ความสามารถ&nbsp;
+                  ทักษะ&nbsp;
                   <Badge bg="success" className="mt-1">
                     {profileData.job}
                   </Badge>

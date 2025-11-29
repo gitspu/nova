@@ -35,11 +35,10 @@ import EmployerProfile  from "./Page/EmployerProfile/Index"
 import EmployerSettings from "./Page/EmployerSettings/Index"
 import UserProfile      from "./Page/UserProfile/Index"
 import UserSearch       from "./Page/Search/Profile"
-import UserSearch2       from "./Page/Search/Profile2"
+import UserSearch2      from "./Page/Search/Profile2"
+import UserSearch3      from "./Page/Search/Profile3"
 import UserSettings     from "./Page/UserSettings/Index"
 import Search           from './Page/Search/Index'
-
-
 
 import { Button, Div, Img, NavBar, P, Span } from './Component/Common';
 
@@ -101,7 +100,8 @@ export function App ()
                   <Route path='/' element={<Search/>} index={true}/>
                   <Route path='/user-profile' element={<UserProfile/>}/>
                   {/* <Route path='/user-search' element={<UserSearch/>}/> */}
-                  <Route path='/user-search' element={<UserSearch2/>}/>
+                  {/* <Route path='/user-search' element={<UserSearch2/>}/> */}
+                  <Route path='/user-search' element={<UserSearch3/>}/>
                   <Route path='/user-settings' element={<UserSettings/>}/>
                   <Route path='/employer-profile' element={<EmployerProfile/>}/>
                   <Route path='/employer-enrollment' element={<EmployerProfile/>}/>

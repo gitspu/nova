@@ -805,9 +805,14 @@ export const Checkbox = ({
         if (onChange != null)
             onChange (event);
     }
+    function modify (newValue)
+    {
+        if (state != null)
+            state[1] (newValue);
+    }
 
     return (
-      <CheckboxRoot className={className}>
+      <CheckboxRoot className={className} onClick={() => modify (!injectGet ())}>
           <CheckboxInput type='checkbox' 
                          checked={injectGet()}
                          onChange={injectSet}>
